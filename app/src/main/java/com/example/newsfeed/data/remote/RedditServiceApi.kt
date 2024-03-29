@@ -1,14 +1,15 @@
 package com.example.newsfeed.data.remote
 
+import com.example.newsfeed.data.remote.models.Entry
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface RedditServiceApi {
 
-    @GET("wiki/rss/{id}")
-    suspend fun getRedditNewsById(@Path("id") id: Int): Response<News>
+    @GET("r/news/.rss/{id}")
+    suspend fun getRedditNewsById(@Path("id") id: Int): Response<Entry>
 
-    @GET("wiki/rss")
-    suspend fun getRedditNews(): Response<News>
+    @GET("r/news/.rss")
+    suspend fun getRedditNews(): Response<Entry>
 }

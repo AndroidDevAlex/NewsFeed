@@ -1,9 +1,7 @@
-package com.example.newsfeed.modules
+package com.example.newsfeed.data.local
 
 import android.content.Context
 import androidx.room.Room
-import com.example.newsfeed.data.local.DataBase
-import com.example.newsfeed.data.local.NewsDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

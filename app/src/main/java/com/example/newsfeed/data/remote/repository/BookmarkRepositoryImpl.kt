@@ -2,8 +2,8 @@ package com.example.newsfeed.data.remote.repository
 
 import android.util.Log
 import com.example.newsfeed.data.local.NewsDao
-import com.example.newsfeed.data.remote.News
-import com.example.newsfeed.domain.repository.BookmarkRepository
+import com.example.newsfeed.data.local.NewsEntity
+import com.example.newsfeed.domain.BookmarkRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -12,7 +12,7 @@ class BookmarkRepositoryImpl @Inject constructor(
     private val newsDao: NewsDao
 ) : BookmarkRepository {
 
-    override fun getSavedNewsFromLocalDB(): Flow<List<News>> {
+    override fun getSavedNewsFromLocalDB(): Flow<List<NewsEntity>> {
         return flow {
             runCatching {
                 newsDao.getAllNews()

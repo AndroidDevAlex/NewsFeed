@@ -29,14 +29,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.example.newsfeed.R
 import com.example.newsfeed.util.SourceButton
-import com.example.newsfeed.data.remote.News
 import com.example.newsfeed.ui.theme.GrayTemplate
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
 
 @Composable
 fun ItemTemplate(
- item: News,
+ item: NewsUi,
  onItemClick: () -> Unit,
  onBookmarkClick: () -> Unit
 ) {
@@ -45,7 +44,6 @@ fun ItemTemplate(
 
  Card(
   modifier = Modifier
-   //.fillMaxSize()
    .fillMaxWidth()
    .height(Dimens.CardHeight)
    .padding(Dimens.CardPadding)
@@ -68,14 +66,12 @@ fun ItemTemplate(
    )
    Column(
     modifier = Modifier
-     //.padding(2.dp)
      .weight(1f),
-    //.align(Alignment.CenterVertically),
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.Start
    ) {
     Text(
-     text = item.publishedAt.toString(),
+     text = item.publishedAt,
      style = TextStyle(
       fontSize = Dimens.TextFontSize,
       color = Color.Gray,
@@ -93,18 +89,17 @@ fun ItemTemplate(
       .padding(vertical = Dimens.Padding)
     )
     Column(
-     //modifier = Modifier.padding(1.dp),
-     //verticalArrangement = Arrangement.SpaceAround,
      modifier = Modifier.fillMaxWidth(),
-     //.padding(start = Dimens.Padding),
      verticalArrangement = Arrangement.SpaceBetween,
      horizontalAlignment = Alignment.End
     ) {
 
-     SourceButton(
-      source = item.source,
-      onClick = onItemClick
-     )
+     item.source?.let {
+      SourceButton(
+       source = it,
+       onClick = onItemClick
+      )
+     }
 
      Icon(
       painter = bookmarkIcon,

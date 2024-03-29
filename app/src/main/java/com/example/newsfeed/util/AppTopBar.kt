@@ -1,6 +1,7 @@
 package com.example.newsfeed.util
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,14 +16,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.example.newsfeed.R
 import com.example.newsfeed.ui.theme.Orange
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTopBar(pressClicked: () -> Unit) {
+fun AppTopBar(pressClicked: () -> Unit, onBackPress: () -> Unit) {
 
     val bookmarkIcon: Painter = painterResource(id = R.drawable.bookmark)
+    val backIcon: Painter = painterResource(id = R.drawable.back)
 
     TopAppBar(
         title = {
@@ -35,9 +38,22 @@ fun AppTopBar(pressClicked: () -> Unit) {
             )
         }, colors = TopAppBarDefaults.smallTopAppBarColors(Orange),
 
+        navigationIcon = {
+            IconButton(
+                onClick = { onBackPress() },
+                modifier = Modifier.padding(start = 16.dp)
+            ) {
+                Icon(
+                    painter = backIcon,
+                    contentDescription = "Back",
+                    tint = Color.White
+                )
+            }
+        },
         actions = {
             IconButton(
-                onClick = { pressClicked() }
+                onClick = { pressClicked() },
+                modifier = Modifier.padding(end = 16.dp)
             ) {
                 Icon(
                     painter = bookmarkIcon,

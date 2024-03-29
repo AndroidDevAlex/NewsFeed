@@ -8,7 +8,7 @@ data class NewsEntity(
     @PrimaryKey(autoGenerate = true) var id: Int? = null,
     val image: String,
     val title: String,
-    val publishedAt: Int,
+    val publishedAt: String,
     val description: String,
     val addedBy: String,
     val isBookmarked: Boolean,

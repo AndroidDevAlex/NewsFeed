@@ -102,4 +102,7 @@ dependencies {
 
       //paging
     implementation ("androidx.paging:paging-compose:3.2.1")
+
+      //Simple XML
+    implementation ("com.squareup.retrofit2:converter-simplexml:2.3.0")
 }

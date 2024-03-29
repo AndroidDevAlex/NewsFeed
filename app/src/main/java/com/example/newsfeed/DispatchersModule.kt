@@ -1,4 +1,4 @@
-package com.example.newsfeed.modules
+package com.example.newsfeed
 
 import dagger.Module
 import dagger.Provides

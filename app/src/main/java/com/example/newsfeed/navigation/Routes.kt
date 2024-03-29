@@ -4,6 +4,12 @@ enum class Routes {
     NEWS_SCREEN,
     FILTER,
     BOOKMARK,
-    DETAILS,
-    NETWORK
+    DETAILS
+}
+
+sealed class Screen(val rout: String) {
+    object Home : Screen("news_screen")
+    object Filter : Screen("filter")
+    object Bookmark : Screen("bookmark")
+    object Details : Screen("details")
 }

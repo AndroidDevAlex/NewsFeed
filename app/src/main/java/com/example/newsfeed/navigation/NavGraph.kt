@@ -4,33 +4,28 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.newsfeed.presentation.screens.BookmarkScreen
-import com.example.newsfeed.presentation.screens.DetailsScreen
-import com.example.newsfeed.presentation.screens.FilterScreen
-import com.example.newsfeed.presentation.screens.NewsScreen
+import com.example.newsfeed.presentation.bookmark.BookmarkScreen
+import com.example.newsfeed.presentation.details.DetailsScreen
+import com.example.newsfeed.presentation.filter.FilterScreen
+import com.example.newsfeed.presentation.home.NewsScreen
 
 @Composable
 fun NavGraph(
     navHostController: NavHostController
 ) {
-    NavHost(navController = navHostController, startDestination = Routes.NEWS_SCREEN.name) {
+    NavHost(navController = navHostController, startDestination = Screen.Home.rout) {
 
-        composable(Routes.NEWS_SCREEN.name) {
-            NewsScreen(onNavigateNext = {navHostController.navigate(route = Routes.DETAILS.name)})
+        composable(Screen.Home.rout) {
+            NewsScreen(navHostController)
         }
-        composable(Routes.FILTER.name) {
+        composable(Screen.Filter.rout) {
             FilterScreen()
         }
-        composable(Routes.BOOKMARK.name) {
-            BookmarkScreen()
+        composable(Screen.Bookmark.rout) {
+            BookmarkScreen(navHostController)
         }
-        composable(Routes.DETAILS.name) {
-            DetailsScreen(onNavigateBack = {
-                navHostController.navigate(Routes.NEWS_SCREEN.name)
-            })
+        composable(Screen.Details.rout) {
+            DetailsScreen(navHostController)
         }
-      /*  composable(Routes.NETWORK.name){
-            NetworkScreen()
-        }*/
     }
 }

@@ -1,32 +1,32 @@
-package com.example.newsfeed.modules
+package com.example.newsfeed.data.remote
 
 import com.example.newsfeed.data.local.NewsDao
-import com.example.newsfeed.data.remote.HabrServiceApi
-import com.example.newsfeed.data.remote.RedditServiceApi
 import com.example.newsfeed.data.remote.repository.BookmarkRepositoryImpl
 import com.example.newsfeed.data.remote.repository.FilterRepositoryImpl
 import com.example.newsfeed.data.remote.repository.NewsRepositoryImpl
-import com.example.newsfeed.domain.repository.BookmarkRepository
-import com.example.newsfeed.domain.repository.FilterRepository
-import com.example.newsfeed.domain.repository.NewsRepository
+import com.example.newsfeed.domain.BookmarkRepository
+import com.example.newsfeed.domain.FilterRepository
+import com.example.newsfeed.domain.NewsRepository
+import com.example.newsfeed.DispatchersModule
+import com.example.newsfeed.presentation.home.GetAllNewsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object RepositoryModules {
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     fun provideBookmarkRepository(newsDao: NewsDao): BookmarkRepository {
         return BookmarkRepositoryImpl(newsDao)
     }
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     fun provideNewsRepository(
         habrServiceApi: HabrServiceApi,
         redditServiceApi: RedditServiceApi,
@@ -41,7 +41,7 @@ object RepositoryModules {
     }
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     fun provideFilterRepository(
         habrServiceApi: HabrServiceApi,
         redditServiceApi: RedditServiceApi
@@ -50,5 +50,11 @@ object RepositoryModules {
             redditServiceApi,
             habrServiceApi
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideNewsUseCase(newsRepository: NewsRepository): GetAllNewsUseCase {
+        return GetAllNewsUseCase(newsRepository)
     }
 }
