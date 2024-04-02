@@ -39,7 +39,6 @@ fun BottomNavigation(
                         tint = if (currentRoute == item.route.name) Orange else Color.White
                     )
                 },
-
                 )
         }
     }

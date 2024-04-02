@@ -22,9 +22,6 @@ class NewsViewModel @Inject constructor(
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    // private val _selectedItem = MutableStateFlow<NewsUi?>(null)
-    // val selectedItem: StateFlow<NewsUi?> = _selectedItem
-
     val newsListNews: StateFlow<StateViewModel> = getAllNewsUseCase()//.invoke()
         .map { it.toStateViewModel() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), StateViewModel.None)
@@ -39,7 +36,7 @@ class NewsViewModel @Inject constructor(
         }
     }
 
-    fun forceUpdate() {
+    fun forceUpdate() { // надо получить данные и смерджить старый стейт с новым
         viewModelScope.launch(ioDispatcher) {
             newsRepository.fetchLatest()
         }

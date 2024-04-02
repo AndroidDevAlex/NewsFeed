@@ -4,8 +4,8 @@ import android.util.Log
 import com.example.newsfeed.data.local.NewsDao
 import com.example.newsfeed.data.remote.HabrServiceApi
 import com.example.newsfeed.data.remote.RedditServiceApi
-import com.example.newsfeed.data.remote.toNewsEntity
-import com.example.newsfeed.data.remote.toNewsUi
+import com.example.newsfeed.data.remote.mapToDB
+import com.example.newsfeed.data.remote.mapToUi
 import com.example.newsfeed.domain.NewsRepository
 import com.example.newsfeed.presentation.NewsUi
 import com.example.newsfeed.util.RequestResult
@@ -40,15 +40,15 @@ class NewsRepositoryImpl @Inject constructor(
                     val habrNews = habrNewsResponse.body()
                     val redditNews = redditNewsResponse.body()
 
-                    habrNews?.let { newsList.addAll(listOf(it.toNewsUi())) }
-                    redditNews?.let { newsList.addAll(listOf(it.toNewsUi())) }
+                    habrNews?.let { newsList.addAll(listOf(it.mapToUi())) }
+                    redditNews?.let { newsList.addAll(listOf(it.mapToUi())) }
 
                     emit(RequestResult.Success(newsList))
                 } else if (habrNewsResponse.isSuccessful) {
-                    habrNewsResponse.body()?.let { newsList.addAll(listOf(it.toNewsUi())) }
+                    habrNewsResponse.body()?.let { newsList.addAll(listOf(it.mapToUi())) }
                     emit(RequestResult.Success(newsList))
                 } else if (redditNewsResponse.isSuccessful) {
-                    redditNewsResponse.body()?.let { newsList.addAll(listOf(it.toNewsUi())) }
+                    redditNewsResponse.body()?.let { newsList.addAll(listOf(it.mapToUi())) }
                     emit(RequestResult.Success(newsList))
                 } else {
                     emit(RequestResult.Error())
@@ -110,7 +110,7 @@ class NewsRepositoryImpl @Inject constructor(
     override suspend fun saveNews(news: NewsUi) {
         runCatching {
             withContext(ioDispatcher) {
-                val newsEntity = news.toNewsEntity()
+                val newsEntity = news.mapToDB()
                 val updateLocalDB = newsDao.insertNews(newsEntity)
                 if (updateLocalDB != -1L) {
                     Log.i("log", "News successfully saved in Local database")

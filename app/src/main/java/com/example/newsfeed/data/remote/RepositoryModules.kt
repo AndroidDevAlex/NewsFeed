@@ -8,6 +8,8 @@ import com.example.newsfeed.domain.BookmarkRepository
 import com.example.newsfeed.domain.FilterRepository
 import com.example.newsfeed.domain.NewsRepository
 import com.example.newsfeed.DispatchersModule
+import com.example.newsfeed.data.remote.repository.DetailRepositoryImpl
+import com.example.newsfeed.domain.DetailRepository
 import com.example.newsfeed.presentation.home.GetAllNewsUseCase
 import dagger.Module
 import dagger.Provides
@@ -35,6 +37,17 @@ object RepositoryModules {
         return NewsRepositoryImpl(
             habrServiceApi,
             redditServiceApi,
+            newsDao,
+            DispatchersModule.provideIoDispatcher()
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideDetailRepository(
+        newsDao: NewsDao,
+    ): DetailRepository {
+        return DetailRepositoryImpl(
             newsDao,
             DispatchersModule.provideIoDispatcher()
         )

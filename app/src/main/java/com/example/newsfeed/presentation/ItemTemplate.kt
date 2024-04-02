@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.example.newsfeed.R
 import com.example.newsfeed.util.SourceButton
 import com.example.newsfeed.ui.theme.GrayTemplate
@@ -58,11 +60,13 @@ fun ItemTemplate(
 
    Image(
     painter = painterResource(id = item.image.toInt()),
+  //  painter = rememberPicassoPainter(item.image),
     contentDescription = "image",
     modifier = Modifier
      .padding(Dimens.ImagePadding)
      .size(Dimens.ImageSize)
      .clip(RoundedCornerShape(percent = Dimens.ClipPercent))
+     .heightIn(120.dp)
    )
    Column(
     modifier = Modifier

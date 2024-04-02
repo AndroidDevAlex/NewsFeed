@@ -76,6 +76,7 @@ dependencies {
 
         //picasso
     implementation("com.squareup.picasso:picasso:2.71828")
+   // implementation("com.google.accompanist:accompanist-picasso:0.18.0")
 
        //coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")

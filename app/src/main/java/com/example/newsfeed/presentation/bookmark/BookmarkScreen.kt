@@ -26,21 +26,41 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.newsfeed.R
+import com.example.newsfeed.navigation.Routes
 import com.example.newsfeed.presentation.ItemTemplate
-import com.example.newsfeed.presentation.home.NewsViewModel
+import com.example.newsfeed.presentation.NewsUi
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookmarkScreen(navController: NavController) {
 
     val bookmarkViewModel: BookmarkViewModel = hiltViewModel()
-    val newsViewModel: NewsViewModel = hiltViewModel()
 
-    val savedData by bookmarkViewModel.savedNews.collectAsState()
+    val state by bookmarkViewModel.state.collectAsState()
+
+    BookmarkScreenUi(
+        state,
+        navigateToDetail = { id, url ->
+            // переход на DETAILS
+            navController.navigate(Routes.DETAILS.name)
+        },
+        bookMarkClick = { news ->
+            bookmarkViewModel.onBookmarkClicked(news)
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+private fun BookmarkScreenUi(
+    state: BookmarkState,
+    navigateToDetail: (Int, String) -> Unit,
+    bookMarkClick: (NewsUi) -> Unit
+) {
 
     Scaffold(topBar = {
         TopAppBar(
@@ -56,7 +76,10 @@ fun BookmarkScreen(navController: NavController) {
             }, colors = TopAppBarDefaults.smallTopAppBarColors(Orange)
         )
     }) {
-        Column(Modifier.fillMaxHeight().padding(60.dp), horizontalAlignment = Alignment.Start) {
+        Column(
+            Modifier
+                .fillMaxHeight()
+                .padding(60.dp), horizontalAlignment = Alignment.Start) {
             Text(
                 text = Headline.SAVED.title,
                 color = Color.DarkGray,
@@ -68,14 +91,14 @@ fun BookmarkScreen(navController: NavController) {
                     .fillMaxSize()
                     .padding(horizontal = Dimens.PaddingHorizontal)
             ) {
-                itemsIndexed(savedData) { _, item ->
+                itemsIndexed(state.news) { _, item ->
                     ItemTemplate(
                         item = item,
                         onItemClick = {
-                           // newsViewModel.onNewsItemSelected(item.id, item.source)
+                            item.source?.let { url -> navigateToDetail(item.id, url) }
                         },
                         onBookmarkClick = {
-                            newsViewModel.onBookmarkClicked(item)
+                            bookMarkClick(item)
                         })
                 }
             }

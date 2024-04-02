@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "news")
-data class NewsEntity(
-    @PrimaryKey(autoGenerate = true) var id: Int? = null,
+data class NewsDB(
+    @PrimaryKey(autoGenerate = true) var id: Int = 0,
     val image: String,
     val title: String,
     val publishedAt: String,

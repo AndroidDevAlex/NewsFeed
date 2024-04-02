@@ -11,19 +11,19 @@ import kotlinx.coroutines.flow.Flow
 interface NewsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNews(newsEntity:NewsEntity): Long
+    suspend fun insertNews(newsEntity:NewsDB): Long
 
     @Query("SELECT * FROM news WHERE id = :id")
-    suspend fun getNewsById(id: Int): NewsEntity
+    suspend fun getNewsById(id: Int): NewsDB
 
     @Query("DELETE FROM news WHERE id = :id")
     suspend fun deleteNewsById(id: Int)
 
     @Query("SELECT * FROM news")
-    fun getAllNews(): Flow<List<NewsEntity>>
+    fun getAllNews(): Flow<List<NewsDB>>
 
     @Delete
-    suspend fun removeOll(news: List<NewsEntity>)
+    suspend fun removeOll(news: List<NewsDB>)
 
     @Query("DELETE FROM news")
     suspend fun clean()

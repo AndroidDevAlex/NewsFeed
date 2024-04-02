@@ -2,4 +2,5 @@
     <string name="app_name">News feed</string>
     <string name="you_are_offline">You are offline</string>
     <string name="you_are_online">You are online</string>
+    <string name="no_news">No news</string>
 </resources>

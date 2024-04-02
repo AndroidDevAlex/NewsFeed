@@ -6,7 +6,7 @@ import org.simpleframework.xml.Root
 @Root(name = "entry", strict = false)
 data class Entry (
     @field:Element(name = "id")
-    val id: Int? = null,
+    val id: Int = 0,
 
     @field:Element(name = "title")
     val title: String? = null,
