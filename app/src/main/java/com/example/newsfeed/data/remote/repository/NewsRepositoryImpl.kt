@@ -1,6 +1,7 @@
 package com.example.newsfeed.data.remote.repository
 
 import android.util.Log
+import com.example.newsfeed.Logger
 import com.example.newsfeed.data.local.NewsDao
 import com.example.newsfeed.data.remote.HabrServiceApi
 import com.example.newsfeed.data.remote.RedditServiceApi
@@ -22,7 +23,8 @@ class NewsRepositoryImpl @Inject constructor(
     private val habrServiceApi: HabrServiceApi,
     private val redditServiceApi: RedditServiceApi,
     private val newsDao: NewsDao,
-    @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher
+    @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher,
+    private val logger: Logger
 ) : NewsRepository {
 
     override fun getOllNewsList(): Flow<RequestResult<List<NewsUi>>> {
@@ -56,7 +58,7 @@ class NewsRepositoryImpl @Inject constructor(
 
                 emit(RequestResult.Loading(false))
             }.onFailure { e ->
-                Log.e("error", "$e")
+                logger.e(LOG_TAG, "Error getting from server = $e")
             }
         }
     }
@@ -76,7 +78,7 @@ class NewsRepositoryImpl @Inject constructor(
                     val news = newsResponse.body()
                     if (news != null) {
 
-                        val newsModel = news.id?.let {
+                        val newsModel = news.id.let {
                             NewsUi(
                                 id = it,
                                 image = "",
@@ -100,8 +102,7 @@ class NewsRepositoryImpl @Inject constructor(
                 }
                 emit(RequestResult.Loading(false))
             }.onFailure { e ->
-                Log.e("tag", "Error fetching news: $e")
-
+                logger.e(LOG_TAG, "Error fetching news from server = $e")
                 emit(RequestResult.Error())
             }
         }
@@ -145,4 +146,8 @@ class NewsRepositoryImpl @Inject constructor(
             }
             .first()
     }
+
+   private companion object{
+       const val LOG_TAG = "NewsRepository"
+   }
 }

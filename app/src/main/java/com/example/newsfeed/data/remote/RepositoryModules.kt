@@ -8,6 +8,8 @@ import com.example.newsfeed.domain.BookmarkRepository
 import com.example.newsfeed.domain.FilterRepository
 import com.example.newsfeed.domain.NewsRepository
 import com.example.newsfeed.DispatchersModule
+import com.example.newsfeed.LogCatLogger
+import com.example.newsfeed.Logger
 import com.example.newsfeed.data.remote.repository.DetailRepositoryImpl
 import com.example.newsfeed.domain.DetailRepository
 import com.example.newsfeed.presentation.home.GetAllNewsUseCase
@@ -28,17 +30,22 @@ object RepositoryModules {
     }
 
     @Provides
+    fun provideLogger(): Logger = LogCatLogger()
+
+    @Provides
     @Singleton
     fun provideNewsRepository(
         habrServiceApi: HabrServiceApi,
         redditServiceApi: RedditServiceApi,
         newsDao: NewsDao,
+        logger: Logger
     ): NewsRepository {
         return NewsRepositoryImpl(
             habrServiceApi,
             redditServiceApi,
             newsDao,
-            DispatchersModule.provideIoDispatcher()
+            DispatchersModule.provideIoDispatcher(),
+            logger
         )
     }
 

@@ -13,19 +13,21 @@ import com.example.newsfeed.presentation.home.NewsScreen
 fun NavGraph(
     navHostController: NavHostController
 ) {
-    NavHost(navController = navHostController, startDestination = Screen.Home.rout) {
+    NavHost(navController = navHostController, startDestination = Screen.Home.route) {
 
-        composable(Screen.Home.rout) {
+        composable(Screen.Home.route) {
             NewsScreen(navHostController)
         }
-        composable(Screen.Filter.rout) {
+        composable(Screen.Filter.route) {
             FilterScreen()
         }
-        composable(Screen.Bookmark.rout) {
+        composable(Screen.Bookmark.route) {
             BookmarkScreen(navHostController)
         }
-        composable(Screen.Details.rout) {
-            DetailsScreen(navHostController)
+        composable(Screen.Details.route) { currentStack ->
+            val args = requireNotNull(currentStack.arguments)
+            val newsUrl = args.getString("newsUrl") ?: ""
+            DetailsScreen(navHostController, newsUrl)
         }
     }
 }

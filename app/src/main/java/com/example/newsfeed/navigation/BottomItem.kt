@@ -4,11 +4,12 @@ import com.example.newsfeed.R
 
 sealed class BottomItem(
     val iconId: Int,
-    val route: Routes
+    val screen: Screen
 ) {
-    object NewsScreen : BottomItem(R.drawable.view, Routes.NEWS_SCREEN)
 
-    object Filter : BottomItem(R.drawable.filter, Routes.FILTER)
+    object NewsScreen : BottomItem(R.drawable.view, Screen.Home)
 
-    object Bookmark : BottomItem(R.drawable.bookmark, Routes.BOOKMARK)
+    object Filter : BottomItem(R.drawable.filter, Screen.Filter)
+
+    object Bookmark : BottomItem(R.drawable.bookmark, Screen.Bookmark)
 }

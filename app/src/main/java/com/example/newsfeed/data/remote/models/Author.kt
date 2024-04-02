@@ -13,8 +13,8 @@ data class Author(
     val uri: String? = null
 
 ){
-    constructor() : this(
-        name = null,
-        uri = null
-    )
+    /*constructor() : this(
+        name = "",
+        uri = ""
+    )*/
 }

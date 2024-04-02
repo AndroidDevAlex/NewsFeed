@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.newsfeed.R
-import com.example.newsfeed.navigation.Routes
+import com.example.newsfeed.navigation.Screen
 import com.example.newsfeed.presentation.ItemTemplate
 import com.example.newsfeed.presentation.NewsUi
 import com.example.newsfeed.ui.theme.Orange
@@ -43,9 +43,8 @@ fun BookmarkScreen(navController: NavController) {
 
     BookmarkScreenUi(
         state,
-        navigateToDetail = { id, url ->
-            // переход на DETAILS
-            navController.navigate(Routes.DETAILS.name)
+        navigateToDetail = { id, source ->
+            navController.navigate(Screen.Details.route + "/$id/$source")
         },
         bookMarkClick = { news ->
             bookmarkViewModel.onBookmarkClicked(news)

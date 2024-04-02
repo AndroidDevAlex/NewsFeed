@@ -11,6 +11,12 @@ data class Entry (
     @field:Element(name = "title")
     val title: String? = null,
 
+    @field:Element(name = "category")
+    val category: Category,
+
+    @field:Element(name = "updated")
+    val updated: String,
+
     @field:Element(name = "published")
     val published: String? = null,
 

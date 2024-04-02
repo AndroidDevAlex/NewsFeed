@@ -33,6 +33,6 @@ import org.simpleframework.xml.Root
     @field:Element(name = "logo")
     val logo: String? = null,
 
-    @field:ElementList(inline = true, required = false)
+    @field:ElementList(inline = true, entry = "entry", required = false)
     val entries: List<Entry>? = null
 )

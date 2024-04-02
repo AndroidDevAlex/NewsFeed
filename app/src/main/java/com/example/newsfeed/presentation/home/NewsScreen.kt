@@ -30,6 +30,7 @@ import com.example.newsfeed.NewsEmpty
 import com.example.newsfeed.NewsState
 import com.example.newsfeed.NewsWithError
 import com.example.newsfeed.R
+import com.example.newsfeed.navigation.Screen
 import com.example.newsfeed.presentation.ItemTemplate
 import com.example.newsfeed.presentation.NewsUi
 import com.example.newsfeed.ui.theme.Orange
@@ -49,7 +50,9 @@ fun NewsScreen(
         onRefresh = { newsViewModel.forceUpdate() },
         bookMarkClick = {},
         newsList = listOf(),
-        navigateToDetail = { _, _ -> }
+        navigateToDetail = { id, source ->
+            navController.navigate(Screen.Details.route + "/$id/$source")
+        }
     )
 }
 
@@ -104,7 +107,7 @@ private fun NewsScreenUi(
                                 ItemTemplate(
                                     item = items,
                                     onItemClick = {
-                                        items.source?.let { it1 -> navigateToDetail(items.id, it1) }
+                                        items.source?.let { url -> navigateToDetail(items.id, url) }
                                     },
                                     onBookmarkClick = {
                                         bookMarkClick()

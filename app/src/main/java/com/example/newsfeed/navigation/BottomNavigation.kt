@@ -1,6 +1,5 @@
 package com.example.newsfeed.navigation
 
-
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -25,18 +24,18 @@ fun BottomNavigation(
         backgroundColor = Color.Gray
     ) {
         val backStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = backStackEntry?.destination?.route ?: Routes.NEWS_SCREEN.name
+        val currentRoute = backStackEntry?.destination?.route ?: Screen.Home.route
         listItems.forEach { item ->
             BottomNavigationItem(
-                selected = currentRoute == item.route.name,
+                selected = currentRoute == item.screen.route,
                 onClick = {
-                    navController.navigate(item.route.name)
+                    navController.navigate(item.screen.route)
                 },
                 icon = {
                     Icon(
                         painter = painterResource(id = item.iconId),
                         contentDescription = "Icon",
-                        tint = if (currentRoute == item.route.name) Orange else Color.White
+                        tint = if (currentRoute == item.screen.route) Orange else Color.White
                     )
                 },
                 )
