@@ -4,7 +4,7 @@ import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
 
 @Root(name = "entry", strict = false)
-data class Entry (
+data class Entry(
     @field:Element(name = "id")
     val id: Int = 0,
 
@@ -12,20 +12,22 @@ data class Entry (
     val title: String? = null,
 
     @field:Element(name = "category")
-    val category: Category,
+    val category: Category? = null,
 
     @field:Element(name = "updated")
-    val updated: String,
+    val updated: String? = null,
 
     @field:Element(name = "published")
     val published: String? = null,
 
     @field:Element(name = "content")
-    val description: String? = null,
+    val description: Content? = null,
 
     @field:Element(name = "link")
-    val link: String? = null,
+    val link: Link? = null,
 
     @field:Element(name = "author")
     val authorBy: Author? = null
-)
+) {
+    constructor() : this(0, null, null, null, null, null, null, null)
+}

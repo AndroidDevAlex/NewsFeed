@@ -25,14 +25,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.newsfeed.NewsDuringUpdate
-import com.example.newsfeed.NewsEmpty
-import com.example.newsfeed.NewsState
-import com.example.newsfeed.NewsWithError
+import com.example.newsfeed.state.NewsDuringUpdate
+import com.example.newsfeed.state.NewsEmpty
+import com.example.newsfeed.state.ToDisplayState
+import com.example.newsfeed.state.NewsWithError
 import com.example.newsfeed.R
 import com.example.newsfeed.navigation.Screen
 import com.example.newsfeed.presentation.ItemTemplate
 import com.example.newsfeed.presentation.NewsUi
+import com.example.newsfeed.state.StateUI
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
@@ -47,9 +48,9 @@ fun NewsScreen(
 
     NewsScreenUi(
         newsState = state,
-        onRefresh = { newsViewModel.forceUpdate() },
-        bookMarkClick = {},
         newsList = listOf(),
+        onRefresh = { newsViewModel.forceUpdate() },
+        bookMarkClick = { news -> newsViewModel.onBookmarkClicked(news)},
         navigateToDetail = { id, source ->
             navController.navigate(Screen.Details.route + "/$id/$source")
         }
@@ -61,8 +62,8 @@ fun NewsScreen(
 @Composable
 private fun NewsScreenUi(
     onRefresh: () -> Unit,
-    newsState: NewsViewModel.StateViewModel,
-    bookMarkClick: () -> Unit,
+    newsState: StateUI,
+    bookMarkClick: (NewsUi) -> Unit,
     newsList: List<NewsUi>,
     navigateToDetail: (Int, String) -> Unit
     ) {
@@ -95,9 +96,9 @@ private fun NewsScreenUi(
                 modifier = Modifier.padding(Dimens.Padding)
             )
 
-            NewsState(state = newsState, onRetry = onRefresh) {
+            ToDisplayState(state = newsState, onRetry = onRefresh) {
                 when (newsState) {
-                    is NewsViewModel.StateViewModel.Success -> {
+                    is StateUI.Success ->{
                         LazyColumn(
                             Modifier
                                 .fillMaxHeight()
@@ -107,25 +108,25 @@ private fun NewsScreenUi(
                                 ItemTemplate(
                                     item = items,
                                     onItemClick = {
-                                        items.source?.let { url -> navigateToDetail(items.id, url) }
+                                        navigateToDetail(items.id, items.source)
                                     },
                                     onBookmarkClick = {
-                                        bookMarkClick()
+                                        bookMarkClick(items)
                                     }
                                 )
                             }
                         }
                     }
 
-                    is NewsViewModel.StateViewModel.Error -> {
+                    is StateUI.Error ->{
                         NewsWithError(newsList, onRefresh)
                     }
 
-                    is NewsViewModel.StateViewModel.Loading -> {
+                    is StateUI.Loading ->{
                         NewsDuringUpdate(newsList, onRefresh)
                     }
 
-                    NewsViewModel.StateViewModel.None -> {
+                    is StateUI.None -> {
                         NewsEmpty()
                     }
                 }

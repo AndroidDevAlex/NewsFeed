@@ -7,15 +7,18 @@ import com.example.newsfeed.data.remote.HabrServiceApi
 import com.example.newsfeed.data.remote.RedditServiceApi
 import com.example.newsfeed.data.remote.mapToDB
 import com.example.newsfeed.data.remote.mapToUi
+import com.example.newsfeed.data.remote.mapToUiFromResponseNews
 import com.example.newsfeed.domain.NewsRepository
 import com.example.newsfeed.presentation.NewsUi
 import com.example.newsfeed.util.RequestResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -28,37 +31,64 @@ class NewsRepositoryImpl @Inject constructor(
 ) : NewsRepository {
 
     override fun getOllNewsList(): Flow<RequestResult<List<NewsUi>>> {
-        return flow {
+        val newsList = mutableListOf<NewsUi>()
 
+        val remoteHabrFlow = flow {
             emit(RequestResult.Loading(true))
-
-            runCatching {
-                val newsList = mutableListOf<NewsUi>()
-
-                val habrNewsResponse = habrServiceApi.getHabrNews()
-                val redditNewsResponse = redditServiceApi.getRedditNews()
-
-                if (habrNewsResponse.isSuccessful && redditNewsResponse.isSuccessful) {
-                    val habrNews = habrNewsResponse.body()
-                    val redditNews = redditNewsResponse.body()
-
-                    habrNews?.let { newsList.addAll(listOf(it.mapToUi())) }
-                    redditNews?.let { newsList.addAll(listOf(it.mapToUi())) }
-
-                    emit(RequestResult.Success(newsList))
-                } else if (habrNewsResponse.isSuccessful) {
-                    habrNewsResponse.body()?.let { newsList.addAll(listOf(it.mapToUi())) }
-                    emit(RequestResult.Success(newsList))
-                } else if (redditNewsResponse.isSuccessful) {
-                    redditNewsResponse.body()?.let { newsList.addAll(listOf(it.mapToUi())) }
-                    emit(RequestResult.Success(newsList))
+            try {
+                val result = habrServiceApi.getHabrNews()
+                if (result.isSuccessful) {
+                    emit(
+                        RequestResult.Success(
+                            result.body()?.mapToUiFromResponseNews() ?: newsList
+                        )
+                    )
                 } else {
                     emit(RequestResult.Error())
+                    throw IOException("Error fetching Habr news")
+                }
+            } catch (e: Exception) {
+                logger.e(LOG_TAG, "Error fetching Habr news: $e")
+            } finally {
+                emit(RequestResult.Loading(false))
+            }
+        }
+        val remoteRedditFlow = flow {
+            emit(RequestResult.Loading(true))
+            try {
+                val result = redditServiceApi.getRedditNews()
+                if (result.isSuccessful) {
+                    emit(
+                        RequestResult.Success(
+                            result.body()?.mapToUiFromResponseNews() ?: newsList
+                        )
+                    )
+                } else {
+                    emit(RequestResult.Error())
+                    throw IOException("Error fetching Reddit news")
+                }
+            } catch (e: Exception) {
+                logger.e(LOG_TAG, "Error fetching Reddit news: $e")
+            } finally {
+                emit(RequestResult.Loading(false))
+            }
+        }
+        return remoteHabrFlow.combine(remoteRedditFlow) { habrNews, redditNews ->
+            when {
+                habrNews is RequestResult.Success && redditNews is RequestResult.Success -> {
+                    val combinedList = mutableListOf<NewsUi>()
+                    combinedList.addAll(habrNews.data as List<NewsUi>)
+                    combinedList.addAll(redditNews.data as List<NewsUi>)
+                    RequestResult.Success(combinedList)
                 }
 
-                emit(RequestResult.Loading(false))
-            }.onFailure { e ->
-                logger.e(LOG_TAG, "Error getting from server = $e")
+                habrNews is RequestResult.Error || redditNews is RequestResult.Error -> {
+                    RequestResult.Error()
+                }
+
+                else -> {
+                    RequestResult.Loading(true)
+                }
             }
         }
     }
@@ -77,19 +107,7 @@ class NewsRepositoryImpl @Inject constructor(
                 if (newsResponse.isSuccessful) {
                     val news = newsResponse.body()
                     if (news != null) {
-
-                        val newsModel = news.id.let {
-                            NewsUi(
-                                id = it,
-                                image = "",
-                                title = news.title ?: "",
-                                publishedAt = news.published ?: "",
-                                description = news.description ?: "",
-                                addedBy = news.authorBy?.name ?: "",
-                                isBookmarked = false,
-                                source = news.link ?: ""
-                            )
-                        }
+                        val newsModel = news.mapToUi()
 
                         emit(RequestResult.Success(newsModel))
                     } else {
@@ -147,7 +165,12 @@ class NewsRepositoryImpl @Inject constructor(
             .first()
     }
 
-   private companion object{
-       const val LOG_TAG = "NewsRepository"
-   }
+    override fun stateBookmark(id: Int): Flow<Boolean> {
+        return newsDao.getNewsByIdFlow(id)
+            .map { news -> news.isBookmarked }
+    }
+
+    private companion object {
+        const val LOG_TAG = "NewsRepository"
+    }
 }

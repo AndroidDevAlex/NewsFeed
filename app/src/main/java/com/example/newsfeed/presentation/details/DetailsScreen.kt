@@ -19,20 +19,19 @@ import com.example.newsfeed.util.AppTopBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun DetailsScreen(navController: NavController, newsUrl: String) {
+fun DetailsScreen(
+    navController: NavController,
+    newsUrl: String
+) {
 
     val detailViewModel = hiltViewModel<DetailViewModel>()
-
-    val state by detailViewModel.detailState.collectAsState()
+    val stateBookmark by detailViewModel.detailState.collectAsState()
 
     DetailsScreenUi(
-        state,
-        bookMarkClick = {
-        detailViewModel.toggleBookmark()
-                        },
-        onBackPress = {
-            navController.popBackStack()
-        },
+        onRefresh = {},
+        bookmarkState = stateBookmark,
+        bookMarkClick = { },// detailViewModel.toggleBookmark()
+        onBackPress = { navController.popBackStack() },
         newsUrl = newsUrl
     )
 }
@@ -40,16 +39,18 @@ fun DetailsScreen(navController: NavController, newsUrl: String) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SetJavaScriptEnabled")
 @Composable
 private fun DetailsScreenUi(
-    state: DetailState,
+    onRefresh: () -> Unit,
+    bookmarkState: DetailState,
     bookMarkClick: () -> Unit,
     onBackPress: () -> Unit,
-    newsUrl: String,
-
+    newsUrl: String
 ) {
+
     Scaffold(topBar = {
         AppTopBar(
             pressClicked = { bookMarkClick() },
-            onBackPress = {onBackPress}
+            onBackPress = { onBackPress },
+            isBookmarked = bookmarkState.isBookmarked
         )
     }) {
         Column(
@@ -57,8 +58,6 @@ private fun DetailsScreenUi(
                 .fillMaxSize()
                 .padding(5.dp)
         ) {
-
-
 
             AndroidView(
                 factory = { context ->
@@ -72,9 +71,11 @@ private fun DetailsScreenUi(
                     }
                 },
                 update = { webView ->
+
                     webView.loadUrl(newsUrl)
                 }
             )
+
         }
     }
 }

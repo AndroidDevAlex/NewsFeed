@@ -8,5 +8,6 @@ data class NewsUi(
     val description: String?,
     val addedBy: String,
     val isBookmarked: Boolean,
-    val source: String?
+    val source: String
 )
+

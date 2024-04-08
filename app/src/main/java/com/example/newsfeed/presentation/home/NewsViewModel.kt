@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsfeed.domain.NewsRepository
 import com.example.newsfeed.presentation.NewsUi
-import com.example.newsfeed.util.RequestResult
+import com.example.newsfeed.state.StateUI
+import com.example.newsfeed.state.toStateUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,9 +23,9 @@ class NewsViewModel @Inject constructor(
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    val newsListNews: StateFlow<StateViewModel> = getAllNewsUseCase()//.invoke()
-        .map { it.toStateViewModel() }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), StateViewModel.None)
+    val newsListNews: StateFlow<StateUI> = getAllNewsUseCase()//.invoke()
+        .map { it.toStateUI() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), StateUI.None)
 
     fun onBookmarkClicked(news: NewsUi) {
         viewModelScope.launch(ioDispatcher) {
@@ -40,24 +41,5 @@ class NewsViewModel @Inject constructor(
         viewModelScope.launch(ioDispatcher) {
             newsRepository.fetchLatest()
         }
-    }
-
-    private fun RequestResult<List<NewsUi>>.toStateViewModel(): StateViewModel {
-        return when (this) {
-            is RequestResult.Error -> StateViewModel.Error(data)
-            is RequestResult.Success -> StateViewModel.Success(checkNotNull(data))
-            is RequestResult.Loading -> StateViewModel.Loading(data)
-        }
-    }
-
-    sealed class StateViewModel {
-
-        object None : StateViewModel()
-
-        class Loading(val news: List<NewsUi>?) : StateViewModel()
-
-        class Error(val news: List<NewsUi>?) : StateViewModel()
-
-        class Success(val news: List<NewsUi>) : StateViewModel()
     }
 }

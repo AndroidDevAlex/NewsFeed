@@ -12,9 +12,4 @@ data class Author(
     @field:Element(name = "uri")
     val uri: String? = null
 
-){
-    /*constructor() : this(
-        name = "",
-        uri = ""
-    )*/
-}
+)

@@ -39,7 +39,7 @@ import com.example.newsfeed.util.Dimens
 fun ItemTemplate(
  item: NewsUi,
  onItemClick: () -> Unit,
- onBookmarkClick: () -> Unit
+ onBookmarkClick: (NewsUi) -> Unit
 ) {
 
  var isHighlighted by remember { mutableStateOf(false) }
@@ -98,12 +98,10 @@ fun ItemTemplate(
      horizontalAlignment = Alignment.End
     ) {
 
-     item.source?.let {
-      SourceButton(
-       source = it,
-       onClick = onItemClick
-      )
-     }
+     SourceButton(
+      source = item.source,
+      onClick = onItemClick
+     )
 
      Icon(
       painter = bookmarkIcon,
@@ -112,7 +110,7 @@ fun ItemTemplate(
       modifier = Modifier
        .clickable {
         isHighlighted = !isHighlighted
-        onBookmarkClick()
+        onBookmarkClick(item)
        }
        .padding(end = Dimens.Padding)
      )

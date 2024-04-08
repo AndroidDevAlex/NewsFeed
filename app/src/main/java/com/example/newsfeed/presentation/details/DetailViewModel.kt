@@ -3,6 +3,7 @@ package com.example.newsfeed.presentation.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsfeed.domain.DetailRepository
+import com.example.newsfeed.presentation.NewsUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,16 +22,16 @@ class DetailViewModel @Inject constructor(
     private val _detailState = MutableStateFlow(DetailState())
     val detailState: StateFlow<DetailState> = _detailState.asStateFlow()
 
-    fun toggleBookmark() {
+    fun toggleBookmark(news: NewsUi) {
         val currentState = _detailState.value
         val newState = currentState.copy(isBookmarked = !currentState.isBookmarked)
         _detailState.value = newState
 
         viewModelScope.launch(ioDispatcher) {
             if (newState.isBookmarked) {
-               // detailRepository.saveNews()
+                detailRepository.saveNews(news)
             } else {
-              //  detailRepository.deleteNews()
+                detailRepository.deleteNews(news.id)
             }
         }
     }

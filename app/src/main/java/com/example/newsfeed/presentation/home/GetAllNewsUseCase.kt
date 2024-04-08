@@ -27,10 +27,10 @@ private fun NewsUi.toUiNews(): NewsUi {
         id = id,
         image = image,
         title = title,
-        publishedAt = title,
-        description = title,
-        addedBy = title,
-        isBookmarked = false,
+        publishedAt = publishedAt,
+        description = description,
+        addedBy = addedBy,
+        isBookmarked = isBookmarked,
         source = source
     )
 }

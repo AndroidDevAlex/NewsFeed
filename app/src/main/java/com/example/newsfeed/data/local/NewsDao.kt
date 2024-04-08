@@ -27,4 +27,7 @@ interface NewsDao {
 
     @Query("DELETE FROM news")
     suspend fun clean()
+
+    @Query("SELECT * FROM news WHERE id = :id")
+    fun getNewsByIdFlow(id: Int): Flow<NewsDB>
 }

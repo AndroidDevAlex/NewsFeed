@@ -10,4 +10,6 @@ data class Category(
 
     @field:Attribute(name = "label")
     val label: String? = null
-)
+){
+    constructor() : this(null, null)
+}

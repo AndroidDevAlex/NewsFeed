@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.newsfeed.presentation.NewsUi
 import com.example.newsfeed.presentation.bookmark.BookmarkScreen
 import com.example.newsfeed.presentation.details.DetailsScreen
 import com.example.newsfeed.presentation.filter.FilterScreen
