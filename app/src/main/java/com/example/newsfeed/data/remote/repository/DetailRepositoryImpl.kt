@@ -31,14 +31,14 @@ class DetailRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteNews(id: Int) {
-        runCatching {
-            withContext(ioDispatcher) {
-                newsDao.deleteNewsById(id)
-                Log.i("log", "News successfully removed from Room database")
-            }
-        }.onFailure { e ->
-            Log.e("log", "error occurred while deleting data: ", e)
-        }
-    }
+     override suspend fun deleteNews(id: Int) {
+         runCatching {
+             withContext(ioDispatcher) {
+                 newsDao.deleteNewsById(id)
+                 Log.i("log", "News successfully removed from Room database")
+             }
+         }.onFailure { e ->
+             Log.e("log", "error occurred while deleting data: ", e)
+         }
+     }
 }

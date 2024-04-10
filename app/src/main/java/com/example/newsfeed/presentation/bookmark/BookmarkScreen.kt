@@ -94,7 +94,7 @@ private fun BookmarkScreenUi(
                     ItemTemplate(
                         item = item,
                         onItemClick = {
-                            item.source?.let { url -> navigateToDetail(item.id, url) }
+                            item.source.let { url -> item.id?.let { it1 -> navigateToDetail(it1, url) } }
                         },
                         onBookmarkClick = {
                             bookMarkClick(item)

@@ -59,8 +59,7 @@ fun ItemTemplate(
     else painterResource(id = R.drawable.bookmark)
 
    Image(
-    painter = painterResource(id = item.image.toInt()),
-  //  painter = rememberPicassoPainter(item.image),
+    painter = painterResource(id = item.image!!.toInt()),
     contentDescription = "image",
     modifier = Modifier
      .padding(Dimens.ImagePadding)

@@ -31,7 +31,7 @@ class DetailViewModel @Inject constructor(
             if (newState.isBookmarked) {
                 detailRepository.saveNews(news)
             } else {
-                detailRepository.deleteNews(news.id)
+                news.id?.let { detailRepository.deleteNews(it) }
             }
         }
     }

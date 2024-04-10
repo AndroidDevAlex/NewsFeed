@@ -30,7 +30,7 @@ class NewsViewModel @Inject constructor(
     fun onBookmarkClicked(news: NewsUi) {
         viewModelScope.launch(ioDispatcher) {
             if (news.isBookmarked) {
-                newsRepository.deleteNews(news.id)
+                news.id?.let { newsRepository.deleteNews(it) }
             } else {
                 newsRepository.saveNews(news)
             }

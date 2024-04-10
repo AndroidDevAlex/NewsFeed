@@ -108,7 +108,7 @@ private fun NewsScreenUi(
                                 ItemTemplate(
                                     item = items,
                                     onItemClick = {
-                                        navigateToDetail(items.id, items.source)
+                                        items.id?.let { it1 -> navigateToDetail(it1, items.source) }
                                     },
                                     onBookmarkClick = {
                                         bookMarkClick(items)

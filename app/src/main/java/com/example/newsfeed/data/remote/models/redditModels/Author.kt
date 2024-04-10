@@ -1,4 +1,4 @@
-package com.example.newsfeed.data.remote.models
+package com.example.newsfeed.data.remote.models.redditModels
 
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
@@ -7,9 +7,10 @@ import org.simpleframework.xml.Root
 data class Author(
 
     @field:Element(name = "name")
-    val name: String? = null,
+    val name: String?,
 
     @field:Element(name = "uri")
-    val uri: String? = null
-
-)
+    val uri: String?
+){
+    constructor(): this(null, null)
+}

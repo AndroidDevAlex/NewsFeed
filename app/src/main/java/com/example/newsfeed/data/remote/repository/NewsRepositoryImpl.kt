@@ -6,7 +6,7 @@ import com.example.newsfeed.data.local.NewsDao
 import com.example.newsfeed.data.remote.HabrServiceApi
 import com.example.newsfeed.data.remote.RedditServiceApi
 import com.example.newsfeed.data.remote.mapToDB
-import com.example.newsfeed.data.remote.mapToUi
+import com.example.newsfeed.data.remote.mapToUiFromNewsFeed
 import com.example.newsfeed.data.remote.mapToUiFromResponseNews
 import com.example.newsfeed.domain.NewsRepository
 import com.example.newsfeed.presentation.NewsUi
@@ -36,11 +36,11 @@ class NewsRepositoryImpl @Inject constructor(
         val remoteHabrFlow = flow {
             emit(RequestResult.Loading(true))
             try {
-                val result = habrServiceApi.getHabrNews()
+                val result = habrServiceApi.getAllHabrNews()//getHabrNews()
                 if (result.isSuccessful) {
                     emit(
                         RequestResult.Success(
-                            result.body()?.mapToUiFromResponseNews() ?: newsList
+                            result.body()?.mapToUiFromNewsFeed() ?: newsList
                         )
                     )
                 } else {
@@ -94,37 +94,41 @@ class NewsRepositoryImpl @Inject constructor(
     }
 
     override fun getNewsById(id: Int, source: String): Flow<RequestResult<NewsUi>> {
-
-        return flow {
-            runCatching {
-                emit(RequestResult.Loading(true))
-
-                val newsResponse = when (source) {
-                    "habr" -> habrServiceApi.getHabrNewsById(id)
-                    else -> redditServiceApi.getRedditNewsById(id)
-                }
-
-                if (newsResponse.isSuccessful) {
-                    val news = newsResponse.body()
-                    if (news != null) {
-                        val newsModel = news.mapToUi()
-
-                        emit(RequestResult.Success(newsModel))
-                    } else {
-
-                        emit(RequestResult.Error())
-                    }
-
-                } else {
-                    emit(RequestResult.Error())
-                }
-                emit(RequestResult.Loading(false))
-            }.onFailure { e ->
-                logger.e(LOG_TAG, "Error fetching news from server = $e")
-                emit(RequestResult.Error())
-            }
-        }
+        TODO("Not yet implemented")
     }
+
+   /*   override fun getNewsById(id: Int, source: String): Flow<RequestResult<NewsUi>> {
+
+          return flow {
+              runCatching {
+                  emit(RequestResult.Loading(true))
+
+                  val newsResponse = when (source) {
+                      "habr" -> habrServiceApi.getHabrNewsById(id.toString())
+                      else -> redditServiceApi.getRedditNewsById(id)
+                  }
+
+                  if (newsResponse.isSuccessful) {
+                      val news = newsResponse.body()
+                      if (news != null) {
+                          val newsModel = news.
+
+                          emit(RequestResult.Success(newsModel))
+                      } else {
+
+                          emit(RequestResult.Error())
+                      }
+
+                  } else {
+                      emit(RequestResult.Error())
+                  }
+                  emit(RequestResult.Loading(false))
+              }.onFailure { e ->
+                  logger.e(LOG_TAG, "Error fetching news from server = $e")
+                  emit(RequestResult.Error())
+              }
+          }
+      }*/
 
     override suspend fun saveNews(news: NewsUi) {
         runCatching {
@@ -142,16 +146,16 @@ class NewsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteNews(id: Int) {
-        runCatching {
-            withContext(ioDispatcher) {
-                newsDao.deleteNewsById(id)
-                Log.i("log", "News successfully removed from Room database")
-            }
-        }.onFailure { e ->
-            Log.e("log", "error occurred while deleting data: ", e)
-        }
-    }
+     override suspend fun deleteNews(id: Int) {
+         runCatching {
+             withContext(ioDispatcher) {
+                 newsDao.deleteNewsById(id)
+                 Log.i("log", "News successfully removed from Room database")
+             }
+         }.onFailure { e ->
+             Log.e("log", "error occurred while deleting data: ", e)
+         }
+     }
 
     override suspend fun fetchLatest(): List<NewsUi> {
 
