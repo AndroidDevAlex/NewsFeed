@@ -1,6 +1,5 @@
 package com.example.newsfeed.domain
 
-
 import com.example.newsfeed.presentation.NewsUi
 import com.example.newsfeed.util.RequestResult
 import kotlinx.coroutines.flow.Flow
@@ -8,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface NewsRepository{
 
     fun getOllNewsList(): Flow<RequestResult<List<NewsUi>>>
-   // fun getOllNewsList(vararg serviceApis: suspend () -> List<NewsUi>): Flow<RequestResult<List<NewsUi>>>
 
     fun getNewsById(id: Int, source: String): Flow<RequestResult<NewsUi>>
 

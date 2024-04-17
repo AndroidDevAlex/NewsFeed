@@ -2,7 +2,7 @@ package com.example.newsfeed.data.remote.repository
 
 import android.util.Log
 import com.example.newsfeed.data.local.NewsDao
-import com.example.newsfeed.data.remote.mapToDB
+//import com.example.newsfeed.data.remote.mapToDB
 import com.example.newsfeed.domain.DetailRepository
 import com.example.newsfeed.presentation.NewsUi
 import kotlinx.coroutines.CoroutineDispatcher
@@ -16,7 +16,7 @@ class DetailRepositoryImpl @Inject constructor(
 ) : DetailRepository {
 
     override suspend fun saveNews(news: NewsUi) {
-        runCatching {
+       /* runCatching {
             withContext(ioDispatcher) {
                 val newsEntity = news.mapToDB()
                 val updateLocalDB = newsDao.insertNews(newsEntity)
@@ -28,7 +28,7 @@ class DetailRepositoryImpl @Inject constructor(
             }
         }.onFailure { e ->
             Log.e("log", "Error in method saveNews", e)
-        }
+        }*/
     }
 
      override suspend fun deleteNews(id: Int) {

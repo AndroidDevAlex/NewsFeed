@@ -1,5 +1,6 @@
 package com.example.newsfeed.presentation.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsfeed.domain.NewsRepository
@@ -23,8 +24,10 @@ class NewsViewModel @Inject constructor(
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    val newsListNews: StateFlow<StateUI> = getAllNewsUseCase()//.invoke()
-        .map { it.toStateUI() }
+    val newsListNews: StateFlow<StateUI> = getAllNewsUseCase()
+        .map {
+            Log.i("NewsViewModel", "$it")
+            it.toStateUI() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), StateUI.None)
 
     fun onBookmarkClicked(news: NewsUi) {

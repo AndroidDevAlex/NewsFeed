@@ -106,4 +106,7 @@ dependencies {
 
       //Simple XML
     implementation ("com.squareup.retrofit2:converter-simplexml:2.3.0")
+
+     //Jsoup
+    implementation("org.jsoup:jsoup:1.14.3")
 }

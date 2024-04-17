@@ -1,5 +1,6 @@
 package com.example.newsfeed.state
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,7 +64,7 @@ fun NewsDuringUpdate(news: List<NewsUi>?, onRetry: (() -> Unit)?) {
                 .padding(10.dp)
                 .fillMaxWidth(), contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+           CircularProgressIndicator()
         }
         if (news != null) {
             onRetry

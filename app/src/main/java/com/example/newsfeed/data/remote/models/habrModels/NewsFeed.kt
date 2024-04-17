@@ -6,5 +6,6 @@ import org.simpleframework.xml.Root
 @Root(name = "rss", strict = false)
 data class NewsFeed(
     @field:Element(name = "channel")
+    @param:Element(name = "channel")
     val channel: Channel
 )

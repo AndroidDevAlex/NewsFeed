@@ -1,5 +1,6 @@
 package com.example.newsfeed.presentation.home
 
+import android.util.Log
 import com.example.newsfeed.domain.NewsRepository
 import com.example.newsfeed.presentation.NewsUi
 import com.example.newsfeed.util.RequestResult
@@ -14,11 +15,12 @@ class GetAllNewsUseCase @Inject constructor(
 
     operator fun invoke(): Flow<RequestResult<List<NewsUi>>> {
         return repository.getOllNewsList()
-            .map { requestResult ->
+          /*  .map { requestResult ->
+                Log.i("GetAllNewsUseCase", "$requestResult")
                 requestResult.map { news ->
                     news.map { it.toUiNews() }
                 }
-            }
+            }*/
     }
 }
 

@@ -3,7 +3,7 @@ package com.example.newsfeed.util
 
 sealed class RequestResult<E>(val data: E? = null) {
 
-    class Success<E>(data: E?) : RequestResult<E>(data)
+    class Success<E>(data: E) : RequestResult<E>(data)
 
     class Error<E> : RequestResult<E>()
 
@@ -13,7 +13,7 @@ sealed class RequestResult<E>(val data: E? = null) {
 fun <In, Out> RequestResult<In>.map(mapper: (In) -> Out): RequestResult<Out> {
     val outData = data?.let { mapper(it) }
     return when (this) {
-        is RequestResult.Success -> RequestResult.Success(outData)
+        is RequestResult.Success -> RequestResult.Success(checkNotNull(outData))
         is RequestResult.Error -> RequestResult.Error()
         is RequestResult.Loading -> RequestResult.Loading(false)
     }

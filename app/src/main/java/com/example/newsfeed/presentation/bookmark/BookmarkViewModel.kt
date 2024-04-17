@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
-import com.example.newsfeed.data.remote.mapFromDBToUi as fromDbToNewsUi
+//import com.example.newsfeed.data.remote.mapFromDBToUi as fromDbToNewsUi
 
 @HiltViewModel
 class BookmarkViewModel @Inject constructor (
@@ -28,12 +28,12 @@ class BookmarkViewModel @Inject constructor (
     }
 
     private fun updateNews() {
-        viewModelScope.launch(ioDispatcher) {
+        /*viewModelScope.launch(ioDispatcher) {
             bookmarkRepository.getSavedNewsFromLocalDB().collect { news ->
                 _state.value = BookmarkState(
                     news.map { it.fromDbToNewsUi()})
             }
-        }
+        }*/
     }
 
     fun onBookmarkClicked(news: NewsUi) {

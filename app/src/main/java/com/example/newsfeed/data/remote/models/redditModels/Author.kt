@@ -7,10 +7,6 @@ import org.simpleframework.xml.Root
 data class Author(
 
     @field:Element(name = "name")
-    val name: String?,
-
-    @field:Element(name = "uri")
-    val uri: String?
-){
-    constructor(): this(null, null)
-}
+    @param:Element(name = "name")
+    val name: String? = null,
+)

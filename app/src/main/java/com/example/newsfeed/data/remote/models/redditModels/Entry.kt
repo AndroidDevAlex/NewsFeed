@@ -6,27 +6,23 @@ import org.simpleframework.xml.Root
 @Root(name = "entry", strict = false)
 data class Entry(
 
-    @field:Element(name = "id")
-    val id: String?,
-
     @field:Element(name = "title")
-    val title: String?,
-
-    @field:Element(name = "category")
-    val category: Category?,
-
-    @field:Element(name = "updated")
-    val updated: String?,
+    @param:Element(name = "title")
+    val title: String? = null,
 
     @field:Element(name = "published")
-    val published: String?,
+    @param:Element(name = "published")
+    val published: String = "",
 
-    @field:Element(name = "content")
-    val description: Content?,
+    @field:Element(name = "content", required = false)
+    @param:Element(name = "content", required = false)
+    val content: Content? = null,
 
     @field:Element(name = "link")
-    val link: Link?,
+    @param:Element(name = "link")
+    val link: Link? = null,
 
-    @field:Element(name = "author")
-    val authorBy: Author?
+    @field:Element(name = "author", required = false)
+    @param:Element(name = "author", required = false)
+    val authorBy: Author? = null
 )

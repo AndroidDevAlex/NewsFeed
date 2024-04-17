@@ -1,6 +1,7 @@
 package com.example.newsfeed.presentation.home
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -48,9 +49,8 @@ fun NewsScreen(
 
     NewsScreenUi(
         newsState = state,
-        newsList = listOf(),
         onRefresh = { newsViewModel.forceUpdate() },
-        bookMarkClick = { news -> newsViewModel.onBookmarkClicked(news)},
+        bookMarkClick = { news -> newsViewModel.onBookmarkClicked(news) },
         navigateToDetail = { id, source ->
             navController.navigate(Screen.Details.route + "/$id/$source")
         }
@@ -64,10 +64,9 @@ private fun NewsScreenUi(
     onRefresh: () -> Unit,
     newsState: StateUI,
     bookMarkClick: (NewsUi) -> Unit,
-    newsList: List<NewsUi>,
     navigateToDetail: (Int, String) -> Unit
-    ) {
-
+) {
+    Log.i("NewsScreenUi", "$newsState")
     Scaffold(
         topBar = {
             TopAppBar(
@@ -98,17 +97,17 @@ private fun NewsScreenUi(
 
             ToDisplayState(state = newsState, onRetry = onRefresh) {
                 when (newsState) {
-                    is StateUI.Success ->{
+                    is StateUI.Success -> {
                         LazyColumn(
                             Modifier
                                 .fillMaxHeight()
                                 .background(Color.Gray)
                         ) {
-                            itemsIndexed(newsList) { _, items ->
+                            itemsIndexed(newsState.news) { _, items ->
                                 ItemTemplate(
                                     item = items,
                                     onItemClick = {
-                                        items.id?.let { it1 -> navigateToDetail(it1, items.source) }
+                                        navigateToDetail(items.id, items.source)
                                     },
                                     onBookmarkClick = {
                                         bookMarkClick(items)
@@ -118,12 +117,12 @@ private fun NewsScreenUi(
                         }
                     }
 
-                    is StateUI.Error ->{
-                        NewsWithError(newsList, onRefresh)
+                    is StateUI.Error -> {
+                        NewsWithError(newsState.news, onRefresh)
                     }
 
-                    is StateUI.Loading ->{
-                        NewsDuringUpdate(newsList, onRefresh)
+                    is StateUI.Loading -> {
+                        NewsDuringUpdate(newsState.news, onRefresh)
                     }
 
                     is StateUI.None -> {
