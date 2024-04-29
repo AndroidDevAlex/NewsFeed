@@ -9,12 +9,3 @@ sealed class RequestResult<E>(val data: E? = null) {
 
     class Loading<E>(val isLoading: Boolean) : RequestResult<E>(null)
 }
-
-fun <In, Out> RequestResult<In>.map(mapper: (In) -> Out): RequestResult<Out> {
-    val outData = data?.let { mapper(it) }
-    return when (this) {
-        is RequestResult.Success -> RequestResult.Success(checkNotNull(outData))
-        is RequestResult.Error -> RequestResult.Error()
-        is RequestResult.Loading -> RequestResult.Loading(false)
-    }
-}

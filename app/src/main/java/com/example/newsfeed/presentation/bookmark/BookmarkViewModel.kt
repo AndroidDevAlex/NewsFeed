@@ -7,34 +7,47 @@ import com.example.newsfeed.presentation.NewsUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
-//import com.example.newsfeed.data.remote.mapFromDBToUi as fromDbToNewsUi
 
 @HiltViewModel
 class BookmarkViewModel @Inject constructor (
     private val bookmarkRepository: BookmarkRepository,
+   // private val bookmarkUseCase: GetAllSavedNews,
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher
 ): ViewModel() {
 
     private val _state = MutableStateFlow(BookmarkState())
     val state: StateFlow<BookmarkState> = _state.asStateFlow()
 
+   // val savedListNews = bookmarkUseCase().shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
     init {
         updateNews()
     }
 
-    private fun updateNews() {
-        /*viewModelScope.launch(ioDispatcher) {
-            bookmarkRepository.getSavedNewsFromLocalDB().collect { news ->
-                _state.value = BookmarkState(
-                    news.map { it.fromDbToNewsUi()})
-            }
+   /* private fun updateNews(news: List<NewsUi>) {
+        _state.update {
+            it.copy(news = news)
         }*/
-    }
+
+   private fun updateNews() {
+        viewModelScope.launch(ioDispatcher) {
+            bookmarkRepository.getSavedNews().collect{newsList ->
+                val newState = _state.value.copy(news = newsList)
+                _state.value = newState
+                }
+            }
+        }
 
     fun onBookmarkClicked(news: NewsUi) {
         viewModelScope.launch(ioDispatcher) {

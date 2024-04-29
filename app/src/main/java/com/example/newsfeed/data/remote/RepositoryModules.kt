@@ -75,6 +75,6 @@ object RepositoryModules {
     @Provides
     @Singleton
     fun provideNewsUseCase(newsRepository: NewsRepository): GetAllNewsUseCase {
-        return GetAllNewsUseCase(newsRepository)
+        return GetAllNewsUseCase(newsRepository, DispatchersModule.provideDefDispatcher())
     }
 }

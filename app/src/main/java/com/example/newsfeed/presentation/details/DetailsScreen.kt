@@ -1,6 +1,7 @@
 package com.example.newsfeed.presentation.details
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Column
@@ -30,9 +31,9 @@ fun DetailsScreen(
     DetailsScreenUi(
         onRefresh = {},
         bookmarkState = stateBookmark,
-        bookMarkClick = { },// detailViewModel.toggleBookmark()
+        bookMarkClick = { },//detailViewModel.toggleBookmark(),
         onBackPress = { navController.popBackStack() },
-        newsUrl = newsUrl
+        newsUrl =  newsUrl
     )
 }
 
@@ -56,8 +57,9 @@ private fun DetailsScreenUi(
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(5.dp)
+                .padding(top = 20.dp)
         ) {
+
 
             AndroidView(
                 factory = { context ->
@@ -73,6 +75,7 @@ private fun DetailsScreenUi(
                 update = { webView ->
 
                     webView.loadUrl(newsUrl)
+                    Log.i("log", "$newsUrl")
                 }
             )
 

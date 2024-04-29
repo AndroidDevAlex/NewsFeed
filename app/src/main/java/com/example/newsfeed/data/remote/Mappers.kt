@@ -20,20 +20,9 @@ private fun Entry.parseDescription(): String{
     return ""
 }
 
-private fun Entry.parseImage(): String {
-    content?.let {
-        val document = Jsoup.parse(content.value ?: "")
-        val imgElement = document.select("a > img")
-        if (imgElement.isNotEmpty()) {
-            return imgElement[0].attr("src")
-        }
-    }
-    return ""
-}
-
 private fun Entry.mapToUi() = NewsUi(
     id = generateNewId(),
-    image = parseImage(),
+    image = "",
     title = title ?: "",
     publishedAt = published,
     description = parseDescription(),
@@ -86,7 +75,7 @@ private fun Item.parseImage(): String {
             return imageElements[0].attr("src")
         }
     }
-    return ""
+    return ""// вернуть заглушку
 }
 
 private fun Item.mapToUi() = NewsUi(
@@ -108,28 +97,45 @@ fun List<Item>.mapToNewsUi(): List<NewsUi> {
     return result
 }
 
-/*fun NewsUi.mapToDB(): NewsDB {
+fun Item.mapToUiId() = NewsUi(
+    id = generateNewId(),
+    image = parseImage(),
+    title = parseTitle(),
+    publishedAt = pubDate,
+    description = parseDescription(),
+    addedBy = authorArticle ?: "",
+    isBookmarked = false,
+    source = link ?: ""
+)
+
+fun NewsUi.mapToDB(): NewsDB {
     return NewsDB(
-        id = id.toString().toInt(),
-        image = this.image ?: "",
-        title = this.title,
-        publishedAt = this.publishedAt,
-        description = this.description ?: "",
-        addedBy = this.addedBy,
-        isBookmarked = this.isBookmarked,
-        source = this.source ?: ""
+        id = id,
+        image = image ?: "",
+        title = title,
+        publishedAt = publishedAt,
+        description = description,
+        addedBy = addedBy,
+        isBookmarked = true,
+        source = source
     )
 }
 
-fun NewsDB.mapFromDBToUi(): NewsUi {
-    return NewsUi(
-        id = id!!,
-        image = this.image,
-        title = this.title,
-        publishedAt = this.publishedAt,
-        description = this.description,
-        addedBy = this.addedBy,
-        isBookmarked = this.isBookmarked,
-        source = this.source
-    )
-}*/
+fun List<NewsDB>.mapFromDBToUi(): List<NewsUi> {
+    val result = mutableListOf<NewsUi>()
+    this.forEach{
+        result.add(it.mapToUi())
+    }
+    return result
+}
+
+private fun NewsDB.mapToUi() = NewsUi(
+    id = generateNewId(),
+    image = image,
+    title = title,
+    publishedAt = publishedAt,
+    description = description,
+    addedBy = addedBy,
+    isBookmarked = true,
+    source = source
+)

@@ -1,14 +1,19 @@
 package com.example.newsfeed.presentation.home
 
 import android.annotation.SuppressLint
+import android.graphics.Paint.Align
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.magnifier
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,6 +43,7 @@ import com.example.newsfeed.state.StateUI
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
+import java.net.URLEncoder
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -49,10 +55,12 @@ fun NewsScreen(
 
     NewsScreenUi(
         newsState = state,
-        onRefresh = { newsViewModel.forceUpdate() },
-        bookMarkClick = { news -> newsViewModel.onBookmarkClicked(news) },
-        navigateToDetail = { id, source ->
-            navController.navigate(Screen.Details.route + "/$id/$source")
+        onRefresh = {},//{ newsViewModel.forceUpdate() },
+        bookMarkClick =  {
+            newsViewModel.onBookmarkClicked(it) } ,
+        navigateToDetail = { news ->
+            val encodedUrl = URLEncoder.encode(news.source, "UTF-8")
+            navController.navigate(Screen.Details.route + "/$encodedUrl")
         }
     )
 }
@@ -64,9 +72,9 @@ private fun NewsScreenUi(
     onRefresh: () -> Unit,
     newsState: StateUI,
     bookMarkClick: (NewsUi) -> Unit,
-    navigateToDetail: (Int, String) -> Unit
+    navigateToDetail:(NewsUi) -> Unit
 ) {
-    Log.i("NewsScreenUi", "$newsState")
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -82,47 +90,41 @@ private fun NewsScreenUi(
                 }, colors = TopAppBarDefaults.smallTopAppBarColors(Orange)
             )
         }) {
-
         Column(
             Modifier
-                .fillMaxHeight()
-                .padding(60.dp), horizontalAlignment = Alignment.Start
+                .padding(6.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(60.dp))
             Text(
                 text = Headline.ALL_FEEDS.title,
-                color = Color.DarkGray,
+                color = Color.Black,
                 fontSize = Dimens.TopAppBarFontSize,
-                modifier = Modifier.padding(Dimens.Padding)
+                fontWeight = FontWeight.Bold
             )
-
-            ToDisplayState(state = newsState, onRetry = onRefresh) {
-                when (newsState) {
+            ToDisplayState(state = newsState) { state ->
+                  when (state) {
                     is StateUI.Success -> {
-                        LazyColumn(
-                            Modifier
-                                .fillMaxHeight()
-                                .background(Color.Gray)
-                        ) {
-                            itemsIndexed(newsState.news) { _, items ->
+                        LazyColumn() {
+                            itemsIndexed(state.news) { _, items ->
                                 ItemTemplate(
                                     item = items,
                                     onItemClick = {
-                                        navigateToDetail(items.id, items.source)
+                                        navigateToDetail(it)
                                     },
                                     onBookmarkClick = {
-                                        bookMarkClick(items)
+                                        bookMarkClick(it)
                                     }
+
                                 )
                             }
                         }
-                    }
-
-                    is StateUI.Error -> {
-                        NewsWithError(newsState.news, onRefresh)
+                    }is StateUI.Error -> {
+                        NewsWithError()
                     }
 
                     is StateUI.Loading -> {
-                        NewsDuringUpdate(newsState.news, onRefresh)
+                        NewsDuringUpdate()
                     }
 
                     is StateUI.None -> {

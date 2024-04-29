@@ -20,7 +20,8 @@ class DetailViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _detailState = MutableStateFlow(DetailState())
-    val detailState: StateFlow<DetailState> = _detailState.asStateFlow()
+    val detailState: StateFlow<DetailState>
+        get() = _detailState.asStateFlow()
 
     fun toggleBookmark(news: NewsUi) {
         val currentState = _detailState.value
@@ -31,7 +32,7 @@ class DetailViewModel @Inject constructor(
             if (newState.isBookmarked) {
                 detailRepository.saveNews(news)
             } else {
-                news.id?.let { detailRepository.deleteNews(it) }
+                detailRepository.deleteNews(news.id)
             }
         }
     }

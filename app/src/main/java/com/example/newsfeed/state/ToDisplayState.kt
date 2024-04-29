@@ -16,26 +16,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.newsfeed.R
-import com.example.newsfeed.presentation.NewsUi
 
 @Composable
 fun <T> ToDisplayState(
     state: T,
-    onRetry: (() -> Unit)? = null,
-    content: @Composable () -> Unit
+    content: @Composable (T) -> Unit
 ) {
     when (state) {
-        is StateUI.Loading -> NewsDuringUpdate(state.news, onRetry)
-        is StateUI.Success -> content
-        is StateUI.Error -> NewsWithError(state.news, onRetry)
+        is StateUI.Loading -> NewsDuringUpdate()
+        is StateUI.Success -> content(state)
+        is StateUI.Error -> NewsWithError()
         StateUI.None -> NewsEmpty()
     }
 }
 
 @Composable
 fun NewsWithError(
-    news: List<NewsUi>?,
-    onRetry: (() -> Unit)?
 ) {
     Column {
         Box(
@@ -50,24 +46,18 @@ fun NewsWithError(
                 color = MaterialTheme.colorScheme.onError
             )
         }
-        if (news != null) {
-            onRetry
-        }
     }
 }
 
 @Composable
-fun NewsDuringUpdate(news: List<NewsUi>?, onRetry: (() -> Unit)?) {
+fun NewsDuringUpdate() {
     Column {
         Box(
             Modifier
-                .padding(10.dp)
+                .padding(30.dp)
                 .fillMaxWidth(), contentAlignment = Alignment.Center
         ) {
-           CircularProgressIndicator()
-        }
-        if (news != null) {
-            onRetry
+            CircularProgressIndicator()
         }
     }
 }

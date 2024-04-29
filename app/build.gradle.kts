@@ -69,6 +69,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
 
          //navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
@@ -77,6 +78,9 @@ dependencies {
         //picasso
     implementation("com.squareup.picasso:picasso:2.71828")
    // implementation("com.google.accompanist:accompanist-picasso:0.18.0")
+
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
        //coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")

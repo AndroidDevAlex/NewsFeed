@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.newsfeed.presentation.NewsUi
 import com.example.newsfeed.presentation.bookmark.BookmarkScreen
 import com.example.newsfeed.presentation.details.DetailsScreen
 import com.example.newsfeed.presentation.filter.FilterScreen
@@ -20,14 +19,13 @@ fun NavGraph(
             NewsScreen(navHostController)
         }
         composable(Screen.Filter.route) {
-            FilterScreen()
+            FilterScreen(navHostController)
         }
         composable(Screen.Bookmark.route) {
             BookmarkScreen(navHostController)
         }
-        composable(Screen.Details.route) { currentStack ->
-            val args = requireNotNull(currentStack.arguments)
-            val newsUrl = args.getString("newsUrl") ?: ""
+        composable(Screen.Details.route + "/{newsUrl}") { backStackEntry ->
+            val newsUrl = backStackEntry.arguments?.getString("newsUrl") ?: ""
             DetailsScreen(navHostController, newsUrl)
         }
     }

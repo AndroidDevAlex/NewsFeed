@@ -1,7 +1,6 @@
 package com.example.newsfeed.data.local
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -13,21 +12,9 @@ interface NewsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNews(newsEntity:NewsDB): Long
 
-    @Query("SELECT * FROM news WHERE id = :id")
-    suspend fun getNewsById(id: Int): NewsDB
-
     @Query("DELETE FROM news WHERE id = :id")
     suspend fun deleteNewsById(id: Int)
 
     @Query("SELECT * FROM news")
     fun getAllNews(): Flow<List<NewsDB>>
-
-    @Delete
-    suspend fun removeOll(news: List<NewsDB>)
-
-    @Query("DELETE FROM news")
-    suspend fun clean()
-
-    @Query("SELECT * FROM news WHERE id = :id")
-    fun getNewsByIdFlow(id: Int): Flow<NewsDB>
 }

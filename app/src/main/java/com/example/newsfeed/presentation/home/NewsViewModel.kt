@@ -1,6 +1,6 @@
 package com.example.newsfeed.presentation.home
 
-import android.util.Log
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsfeed.domain.NewsRepository
@@ -24,25 +24,24 @@ class NewsViewModel @Inject constructor(
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    val newsListNews: StateFlow<StateUI> = getAllNewsUseCase()
-        .map {
-            Log.i("NewsViewModel", "$it")
-            it.toStateUI() }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), StateUI.None)
+     val newsListNews: StateFlow<StateUI> = getAllNewsUseCase()
+         .map {
+             it.toStateUI() }
+         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), StateUI.Loading(true))
 
     fun onBookmarkClicked(news: NewsUi) {
         viewModelScope.launch(ioDispatcher) {
             if (news.isBookmarked) {
-                news.id?.let { newsRepository.deleteNews(it) }
+                newsRepository.deleteNews(news.id)
             } else {
                 newsRepository.saveNews(news)
             }
         }
     }
 
-    fun forceUpdate() { // надо получить данные и смерджить старый стейт с новым
+    /*fun forceUpdate() {
         viewModelScope.launch(ioDispatcher) {
             newsRepository.fetchLatest()
         }
-    }
+    }*/
 }

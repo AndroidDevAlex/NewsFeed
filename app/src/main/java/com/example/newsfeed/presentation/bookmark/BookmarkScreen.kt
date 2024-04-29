@@ -2,9 +2,10 @@ package com.example.newsfeed.presentation.bookmark
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -16,6 +17,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +34,8 @@ import com.example.newsfeed.presentation.NewsUi
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
+import kotlinx.coroutines.flow.collectLatest
+import java.net.URLEncoder
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -39,12 +43,16 @@ fun BookmarkScreen(navController: NavController) {
 
     val bookmarkViewModel: BookmarkViewModel = hiltViewModel()
 
+   // val state by bookmarkViewModel.savedListNews.collectAsStateWithLifecycle()
+
     val state by bookmarkViewModel.state.collectAsState()
 
     BookmarkScreenUi(
-        state,
-        navigateToDetail = { id, source ->
-            navController.navigate(Screen.Details.route + "/$id/$source")
+        state = state,
+        navigateToDetail = {
+                news ->
+            val encodedUrl = URLEncoder.encode(news.source, "UTF-8")
+            navController.navigate(Screen.Details.route + "/$encodedUrl")
         },
         bookMarkClick = { news ->
             bookmarkViewModel.onBookmarkClicked(news)
@@ -57,7 +65,7 @@ fun BookmarkScreen(navController: NavController) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 private fun BookmarkScreenUi(
     state: BookmarkState,
-    navigateToDetail: (Int, String) -> Unit,
+    navigateToDetail:(NewsUi) -> Unit,
     bookMarkClick: (NewsUi) -> Unit
 ) {
 
@@ -77,13 +85,15 @@ private fun BookmarkScreenUi(
     }) {
         Column(
             Modifier
-                .fillMaxHeight()
-                .padding(60.dp), horizontalAlignment = Alignment.Start) {
+                .padding(6.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally){
+            Spacer(modifier = Modifier.height(60.dp))
             Text(
                 text = Headline.SAVED.title,
-                color = Color.DarkGray,
+                color = Color.Black,
                 fontSize = Dimens.TopAppBarFontSize,
-                modifier = Modifier.padding(Dimens.Padding)
+                modifier = Modifier.padding(Dimens.Padding),
+                fontWeight = FontWeight.Bold
             )
             LazyColumn(
                 modifier = Modifier
@@ -94,10 +104,10 @@ private fun BookmarkScreenUi(
                     ItemTemplate(
                         item = item,
                         onItemClick = {
-                            item.source.let { url -> item.id?.let { it1 -> navigateToDetail(it1, url) } }
+                            navigateToDetail(it)
                         },
-                        onBookmarkClick = {
-                            bookMarkClick(item)
+                    onBookmarkClick = {
+                            bookMarkClick(it)
                         })
                 }
             }

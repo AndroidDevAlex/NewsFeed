@@ -11,19 +11,18 @@ import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun SourceButton(source: String, onClick: () -> Unit) {
-
     val buttonColors = when (source) {
         "habr" -> ButtonDefaults.buttonColors(
-            backgroundColor = Color.Cyan,
+            backgroundColor = Color.Black,
             contentColor = Color.Magenta
         )
 
         "reddit" -> ButtonDefaults.buttonColors(
-            backgroundColor = Color.Yellow,
-            contentColor = Color.Black
+            backgroundColor = Color.Red,
+            contentColor = Color.White
         )
 
-        else -> ButtonDefaults.buttonColors(backgroundColor = Color.Blue, contentColor = Color.DarkGray)
+        else -> ButtonDefaults.buttonColors(backgroundColor = Color.Green, contentColor = Color.DarkGray)
     }
 
     Button(
@@ -32,7 +31,7 @@ fun SourceButton(source: String, onClick: () -> Unit) {
         colors = buttonColors
     ) {
         Text(
-            text = source,
+            text = source.substringBefore('.'),
             style = TextStyle(
                 fontSize = Dimens.TextFontSizeSource,
                 fontWeight = FontWeight.Bold
