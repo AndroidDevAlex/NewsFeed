@@ -10,8 +10,5 @@ interface NewsRepository{
 
     suspend fun saveNews(news: NewsUi)
 
-    suspend fun deleteNews(id: Int)
-
-
-  // suspend fun fetchLatest(): RequestResult<List<NewsUi>>
+    suspend fun deleteNews(news: NewsUi)
 }

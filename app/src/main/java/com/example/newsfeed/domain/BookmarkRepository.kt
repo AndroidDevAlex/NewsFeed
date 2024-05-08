@@ -7,5 +7,7 @@ interface BookmarkRepository {
 
     fun getSavedNews(): Flow<List<NewsUi>>
 
-  // suspend fun getSavedNews(): List<NewsDB>
+    suspend fun saveNews(news: NewsUi)
+
+    suspend fun deleteNews(news: NewsUi)
 }

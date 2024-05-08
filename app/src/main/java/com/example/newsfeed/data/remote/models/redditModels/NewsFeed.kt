@@ -11,10 +11,9 @@ data class NewsFeed(
 
    @field:Element(name = "icon")
    @param:Element(name = "icon")
-   val icon: String? = null,
+   val icon: String = "",
 
    @field:ElementList(inline = true, entry = "entry")
    @param:ElementList(inline = true, entry = "entry")
-   val entries: List<Entry>? = null
-
+   val entries: List<Entry> = emptyList()
 )

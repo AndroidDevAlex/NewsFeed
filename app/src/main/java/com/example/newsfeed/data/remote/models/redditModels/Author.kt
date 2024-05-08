@@ -8,5 +8,5 @@ data class Author(
 
     @field:Element(name = "name")
     @param:Element(name = "name")
-    val name: String? = null,
+    val name: String = "",
 )

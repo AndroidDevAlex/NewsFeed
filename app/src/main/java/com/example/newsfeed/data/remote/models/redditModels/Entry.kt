@@ -8,7 +8,7 @@ data class Entry(
 
     @field:Element(name = "title")
     @param:Element(name = "title")
-    val title: String? = null,
+    val title: String = "",
 
     @field:Element(name = "published")
     @param:Element(name = "published")
@@ -16,13 +16,13 @@ data class Entry(
 
     @field:Element(name = "content", required = false)
     @param:Element(name = "content", required = false)
-    val content: Content? = null,
+    val content: Content,
 
     @field:Element(name = "link")
     @param:Element(name = "link")
-    val link: Link? = null,
+    val link: Link,
 
     @field:Element(name = "author", required = false)
     @param:Element(name = "author", required = false)
-    val authorBy: Author? = null
+    val authorBy: Author
 )

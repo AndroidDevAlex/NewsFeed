@@ -7,12 +7,12 @@ import com.example.newsfeed.presentation.NewsUi
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-private fun Entry.parseDescription(): String{
+private fun Entry.parseDescription(): String {
     content?.let {
-        val doc: Document = Jsoup.parse(content.value?: "")
+        val doc: Document = Jsoup.parse(content.value ?: "")
         val content = doc.select("content")
         val textContent = StringBuilder()
-        for(p in content){
+        for (p in content) {
             textContent.append(p.text()).append("\n")
         }
         return textContent.toString()
@@ -28,8 +28,16 @@ private fun Entry.mapToUi() = NewsUi(
     description = parseDescription(),
     addedBy = authorBy?.name ?: "",
     isBookmarked = false,
-    source = link?.href ?: ""
+    source = redditSource(link.href),
+    url = link.href
 )
+
+private fun redditSource(link: String): String {
+    return when {
+        link.contains("reddit.com") -> "reddit"
+        else -> ""
+    }
+}
 
 fun List<Entry>.mapToUi(): List<NewsUi> {
     val result = mutableListOf<NewsUi>()
@@ -46,15 +54,14 @@ private fun generateNewId(): Int {
 }
 
 private fun Item.parseTitle(): String {
-    title?.let {
+    title.let {
         val doc: Document = Jsoup.parse(title)
         return doc.text()
     }
-    return ""
 }
 
 private fun Item.parseDescription(): String {
-    description?.let {
+    description.let {
         val doc: Document = Jsoup.parse(description)
         val paragraphs = doc.select("p")
         val textContent = StringBuilder()
@@ -63,12 +70,11 @@ private fun Item.parseDescription(): String {
         }
         return textContent.toString()
     }
-    return ""
 }
 
 private fun Item.parseImage(): String {
 
-    description?.let {
+    description.let {
         val doc: Document = Jsoup.parse(description)
         val imageElements = doc.select("img")
         if (imageElements.isNotEmpty()) {
@@ -84,10 +90,18 @@ private fun Item.mapToUi() = NewsUi(
     title = parseTitle(),
     publishedAt = pubDate,
     description = parseDescription(),
-    addedBy = authorArticle ?: "",
+    addedBy = authorArticle,
     isBookmarked = false,
-    source = link ?: ""
+    source = habrSource(link),
+    url = link
 )
+
+private fun habrSource(link: String): String {
+    return when {
+        link.contains("habr.com") -> "habr"
+        else -> ""
+    }
+}
 
 fun List<Item>.mapToNewsUi(): List<NewsUi> {
     val result = mutableListOf<NewsUi>()
@@ -97,45 +111,36 @@ fun List<Item>.mapToNewsUi(): List<NewsUi> {
     return result
 }
 
-fun Item.mapToUiId() = NewsUi(
-    id = generateNewId(),
-    image = parseImage(),
-    title = parseTitle(),
-    publishedAt = pubDate,
-    description = parseDescription(),
-    addedBy = authorArticle ?: "",
-    isBookmarked = false,
-    source = link ?: ""
-)
-
 fun NewsUi.mapToDB(): NewsDB {
     return NewsDB(
         id = id,
-        image = image ?: "",
+        image = image,
         title = title,
         publishedAt = publishedAt,
         description = description,
         addedBy = addedBy,
         isBookmarked = true,
-        source = source
+        source = source,
+        url = url
     )
 }
 
 fun List<NewsDB>.mapFromDBToUi(): List<NewsUi> {
     val result = mutableListOf<NewsUi>()
-    this.forEach{
+    this.forEach {
         result.add(it.mapToUi())
     }
     return result
 }
 
 private fun NewsDB.mapToUi() = NewsUi(
-    id = generateNewId(),
+    id = id,
     image = image,
     title = title,
     publishedAt = publishedAt,
     description = description,
     addedBy = addedBy,
     isBookmarked = true,
-    source = source
+    source = source,
+    url = url
 )

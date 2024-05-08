@@ -13,7 +13,7 @@ object Dimens {
     val ImagePadding = 5.dp
     val ImageSize = 70.dp
     val ClipPercent = 25
-    val TextFontSize = 12.sp
-    val TextFontSizeTitle = 16.sp
+    val TextFontSize = 10.sp
+    val TextFontSizeTitle = 15.sp
     val TextFontSizeSource = 14.sp
 }

@@ -13,10 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +32,8 @@ import com.example.newsfeed.util.SourceButton
 fun ItemTemplate(
  item: NewsUi,
  onItemClick: (NewsUi) -> Unit,
- onBookmarkClick: (NewsUi) -> Unit
+ bookmarkClick: (NewsUi) -> Unit,
+ isBookmarked: Boolean
 ) {
  Column(
   modifier = Modifier
@@ -50,11 +47,10 @@ fun ItemTemplate(
    Box(
     modifier = Modifier
      .weight(1f)
-     .padding(end = 8.dp)
    ) {
     TemplateRow(item, onItemClick)
    }
-   BookmarkAndSource(item, onBookmarkClick)
+   BookmarkAndSource(item, bookmarkClick, isBookmarked)
   }
  }
 }
@@ -81,7 +77,7 @@ private fun NewsContent(item: NewsUi) {
  Column(
   modifier =
   Modifier
-   .padding(top = 5.dp, start = 5.dp)
+   .padding(top = 5.dp, start = 5.dp, bottom = 3.dp)
  ) {
   Text(
    text = item.publishedAt,
@@ -107,7 +103,7 @@ private fun NewsImage(item: NewsUi) {
  item.image?.let { imageUrl ->
   Box(
    modifier = Modifier
-    .border(1.dp, Color.Black)
+    .border(2.dp, Color.Black)
   ) {
    AsyncImage(
     model = imageUrl, contentDescription = "image",
@@ -124,13 +120,13 @@ private fun NewsImage(item: NewsUi) {
 private fun BookmarkAndSource(
  item: NewsUi,
  onBookmarkClick: (NewsUi) -> Unit,
+ isBookmarked: Boolean
 ) {
 
- var isHighlighted by rememberSaveable { mutableStateOf(false) }
-
  val bookmarkIcon: Painter =
-  if (isHighlighted) painterResource(id = R.drawable.bookmark_orange)
-  else painterResource(id = R.drawable.bookmark)
+  painterResource(id = if (isBookmarked) R.drawable.bookmark_prassed else R.drawable.bookmark)
+
+ val tint = if (isBookmarked) Orange else Color.Gray
 
  Column(horizontalAlignment = Alignment.End) {
 
@@ -142,10 +138,9 @@ private fun BookmarkAndSource(
   Icon(
    painter = bookmarkIcon,
    contentDescription = "Bookmark",
-   tint = if (isHighlighted) Orange else Color.Gray,
+   tint = tint,
    modifier = Modifier
     .clickable {
-     isHighlighted = !isHighlighted
      onBookmarkClick(item)
     }
   )

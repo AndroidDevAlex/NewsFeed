@@ -7,5 +7,5 @@ import org.simpleframework.xml.Root
 data class Link(
 
     @field:Attribute(name = "href")
-    var href: String? = null
+    var href: String = ""
 )

@@ -7,9 +7,6 @@ import com.example.newsfeed.data.remote.repository.NewsRepositoryImpl
 import com.example.newsfeed.domain.BookmarkRepository
 import com.example.newsfeed.domain.FilterRepository
 import com.example.newsfeed.domain.NewsRepository
-import com.example.newsfeed.DispatchersModule
-import com.example.newsfeed.LogCatLogger
-import com.example.newsfeed.Logger
 import com.example.newsfeed.data.remote.repository.DetailRepositoryImpl
 import com.example.newsfeed.domain.DetailRepository
 import com.example.newsfeed.presentation.home.GetAllNewsUseCase
@@ -21,60 +18,57 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RepositoryModules {
+object RemoteModules {
 
     @Provides
     @Singleton
-    fun provideBookmarkRepository(newsDao: NewsDao): BookmarkRepository {
-        return BookmarkRepositoryImpl(newsDao)
+    fun provideBookmarkRepository(roomDataSource: RoomDataSource): BookmarkRepository {
+        return BookmarkRepositoryImpl(roomDataSource)
     }
 
     @Provides
-    fun provideLogger(): Logger = LogCatLogger()
+    @Singleton
+    fun provideRoomDataSource(newsDao: NewsDao): RoomDataSource {
+        return RoomDataSource(newsDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiManager(
+        habrServiceApi: HabrServiceApi,
+        redditServiceApi: RedditServiceApi,
+    ): ApiManager {
+        return ApiManager(habrServiceApi, redditServiceApi)
+    }
 
     @Provides
     @Singleton
     fun provideNewsRepository(
-        habrServiceApi: HabrServiceApi,
-        redditServiceApi: RedditServiceApi,
-        newsDao: NewsDao,
-        logger: Logger
+        dataSource: RoomDataSource,
+        apiManager: ApiManager
     ): NewsRepository {
-        return NewsRepositoryImpl(
-            habrServiceApi,
-            redditServiceApi,
-            newsDao,
-            DispatchersModule.provideIoDispatcher(),
-            logger
-        )
+        return NewsRepositoryImpl(dataSource, apiManager)
     }
 
     @Provides
     @Singleton
     fun provideDetailRepository(
-        newsDao: NewsDao,
+        roomDataSource: RoomDataSource
     ): DetailRepository {
         return DetailRepositoryImpl(
-            newsDao,
-            DispatchersModule.provideIoDispatcher()
+            roomDataSource
         )
     }
 
     @Provides
     @Singleton
-    fun provideFilterRepository(
-        habrServiceApi: HabrServiceApi,
-        redditServiceApi: RedditServiceApi
-    ): FilterRepository {
-        return FilterRepositoryImpl(
-            redditServiceApi,
-            habrServiceApi
-        )
+    fun provideFilterRepository(): FilterRepository {
+        return FilterRepositoryImpl()
     }
 
     @Provides
     @Singleton
     fun provideNewsUseCase(newsRepository: NewsRepository): GetAllNewsUseCase {
-        return GetAllNewsUseCase(newsRepository, DispatchersModule.provideDefDispatcher())
+        return GetAllNewsUseCase(newsRepository)
     }
 }

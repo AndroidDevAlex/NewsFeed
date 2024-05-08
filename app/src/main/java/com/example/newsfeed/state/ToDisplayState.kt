@@ -4,7 +4,9 @@ package com.example.newsfeed.state
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -31,8 +33,7 @@ fun <T> ToDisplayState(
 }
 
 @Composable
-fun NewsWithError(
-) {
+fun NewsWithError() {
     Column {
         Box(
             Modifier
@@ -45,6 +46,7 @@ fun NewsWithError(
                 text = stringResource(R.string.error_during_update),
                 color = MaterialTheme.colorScheme.onError
             )
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

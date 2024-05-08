@@ -31,27 +31,15 @@ import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
 import com.example.newsfeed.util.SourceButton
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @Composable
-fun FilterScreen(navController: NavController) {// onApiSelected: ((String) -> Unit)? = null
+fun FilterScreen(navController: NavController) {
 
     val redditNewsViewModel: FilterViewModel = hiltViewModel()
 
-        FilterScreenUi(
+    FilterScreenUi(
         clickItem = {})
 }
-        /*clickItem = { source ->{
-            when(source){
-                "reddit" -> {
-
-                }
-                "habr" -> {
-
-                }
-            }
-        }
-
-        }*/
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -87,16 +75,16 @@ fun FilterScreenUi(
                 color = Color.Black,
                 fontSize = Dimens.TopAppBarFontSize,
                 modifier = Modifier.padding(Dimens.Padding),
-                        fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold
             )
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-            Modifier
-                .background(Color.White)
-                .padding(Dimens.Padding)
+                Modifier
+                    .background(Color.White)
+                    .padding(Dimens.Padding)
             ) {
-                itemsIndexed(newsList) { _,source ->
+                itemsIndexed(newsList) { _, source ->
                     SourceButton(
                         source = source,
                         onClick = {

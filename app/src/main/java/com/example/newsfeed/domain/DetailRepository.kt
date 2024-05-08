@@ -6,5 +6,5 @@ interface DetailRepository {
 
     suspend fun saveNews(news: NewsUi)
 
-    suspend fun deleteNews(id: Int)
+    suspend fun deleteNews(news: NewsUi)
 }

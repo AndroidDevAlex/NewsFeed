@@ -5,12 +5,14 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "news")
 data class NewsDB(
-    @PrimaryKey(autoGenerate = true) var id: Int? = null,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int? = null,
     val image: String?,
     val title: String,
     val publishedAt: String,
     val description: String,
     val addedBy: String,
     val isBookmarked: Boolean,
-    val source: String
+    val source: String,
+    val url: String
 )

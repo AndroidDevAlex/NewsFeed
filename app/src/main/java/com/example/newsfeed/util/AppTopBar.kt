@@ -23,7 +23,7 @@ import com.example.newsfeed.ui.theme.Orange
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    pressClicked: () -> Unit,
+    pressBookmark: () -> Unit,// передавать NewsUi
     onBackPress: () -> Unit,
     isBookmarked: Boolean
 ) {
@@ -56,10 +56,10 @@ fun AppTopBar(
         },
         actions = {
             IconButton(
-                onClick = { pressClicked() },
+                onClick = { pressBookmark() },
                 modifier = Modifier.padding(end = 16.dp)
             ) {
-                val iconTint = if (isBookmarked) Color.DarkGray else Color.White
+                val iconTint = if (isBookmarked) Orange else Color.White
                 Icon(
                     painter = bookmarkIcon,
                     contentDescription = "icon",

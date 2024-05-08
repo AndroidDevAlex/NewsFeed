@@ -7,5 +7,5 @@ import org.simpleframework.xml.Text
 data class Content(
 
     @field:Text
-    val value: String? = null
+    val value: String = ""
 )

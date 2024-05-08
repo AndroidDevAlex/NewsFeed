@@ -1,6 +1,7 @@
 package com.example.newsfeed.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,4 +30,8 @@ fun NavGraph(
             DetailsScreen(navHostController, newsUrl)
         }
     }
+}
+
+fun NavController.navigateToPreviousScreen() {
+    popBackStack()
 }

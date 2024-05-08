@@ -1,19 +1,13 @@
 package com.example.newsfeed.presentation.home
 
 import android.annotation.SuppressLint
-import android.graphics.Paint.Align
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.magnifier
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -43,6 +37,9 @@ import com.example.newsfeed.state.StateUI
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.net.URLEncoder
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -53,15 +50,22 @@ fun NewsScreen(
     val newsViewModel = hiltViewModel<NewsViewModel>()
     val state by newsViewModel.newsListNews.collectAsState()
 
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = state.isRefreshing)
+
     NewsScreenUi(
         newsState = state,
-        onRefresh = {},//{ newsViewModel.forceUpdate() },
-        bookMarkClick =  {
-            newsViewModel.onBookmarkClicked(it) } ,
+        onRefresh = {
+            swipeRefreshState.isRefreshing = true
+            newsViewModel.refreshScreen()
+        },
+        bookMarkClick = {
+            newsViewModel.pressBookmark(it)
+        },
         navigateToDetail = { news ->
-            val encodedUrl = URLEncoder.encode(news.source, "UTF-8")
+            val encodedUrl = URLEncoder.encode(news.url, "UTF-8")
             navController.navigate(Screen.Details.route + "/$encodedUrl")
-        }
+        },
+        swipeRefreshState = swipeRefreshState
     )
 }
 
@@ -70,65 +74,73 @@ fun NewsScreen(
 @Composable
 private fun NewsScreenUi(
     onRefresh: () -> Unit,
-    newsState: StateUI,
+    newsState: NewsState,
     bookMarkClick: (NewsUi) -> Unit,
-    navigateToDetail:(NewsUi) -> Unit
+    navigateToDetail: (NewsUi) -> Unit,
+    swipeRefreshState: SwipeRefreshState
 ) {
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.app_name),
-                        color = Color.White,
-                        fontSize = Dimens.TopAppBarFontSize,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                        fontWeight = FontWeight.Bold
-                    )
-                }, colors = TopAppBarDefaults.smallTopAppBarColors(Orange)
-            )
-        }) {
-        Column(
-            Modifier
-                .padding(6.dp),
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = { onRefresh() }
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(id = R.string.app_name),
+                            color = Color.White,
+                            fontSize = Dimens.TopAppBarFontSize,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }, colors = TopAppBarDefaults.smallTopAppBarColors(Orange)
+                )
+            }) {
+            Column(
+                Modifier
+                    .padding(6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(60.dp))
-            Text(
-                text = Headline.ALL_FEEDS.title,
-                color = Color.Black,
-                fontSize = Dimens.TopAppBarFontSize,
-                fontWeight = FontWeight.Bold
-            )
-            ToDisplayState(state = newsState) { state ->
-                  when (state) {
-                    is StateUI.Success -> {
-                        LazyColumn() {
-                            itemsIndexed(state.news) { _, items ->
-                                ItemTemplate(
-                                    item = items,
-                                    onItemClick = {
-                                        navigateToDetail(it)
-                                    },
-                                    onBookmarkClick = {
-                                        bookMarkClick(it)
-                                    }
+            ) {
+                Spacer(modifier = Modifier.height(60.dp))
+                Text(
+                    text = Headline.ALL_FEEDS.title,
+                    color = Color.Black,
+                    fontSize = Dimens.TopAppBarFontSize,
+                    fontWeight = FontWeight.Bold
+                )
+                ToDisplayState(state = newsState.uiState) { state ->
+                    when (state) {
+                        is StateUI.Success -> {
+                            LazyColumn() {
+                                itemsIndexed(state.news) { _, items ->
+                                    ItemTemplate(
+                                        item = items,
+                                        onItemClick = {
+                                            navigateToDetail(it)
+                                        },
+                                        bookmarkClick = {
+                                            bookMarkClick(it)
+                                        }, isBookmarked = items.isBookmarked
 
-                                )
+                                    )
+                                }
                             }
                         }
-                    }is StateUI.Error -> {
-                        NewsWithError()
-                    }
 
-                    is StateUI.Loading -> {
-                        NewsDuringUpdate()
-                    }
+                        is StateUI.Error -> {
+                            NewsWithError()
+                        }
 
-                    is StateUI.None -> {
-                        NewsEmpty()
+                        is StateUI.Loading -> {
+                            NewsDuringUpdate()
+                        }
+
+                        is StateUI.None -> {
+                            NewsEmpty()
+                        }
                     }
                 }
             }

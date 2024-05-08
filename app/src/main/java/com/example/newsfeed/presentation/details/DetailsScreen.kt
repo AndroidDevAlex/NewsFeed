@@ -1,7 +1,6 @@
 package com.example.newsfeed.presentation.details
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Column
@@ -16,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.newsfeed.navigation.navigateToPreviousScreen
 import com.example.newsfeed.util.AppTopBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -26,22 +26,22 @@ fun DetailsScreen(
 ) {
 
     val detailViewModel = hiltViewModel<DetailViewModel>()
-    val stateBookmark by detailViewModel.detailState.collectAsState()
+    val state by detailViewModel.detailState.collectAsState()
 
     DetailsScreenUi(
-        onRefresh = {},
-        bookmarkState = stateBookmark,
-        bookMarkClick = { },//detailViewModel.toggleBookmark(),
-        onBackPress = { navController.popBackStack() },
-        newsUrl =  newsUrl
+        uiState = state,
+        bookMarkClick = {
+            // detailViewModel.toggleBookmark()
+        },
+        onBackPress = { navController.navigateToPreviousScreen() },
+        newsUrl = newsUrl
     )
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SetJavaScriptEnabled")
 @Composable
 private fun DetailsScreenUi(
-    onRefresh: () -> Unit,
-    bookmarkState: DetailState,
+    uiState: DetailState,
     bookMarkClick: () -> Unit,
     onBackPress: () -> Unit,
     newsUrl: String
@@ -49,18 +49,18 @@ private fun DetailsScreenUi(
 
     Scaffold(topBar = {
         AppTopBar(
-            pressClicked = { bookMarkClick() },
+            pressBookmark = {
+                bookMarkClick()
+            },
             onBackPress = { onBackPress },
-            isBookmarked = bookmarkState.isBookmarked
+            isBookmarked = uiState.isBookmarked
         )
     }) {
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(top = 20.dp)
+                .padding(top = 35.dp)
         ) {
-
-
             AndroidView(
                 factory = { context ->
                     WebView(context).apply {
@@ -73,12 +73,9 @@ private fun DetailsScreenUi(
                     }
                 },
                 update = { webView ->
-
                     webView.loadUrl(newsUrl)
-                    Log.i("log", "$newsUrl")
                 }
             )
-
         }
     }
 }

@@ -20,6 +20,7 @@ class DetailViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _detailState = MutableStateFlow(DetailState())
+
     val detailState: StateFlow<DetailState>
         get() = _detailState.asStateFlow()
 
@@ -32,7 +33,7 @@ class DetailViewModel @Inject constructor(
             if (newState.isBookmarked) {
                 detailRepository.saveNews(news)
             } else {
-                detailRepository.deleteNews(news.id)
+                detailRepository.deleteNews(news)
             }
         }
     }

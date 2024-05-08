@@ -9,10 +9,8 @@ import com.example.newsfeed.state.StateUI
 import com.example.newsfeed.state.toStateUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -24,24 +22,50 @@ class NewsViewModel @Inject constructor(
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-     val newsListNews: StateFlow<StateUI> = getAllNewsUseCase()
-         .map {
-             it.toStateUI() }
-         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), StateUI.Loading(true))
+    private val _newsListNews = MutableStateFlow(NewsState(StateUI.None))
+    val newsListNews: StateFlow<NewsState> = _newsListNews
 
-    fun onBookmarkClicked(news: NewsUi) {
-        viewModelScope.launch(ioDispatcher) {
-            if (news.isBookmarked) {
-                newsRepository.deleteNews(news.id)
-            } else {
-                newsRepository.saveNews(news)
+    init {
+        getAllNews()
+    }
+
+    private fun getAllNews() {
+        _newsListNews.value = NewsState(StateUI.Loading(true))
+        viewModelScope.launch {
+            getAllNewsUseCase.invoke().collect { result ->
+                _newsListNews.value = NewsState(result.toStateUI())
             }
         }
     }
 
-    /*fun forceUpdate() {
+    fun pressBookmark(news: NewsUi) {
+        val currentState = _newsListNews.value
+        val isBookmarked = currentState.isBookmarked
+
         viewModelScope.launch(ioDispatcher) {
-            newsRepository.fetchLatest()
+
+            if (isBookmarked) {
+                newsRepository.deleteNews(news)
+            } else {
+                newsRepository.saveNews(news)
+            }
+
+            val updatedNewsList = _newsListNews.value.newsList.map { item ->
+                if (item.id == news.id) {
+                    item.copy(isBookmarked = !item.isBookmarked)
+                } else {
+                    item
+                }
+            }
+            _newsListNews.value = _newsListNews.value.copy(newsList = updatedNewsList)
         }
-    }*/
+    }
+
+    fun refreshScreen() {
+        viewModelScope.launch{
+            getAllNewsUseCase.invoke().collect { result ->
+                _newsListNews.value = NewsState(result.toStateUI())
+            }
+        }
+    }
 }

@@ -7,5 +7,5 @@ sealed class RequestResult<E>(val data: E? = null) {
 
     class Error<E> : RequestResult<E>()
 
-    class Loading<E>(val isLoading: Boolean) : RequestResult<E>(null)
+    class Loading<E> : RequestResult<E>()
 }

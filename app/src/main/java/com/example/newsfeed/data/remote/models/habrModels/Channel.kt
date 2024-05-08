@@ -8,5 +8,5 @@ data class Channel(
 
     @field:ElementList(inline = true, entry = "item")
     @param:ElementList(inline = true, entry = "item")
-    val items: List<Item>? = null
+    val items: List<Item> = emptyList()
 )

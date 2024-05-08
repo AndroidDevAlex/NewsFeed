@@ -31,7 +31,7 @@ fun SourceButton(source: String, onClick: () -> Unit) {
         colors = buttonColors
     ) {
         Text(
-            text = source.substringBefore('.'),
+            text = source,
             style = TextStyle(
                 fontSize = Dimens.TextFontSizeSource,
                 fontWeight = FontWeight.Bold

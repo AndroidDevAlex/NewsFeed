@@ -18,6 +18,6 @@ fun RequestResult<List<NewsUi>>.toStateUI(): StateUI {
     return when (this) {
         is RequestResult.Error -> StateUI.Error(data)
         is RequestResult.Success -> StateUI.Success(checkNotNull(data))
-        is RequestResult.Loading -> StateUI.Loading(false)
+        is RequestResult.Loading -> StateUI.Loading(true)
     }
 }
