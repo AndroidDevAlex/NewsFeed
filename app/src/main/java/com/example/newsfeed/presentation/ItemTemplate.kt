@@ -123,8 +123,10 @@ private fun BookmarkAndSource(
  isBookmarked: Boolean
 ) {
 
- val bookmarkIcon: Painter =
-  painterResource(id = if (isBookmarked) R.drawable.bookmark_prassed else R.drawable.bookmark)
+ val bookmarkIcon: Painter = painterResource(id = R.drawable.bookmark)
+
+ //val bookmarkIcon: Painter =
+ // painterResource(id = if (isBookmarked) R.drawable.bookmark_prassed else R.drawable.bookmark)
 
  val tint = if (isBookmarked) Orange else Color.Gray
 

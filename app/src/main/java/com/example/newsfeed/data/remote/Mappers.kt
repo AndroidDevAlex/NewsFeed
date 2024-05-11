@@ -8,8 +8,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
 private fun Entry.parseDescription(): String {
-    content?.let {
-        val doc: Document = Jsoup.parse(content.value ?: "")
+    content.let {
+        val doc: Document = Jsoup.parse(content.value)
         val content = doc.select("content")
         val textContent = StringBuilder()
         for (p in content) {
@@ -23,10 +23,10 @@ private fun Entry.parseDescription(): String {
 private fun Entry.mapToUi() = NewsUi(
     id = generateNewId(),
     image = "",
-    title = title ?: "",
+    title = title,
     publishedAt = published,
     description = parseDescription(),
-    addedBy = authorBy?.name ?: "",
+    addedBy = authorBy.name,
     isBookmarked = false,
     source = redditSource(link.href),
     url = link.href
@@ -48,6 +48,7 @@ fun List<Entry>.mapToUi(): List<NewsUi> {
 }
 
 private var currentId = 0
+//private val existingIds = mutableSetOf<Int>()
 
 private fun generateNewId(): Int {
     return ++currentId
@@ -81,7 +82,7 @@ private fun Item.parseImage(): String {
             return imageElements[0].attr("src")
         }
     }
-    return ""// вернуть заглушку
+    return "" // вернуть заглушку "https://habrastorage.org/webt/ym/el/wk/ymelwk3zy1gawz4nkejl_-ammtc.png"
 }
 
 private fun Item.mapToUi() = NewsUi(

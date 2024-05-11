@@ -123,8 +123,8 @@ private fun NewsScreenUi(
                                         },
                                         bookmarkClick = {
                                             bookMarkClick(it)
-                                        }, isBookmarked = items.isBookmarked
-
+                                        },
+                                        isBookmarked = items.isBookmarked
                                     )
                                 }
                             }

@@ -39,10 +39,11 @@ class NewsViewModel @Inject constructor(
     }
 
     fun pressBookmark(news: NewsUi) {
-        val currentState = _newsListNews.value
-        val isBookmarked = currentState.isBookmarked
 
         viewModelScope.launch(ioDispatcher) {
+
+            val currentState = _newsListNews.value
+            val isBookmarked = currentState.isBookmarked
 
             if (isBookmarked) {
                 newsRepository.deleteNews(news)
@@ -57,7 +58,7 @@ class NewsViewModel @Inject constructor(
                     item
                 }
             }
-            _newsListNews.value = _newsListNews.value.copy(newsList = updatedNewsList)
+            _newsListNews.value = currentState.copy(newsList = updatedNewsList, isBookmarked = !isBookmarked)
         }
     }
 
