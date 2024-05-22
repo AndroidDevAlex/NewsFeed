@@ -7,5 +7,6 @@ data class NewsState(
     val uiState: StateUI,
     val isBookmarked: Boolean = false,
     val newsList: List<NewsUi> = emptyList(),
-    val isRefreshing: Boolean = false
+    val isRefreshing: Boolean = false,
+    val showDialog: Boolean = false
 )

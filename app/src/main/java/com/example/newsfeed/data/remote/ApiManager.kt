@@ -5,7 +5,7 @@ import com.example.newsfeed.presentation.NewsUi
 import com.example.newsfeed.util.RequestResult
 
 class ApiManager(
-    private val habrServiceApi: HabrServiceApi,
+     private val habrServiceApi: HabrServiceApi,
      private val redditServiceApi: RedditServiceApi
 ) {
 

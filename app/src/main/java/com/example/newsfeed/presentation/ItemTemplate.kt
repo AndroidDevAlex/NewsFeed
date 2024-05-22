@@ -1,5 +1,6 @@
 package com.example.newsfeed.presentation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,6 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -116,6 +121,7 @@ private fun NewsImage(item: NewsUi) {
  }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 private fun BookmarkAndSource(
  item: NewsUi,
@@ -124,9 +130,9 @@ private fun BookmarkAndSource(
 ) {
 
  val bookmarkIcon: Painter = painterResource(id = R.drawable.bookmark)
+ //val imageBookmarkIcon by remember { mutableStateOf(true) }
 
- //val bookmarkIcon: Painter =
- // painterResource(id = if (isBookmarked) R.drawable.bookmark_prassed else R.drawable.bookmark)
+// val tint = if (isBookmarked && imageBookmarkIcon) Orange else Color.Gray
 
  val tint = if (isBookmarked) Orange else Color.Gray
 
@@ -144,6 +150,7 @@ private fun BookmarkAndSource(
    modifier = Modifier
     .clickable {
      onBookmarkClick(item)
+     //imageBookmarkIcon = !imageBookmarkIcon
     }
   )
  }

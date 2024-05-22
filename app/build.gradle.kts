@@ -101,9 +101,6 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
-      //paging
-    implementation ("androidx.paging:paging-compose:3.2.1")
-
       //Simple XML
     implementation ("com.squareup.retrofit2:converter-simplexml:2.3.0")
 
@@ -112,4 +109,9 @@ dependencies {
 
     //swipe&refresh
     implementation("com.google.accompanist:accompanist-swiperefresh:0.25.1")
+
+    //pagination
+    implementation("androidx.paging:paging-compose:3.3.0")
+    implementation ("androidx.paging:paging-runtime:3.3.0")
+    implementation("androidx.room:room-paging:2.6.1")
 }

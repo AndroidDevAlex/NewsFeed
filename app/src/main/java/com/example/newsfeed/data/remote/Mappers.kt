@@ -82,7 +82,7 @@ private fun Item.parseImage(): String {
             return imageElements[0].attr("src")
         }
     }
-    return "" // вернуть заглушку "https://habrastorage.org/webt/ym/el/wk/ymelwk3zy1gawz4nkejl_-ammtc.png"
+    return "" // вернуть заглушку
 }
 
 private fun Item.mapToUi() = NewsUi(
@@ -126,7 +126,7 @@ fun NewsUi.mapToDB(): NewsDB {
     )
 }
 
-fun List<NewsDB>.mapFromDBToUi(): List<NewsUi> {
+/*fun List<NewsDB>.mapFromDBToUi(): List<NewsUi> {
     val result = mutableListOf<NewsUi>()
     this.forEach {
         result.add(it.mapToUi())
@@ -144,4 +144,18 @@ private fun NewsDB.mapToUi() = NewsUi(
     isBookmarked = true,
     source = source,
     url = url
-)
+)*/
+
+fun NewsDB.mapFromDBToUi(): NewsUi {
+    return NewsUi(
+        id = id,
+        image = image,
+        title = title,
+        publishedAt = publishedAt,
+        description = description,
+        addedBy = addedBy,
+        isBookmarked = true,
+        source = source,
+        url = url
+    )
+}
