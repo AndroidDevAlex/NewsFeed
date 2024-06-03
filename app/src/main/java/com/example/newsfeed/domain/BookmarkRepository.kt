@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface BookmarkRepository {
 
-    //suspend fun getSavedNews(): List<NewsUi>
-
     suspend fun saveNews(news: NewsUi)
 
     suspend fun deleteNews(news: NewsUi)

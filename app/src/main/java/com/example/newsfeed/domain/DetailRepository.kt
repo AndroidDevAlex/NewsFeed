@@ -7,4 +7,6 @@ interface DetailRepository {
     suspend fun saveNews(news: NewsUi)
 
     suspend fun deleteNews(news: NewsUi)
+
+    suspend fun getNewsByUrl(newsUrl: String): NewsUi
 }

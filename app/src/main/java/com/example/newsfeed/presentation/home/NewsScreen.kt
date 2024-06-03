@@ -1,13 +1,15 @@
-
 package com.example.newsfeed.presentation.home
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,16 +32,11 @@ import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.example.newsfeed.state.NewsDuringUpdate
-import com.example.newsfeed.state.NewsEmpty
-import com.example.newsfeed.state.ToDisplayState
-import com.example.newsfeed.state.NewsWithError
 import com.example.newsfeed.R
 import com.example.newsfeed.navigation.Screen
 import com.example.newsfeed.presentation.ErrorDialog
 import com.example.newsfeed.presentation.ItemTemplate
 import com.example.newsfeed.presentation.NewsUi
-import com.example.newsfeed.state.StateUI
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
@@ -48,7 +45,7 @@ import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.net.URLEncoder
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "FlowOperatorInvokedInComposition")
 @Composable
 fun NewsScreen(
     navController: NavController
@@ -58,7 +55,7 @@ fun NewsScreen(
 
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = state.isRefreshing)
 
-    val newsPaging = newsViewModel.newsPagingDataFlow.collectAsLazyPagingItems()
+    val newsPaging = state.newList.collectAsLazyPagingItems()
 
     if (state.showDialog) {
         ErrorDialog(
@@ -69,7 +66,6 @@ fun NewsScreen(
     NewsScreenUi(
         newsState = state,
         onRefresh = {
-            swipeRefreshState.isRefreshing = true
             newsViewModel.refreshScreen()
         },
         bookMarkClick = {
@@ -95,110 +91,98 @@ private fun NewsScreenUi(
     swipeRefreshState: SwipeRefreshState,
     newsPagingData: LazyPagingItems<NewsUi>,
 ) {
-     SwipeRefresh(
+    SwipeRefresh(
         state = swipeRefreshState,
         onRefresh = { onRefresh() }
     ) {
-         Scaffold(
-             topBar = {
-                 TopAppBar(
-                     title = {
-                         Text(
-                             text = stringResource(id = R.string.app_name),
-                             color = Color.White,
-                             fontSize = Dimens.TopAppBarFontSize,
-                             textAlign = TextAlign.Center,
-                             modifier = Modifier.fillMaxWidth(),
-                             fontWeight = FontWeight.Bold
-                         )
-                     }, colors = TopAppBarDefaults.smallTopAppBarColors(Orange)
-                 )
-             }) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(id = R.string.app_name),
+                            color = Color.White,
+                            fontSize = Dimens.TopAppBarFontSize,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }, colors = TopAppBarDefaults.smallTopAppBarColors(Orange)
+                )
+            }) {
 
-             Column(
-                 Modifier
-                     .padding(6.dp),
-                 horizontalAlignment = Alignment.CenterHorizontally
+            Column(
+                Modifier
+                    .padding(6.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
 
-             ) {
-                 Spacer(modifier = Modifier.height(60.dp))
+            ) {
 
-                 when {
-                     /*newsPagingData.loadState.refresh is LoadState.Loading -> {
-                         CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-                     }*/
+                Spacer(modifier = Modifier.height(60.dp))
+                Text(
+                    text = Headline.ALL_FEEDS.title,
+                    color = Color.Black,
+                    fontSize = Dimens.TopAppBarFontSize,
+                    fontWeight = FontWeight.Bold
+                )
 
-                     newsPagingData.loadState.refresh is LoadState.Error -> {
-                         val e = (newsPagingData.loadState.refresh as LoadState.Error).error
-                         Text(
-                             text = stringResource(R.string.load_error),
-                             color = Color.Red
-                         )
-                         Log.e("HomeScreen", "Error during loading: ${e.localizedMessage}")
+                LazyColumn {
+                    items(newsPagingData.itemCount) { index ->
+                        newsPagingData[index]?.let { news ->
+                            ItemTemplate(
+                                item = news,
+                                onItemClick = { navigateToDetail(it) },
+                                bookmarkClick = { bookMarkClick(it) }
+                            )
+                        }
+                    }
+                }
+                newsPagingData.apply {
 
-                     }
-                 }
-                     Text(
-                         text = Headline.ALL_FEEDS.title,
-                         color = Color.Black,
-                         fontSize = Dimens.TopAppBarFontSize,
-                         fontWeight = FontWeight.Bold
-                     )
+                    when{
+                        loadState.refresh is LoadState.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize(Alignment.Center)
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
 
-                 ToDisplayState(state = newsState.uiState) { state ->
-                     when (state) {
-                         is StateUI.Success -> {
-                             LazyColumn {
-                                 items(newsPagingData.itemCount) { index ->
-                                     newsPagingData[index]?.let { news ->
-                                         ItemTemplate(
-                                             item = news,
-                                             onItemClick = { navigateToDetail(it) },
-                                             bookmarkClick = { bookMarkClick(it) },
-                                             isBookmarked = news.isBookmarked
-                                         )
-                                     }
-                                 }
+                        loadState.refresh is LoadState.Error -> {
 
-                                 newsPagingData.apply {
-                                     when {
-                                         /*loadState.refresh is LoadState.Loading -> {
-                                             item { CircularProgressIndicator() }
-                                         }*/
-                                         loadState.append is LoadState.Loading -> {
-                                             item { CircularProgressIndicator() }
-                                         }
-                                         loadState.append is LoadState.Error -> {
-                                             val e = loadState.append as LoadState.Error
-                                             item {
-                                                 Text(
-                                                     text = stringResource(R.string.update_error),
-                                                     color = Color.Red
-                                                 )
-                                                 Log.e(
-                                                     "HomeScreen",
-                                                     "Error during updating: ${e.error.localizedMessage}"
-                                                 )
-                                             }
-                                         }
-                                     }
-                                 }
-                             }
-                         }
-                             is StateUI.Error -> {
-                                 NewsWithError()
-                             }
+                            val e = (loadState.refresh as LoadState.Error).error
+                            Text(
+                                text = stringResource(R.string.load_error),
+                                color = Color.Red
+                            )
+                            Log.e("HomeScreen", "Error during loading: ${e.localizedMessage}")
+                        }
 
-                             is StateUI.Loading -> {
-                                 NewsDuringUpdate()
-                             }
+                        loadState.append is LoadState.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize(Alignment.BottomCenter)
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
 
-                             is StateUI.None -> {
-                                 NewsEmpty()
-                             }
-                         }
-                     }
-                 }
-         }
-     }
-}
+                        loadState.append is LoadState.Error -> {
+                            val e = loadState.append as LoadState.Error
+                            Text(
+                                text = stringResource(R.string.update_error),
+                                color = Color.Red
+                            )
+                            Log.e(
+                                "HomeScreen", "Error during updating: ${e.error.localizedMessage}"
+                            )
+                        }
+                    }
+                }
+                }
+            }
+        }
+    }

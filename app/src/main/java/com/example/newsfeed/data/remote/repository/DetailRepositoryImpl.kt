@@ -17,4 +17,8 @@ class DetailRepositoryImpl @Inject constructor(
     override suspend fun deleteNews(news: NewsUi) {
         dataSource.deleteNews(news)
     }
+
+    override suspend fun getNewsByUrl(newsUrl: String): NewsUi {
+        return dataSource.getNewsByUrl(newsUrl)
+    }
 }

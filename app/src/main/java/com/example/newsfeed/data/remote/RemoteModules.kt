@@ -9,7 +9,7 @@ import com.example.newsfeed.domain.FilterRepository
 import com.example.newsfeed.domain.NewsRepository
 import com.example.newsfeed.data.remote.repository.DetailRepositoryImpl
 import com.example.newsfeed.domain.DetailRepository
-import com.example.newsfeed.presentation.home.GetAllNewsUseCase
+import com.example.newsfeed.domain.useCase.NewsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,7 +36,7 @@ object RemoteModules {
     @Singleton
     fun provideApiManager(
         habrServiceApi: HabrServiceApi,
-        redditServiceApi: RedditServiceApi,
+        redditServiceApi: RedditServiceApi
     ): ApiManager {
         return ApiManager(habrServiceApi, redditServiceApi)
     }
@@ -68,7 +68,7 @@ object RemoteModules {
 
     @Provides
     @Singleton
-    fun provideNewsUseCase(newsRepository: NewsRepository): GetAllNewsUseCase {
-        return GetAllNewsUseCase(newsRepository)
+    fun provideNewsUseCase(newsRepository: NewsRepository): NewsUseCase {
+        return NewsUseCase(newsRepository)
     }
 }

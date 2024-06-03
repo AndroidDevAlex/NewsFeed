@@ -15,10 +15,6 @@ class BookmarkRepositoryImpl @Inject constructor(
     private val dataSource: RoomDataSource
 ) : BookmarkRepository {
 
-   /* override suspend fun getSavedNews(): List<NewsUi> {
-        return dataSource.getSavedNews()
-    }*/
-
     override suspend fun saveNews(news: NewsUi) {
         dataSource.saveNews(news)
     }

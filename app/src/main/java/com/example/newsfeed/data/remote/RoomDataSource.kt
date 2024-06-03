@@ -3,7 +3,6 @@ package com.example.newsfeed.data.remote
 import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-//import com.example.newsfeed.data.NewsPagingSource
 import com.example.newsfeed.data.local.NewsDao
 import com.example.newsfeed.presentation.NewsUi
 
@@ -17,19 +16,8 @@ class RoomDataSource(
             initialLoadSize = INITIAL_LOAD_SIZE,
             prefetchDistance = PREFETCH_DISTANCE
         ),
-        // pagingSourceFactory = { NewsPagingSource(newsDao) }
          pagingSourceFactory = { newsDao.getNewsPagination() }
     ) .flow
-
-    /*suspend fun getSavedNews(): List<NewsUi> {
-        return try {
-           val savedNews = newsDao.getAllNews().map { it.mapFromDBToUi() }
-            savedNews
-        } catch (e: Exception) {
-            Log.e("log", " error occurred while receiving data $e")
-            emptyList()
-        }
-    }*/
 
      suspend fun saveNews(news: NewsUi) {
         try {
@@ -47,8 +35,12 @@ class RoomDataSource(
             newsDao.deleteNews(newsDB)
             Log.i("log", "News successfully removed from DB")
         }catch (e: Exception){
-            Log.e("log", "error occurred while deleting data: ", e)
+            Log.e("log", "Error occurred while deleting data: ", e)
         }
+    }
+
+    suspend fun getNewsByUrl(newsUrl: String): NewsUi {
+        return newsDao.getNewsByUrl(newsUrl).mapFromDBToUi()
     }
 
     companion object {

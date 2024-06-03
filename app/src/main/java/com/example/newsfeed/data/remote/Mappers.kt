@@ -48,7 +48,6 @@ fun List<Entry>.mapToUi(): List<NewsUi> {
 }
 
 private var currentId = 0
-//private val existingIds = mutableSetOf<Int>()
 
 private fun generateNewId(): Int {
     return ++currentId
@@ -73,7 +72,7 @@ private fun Item.parseDescription(): String {
     }
 }
 
-private fun Item.parseImage(): String {
+/*private fun Item.parseImage(): String {
 
     description.let {
         val doc: Document = Jsoup.parse(description)
@@ -82,10 +81,50 @@ private fun Item.parseImage(): String {
             return imageElements[0].attr("src")
         }
     }
-    return "" // вернуть заглушку
+    return ""
+}*/
+
+private const val rssXmlResponse = """
+    <rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+        <channel>
+            <title>
+                <![CDATA[ Все публикации подряд на Хабре ]]>
+            </title>
+            <link>https://habr.com/ru/articles/</link>
+            <description>
+                <![CDATA[ Все публикации подряд на Хабре ]]>
+            </description>
+            <language>ru</language>
+            <managingEditor>editor@habr.com</managingEditor>
+            <generator>habr.com</generator>
+            <pubDate>Mon, 03 Jun 2024 13:23:01 GMT</pubDate>
+            <image>
+                <link>https://habr.com/ru/</link>
+                <url>
+                    https://habrastorage.org/webt/ym/el/wk/ymelwk3zy1gawz4nkejl_-ammtc.png
+                </url>
+                <title>Хабр</title>
+            </image>
+        </channel>
+    </rss>
+"""
+
+private fun Item.parseImage(): String {
+
+    val doc: Document = Jsoup.parse(description)
+    val imageElements = doc.select("img")
+    return if (imageElements.isNotEmpty()) {
+        imageElements[0].attr("src")
+    } else {
+       // val rssImage: Document = Jsoup.parse(image.url)
+        val rssDoc: Document = Jsoup.parse(rssXmlResponse)
+        val imageElementRss = rssDoc.select("url")
+        //val imageElementRss = rssImage.select("url")
+        imageElementRss[0].text()
+    }
 }
 
-private fun Item.mapToUi() = NewsUi(
+ private fun Item.mapToUi() = NewsUi(
     id = generateNewId(),
     image = parseImage(),
     title = parseTitle(),
@@ -94,7 +133,8 @@ private fun Item.mapToUi() = NewsUi(
     addedBy = authorArticle,
     isBookmarked = false,
     source = habrSource(link),
-    url = link
+    url = link,
+    // imageUrl = image.url
 )
 
 private fun habrSource(link: String): String {
@@ -122,29 +162,10 @@ fun NewsUi.mapToDB(): NewsDB {
         addedBy = addedBy,
         isBookmarked = true,
         source = source,
-        url = url
+        url = url,
+        //imageUrl = imageUrl
     )
 }
-
-/*fun List<NewsDB>.mapFromDBToUi(): List<NewsUi> {
-    val result = mutableListOf<NewsUi>()
-    this.forEach {
-        result.add(it.mapToUi())
-    }
-    return result
-}
-
-private fun NewsDB.mapToUi() = NewsUi(
-    id = id,
-    image = image,
-    title = title,
-    publishedAt = publishedAt,
-    description = description,
-    addedBy = addedBy,
-    isBookmarked = true,
-    source = source,
-    url = url
-)*/
 
 fun NewsDB.mapFromDBToUi(): NewsUi {
     return NewsUi(
@@ -156,6 +177,7 @@ fun NewsDB.mapFromDBToUi(): NewsUi {
         addedBy = addedBy,
         isBookmarked = true,
         source = source,
-        url = url
+        url = url,
+      //  imageUrl = imageUrl
     )
 }

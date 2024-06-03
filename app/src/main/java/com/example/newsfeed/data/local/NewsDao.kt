@@ -16,15 +16,9 @@ interface NewsDao {
     @Delete
     suspend fun deleteNews(newsEntity: NewsDB)
 
-   /* @Query("SELECT * FROM news")
-    suspend fun getAllNews(): List<NewsDB>*/
+    @Query("SELECT * FROM news ORDER BY id ASC")
+    fun getNewsPagination(): PagingSource<Int, NewsDB>
 
-   /* @Query("SELECT * FROM news LIMIT :limit OFFSET :id")
-    suspend fun getNews(id: Int, limit: Int): List<NewsDB>*/
-
-   /* @Query("SELECT * FROM news ORDER BY id ASC LIMIT :limit OFFSET :offset")
-    suspend fun getNews(offset: Int, limit: Int): List<NewsDB>*/
-
-   @Query("SELECT * FROM news ORDER BY id ASC")
-     fun getNewsPagination(): PagingSource<Int, NewsDB>
+    @Query("SELECT * FROM news WHERE url = :newsUrl LIMIT 1")
+    suspend fun getNewsByUrl(newsUrl: String): NewsDB
 }

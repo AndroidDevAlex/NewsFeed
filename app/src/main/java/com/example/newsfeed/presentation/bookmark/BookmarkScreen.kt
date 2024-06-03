@@ -2,12 +2,14 @@ package com.example.newsfeed.presentation.bookmark
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,13 +46,10 @@ fun BookmarkScreen(navController: NavController) {
 
     val bookmarkViewModel: BookmarkViewModel = hiltViewModel()
 
-    val savedNews = bookmarkViewModel.bookmarkedPagingDataFlow.collectAsLazyPagingItems()
-
-  //val state by bookmarkViewModel.state.collectAsState()
+    val savedPagingNews = bookmarkViewModel.bookmarkedPagingDataFlow.collectAsLazyPagingItems()
 
     BookmarkScreenUi(
-       // state = state,
-        bookmarkedNews = savedNews,
+        bookmarkedNews = savedPagingNews,
         navigateToDetail = { news ->
             val encodedUrl = URLEncoder.encode(news.url, "UTF-8")
             navController.navigate(Screen.Details.route + "/$encodedUrl")
@@ -65,7 +64,6 @@ fun BookmarkScreen(navController: NavController) {
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 private fun BookmarkScreenUi(
-   // state: BookmarkState,
     bookmarkedNews: LazyPagingItems<NewsUi>,
     navigateToDetail: (NewsUi) -> Unit,
     bookMarkClick: (NewsUi) -> Unit
@@ -92,22 +90,8 @@ private fun BookmarkScreenUi(
         ) {
             Spacer(modifier = Modifier.height(60.dp))
 
-            when {
-                bookmarkedNews.loadState.refresh is LoadState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-                }
-
-                bookmarkedNews.loadState.refresh is LoadState.Error -> {
-                    val e = (bookmarkedNews.loadState.refresh as LoadState.Error).error
-                    Text(
-                        text = stringResource(R.string.load_error),
-                        color = Color.Red
-                    )
-                    Log.e("BookmarkScreen", "Error during loading: ${e.localizedMessage}")
-
-                }
-
-                bookmarkedNews.itemCount == 0 -> {
+            when (bookmarkedNews.itemCount) {
+                0 -> {
                     Text(
                         text = stringResource(R.string.no_saved_news),
                         color = Color.Black,
@@ -119,7 +103,6 @@ private fun BookmarkScreenUi(
                             .padding(top = 30.dp)
                     )
                 }
-
                 else -> {
                     Text(
                         text = Headline.SAVED.title,
@@ -127,6 +110,7 @@ private fun BookmarkScreenUi(
                         fontSize = Dimens.TopAppBarFontSize,
                         fontWeight = FontWeight.Bold
                     )
+
                     LazyColumn {
                         items(bookmarkedNews.itemCount) { index ->
                             bookmarkedNews[index]?.let { news ->
@@ -134,30 +118,53 @@ private fun BookmarkScreenUi(
                                     item = news,
                                     onItemClick = { navigateToDetail(it) },
                                     bookmarkClick = { bookMarkClick(it) },
-                                    isBookmarked = news.isBookmarked
                                 )
                             }
                         }
+                    }
+                    bookmarkedNews.apply {
 
-                        bookmarkedNews.apply {
-                            when {
-                                loadState.append is LoadState.Loading -> {
-                                    item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
+                        when {
+                            loadState.refresh is LoadState.Loading -> {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .wrapContentSize(Alignment.Center)
+                                ) {
+                                    CircularProgressIndicator()
                                 }
+                            }
 
-                                loadState.append is LoadState.Error -> {
-                                    val e = loadState.append as LoadState.Error
-                                    item {
-                                        Text(
-                                            text = stringResource(R.string.update_error),
-                                            color = Color.Red
-                                        )
-                                        Log.e(
-                                            "BookmarkScreen",
-                                            "Error during updating: ${e.error.localizedMessage}"
-                                        )
-                                    }
+                            loadState.refresh is LoadState.Error -> {
+
+                                val e = (loadState.refresh as LoadState.Error).error
+                                Text(
+                                    text = stringResource(R.string.load_error),
+                                    color = Color.Red
+                                )
+                                Log.e("BookMarkScreen", "Error during loading: ${e.localizedMessage}")
+                            }
+
+                            loadState.append is LoadState.Loading -> {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .wrapContentSize(Alignment.BottomCenter)
+                                ) {
+                                    CircularProgressIndicator()
                                 }
+                            }
+
+                            loadState.append is LoadState.Error -> {
+                                val e = loadState.append as LoadState.Error
+                                Text(
+                                    text = stringResource(R.string.update_error),
+                                    color = Color.Red
+                                )
+                                Log.e(
+                                    "BookMarkScreen",
+                                    "Error during updating: ${e.error.localizedMessage}"
+                                )
                             }
                         }
                     }

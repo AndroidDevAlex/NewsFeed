@@ -14,10 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,8 +33,7 @@ import com.example.newsfeed.util.SourceButton
 fun ItemTemplate(
  item: NewsUi,
  onItemClick: (NewsUi) -> Unit,
- bookmarkClick: (NewsUi) -> Unit,
- isBookmarked: Boolean
+ bookmarkClick: (NewsUi) -> Unit
 ) {
  Column(
   modifier = Modifier
@@ -55,7 +50,7 @@ fun ItemTemplate(
    ) {
     TemplateRow(item, onItemClick)
    }
-   BookmarkAndSource(item, bookmarkClick, isBookmarked)
+   BookmarkAndSource(item, bookmarkClick)
   }
  }
 }
@@ -125,16 +120,12 @@ private fun NewsImage(item: NewsUi) {
 @Composable
 private fun BookmarkAndSource(
  item: NewsUi,
- onBookmarkClick: (NewsUi) -> Unit,
- isBookmarked: Boolean
+ onBookmarkClick: (NewsUi) -> Unit
 ) {
 
  val bookmarkIcon: Painter = painterResource(id = R.drawable.bookmark)
- //val imageBookmarkIcon by remember { mutableStateOf(true) }
 
-// val tint = if (isBookmarked && imageBookmarkIcon) Orange else Color.Gray
-
- val tint = if (isBookmarked) Orange else Color.Gray
+ val tint = if (item.isBookmarked) Orange else Color.Gray
 
  Column(horizontalAlignment = Alignment.End) {
 
@@ -150,7 +141,6 @@ private fun BookmarkAndSource(
    modifier = Modifier
     .clickable {
      onBookmarkClick(item)
-     //imageBookmarkIcon = !imageBookmarkIcon
     }
   )
  }

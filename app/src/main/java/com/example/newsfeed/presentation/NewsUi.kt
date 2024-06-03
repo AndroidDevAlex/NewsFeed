@@ -9,5 +9,6 @@ data class NewsUi(
     val addedBy: String,
     val isBookmarked: Boolean,
     val source: String,
-    val url: String
+    val url: String,
+    //val imageUrl: String?
 )
