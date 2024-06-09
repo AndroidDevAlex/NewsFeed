@@ -9,6 +9,8 @@ import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+private const val defaultImageHabr = "https://habrastorage.org/webt/ym/el/wk/ymelwk3zy1gawz4nkejl_-ammtc.png"
+
 private fun Entry.parseDescription(): String {
     content.let {
         val doc: Document = Jsoup.parse(content.value)
@@ -68,31 +70,6 @@ private fun Item.parseDescription(): String {
     }
 }
 
-private const val rssXmlResponse = """
-    <rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
-        <channel>
-            <title>
-                <![CDATA[ Все публикации подряд на Хабре ]]>
-            </title>
-            <link>https://habr.com/ru/articles/</link>
-            <description>
-                <![CDATA[ Все публикации подряд на Хабре ]]>
-            </description>
-            <language>ru</language>
-            <managingEditor>editor@habr.com</managingEditor>
-            <generator>habr.com</generator>
-            <pubDate>Mon, 03 Jun 2024 13:23:01 GMT</pubDate>
-            <image>
-                <link>https://habr.com/ru/</link>
-                <url>
-                    https://habrastorage.org/webt/ym/el/wk/ymelwk3zy1gawz4nkejl_-ammtc.png
-                </url>
-                <title>Хабр</title>
-            </image>
-        </channel>
-    </rss>
-"""
-
 private fun Item.parseImage(): String {
 
     val doc: Document = Jsoup.parse(description)
@@ -100,9 +77,7 @@ private fun Item.parseImage(): String {
     return if (imageElements.isNotEmpty()) {
         imageElements[0].attr("src")
     } else {
-        val rssDoc: Document = Jsoup.parse(rssXmlResponse)
-        val imageElementRss = rssDoc.select("url")
-        imageElementRss[0].text()
+        defaultImageHabr
     }
 }
 
