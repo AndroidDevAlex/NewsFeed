@@ -9,7 +9,8 @@ import com.example.newsfeed.domain.FilterRepository
 import com.example.newsfeed.domain.NewsRepository
 import com.example.newsfeed.data.remote.repository.DetailRepositoryImpl
 import com.example.newsfeed.domain.DetailRepository
-import com.example.newsfeed.domain.useCase.NewsUseCase
+import com.example.newsfeed.domain.useCase.FetchNewsUseCase
+import com.example.newsfeed.domain.useCase.GetSavedNewsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -68,7 +69,13 @@ object RemoteModules {
 
     @Provides
     @Singleton
-    fun provideNewsUseCase(newsRepository: NewsRepository): NewsUseCase {
-        return NewsUseCase(newsRepository)
+    fun provideGetNewsUseCase(newsRepository: NewsRepository): GetSavedNewsUseCase {
+        return GetSavedNewsUseCase(newsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFetchNewsUseCase(newsRepository: NewsRepository): FetchNewsUseCase {
+        return FetchNewsUseCase(newsRepository)
     }
 }

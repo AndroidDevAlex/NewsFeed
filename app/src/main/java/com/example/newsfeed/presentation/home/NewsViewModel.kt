@@ -1,7 +1,6 @@
 package com.example.newsfeed.presentation.home
 
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,16 +8,18 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.example.newsfeed.domain.NewsRepository
-import com.example.newsfeed.domain.useCase.NewsUseCase
+import com.example.newsfeed.domain.useCase.FetchNewsUseCase
+import com.example.newsfeed.domain.useCase.GetSavedNewsUseCase
 import com.example.newsfeed.presentation.NewsUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -26,8 +27,9 @@ import javax.inject.Named
 @HiltViewModel
 class NewsViewModel @Inject constructor(
     private val newsRepository: NewsRepository,
-    private val newsUseCase: NewsUseCase,
-    @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher
+    private val getNewsUseCase: GetSavedNewsUseCase,
+    @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher,
+    private val fetchNewsUseCase: FetchNewsUseCase
 ) : ViewModel() {
 
     private val _newsListNews = MutableStateFlow(NewsState())
@@ -35,106 +37,63 @@ class NewsViewModel @Inject constructor(
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Log.e("log", "error during refresh screen: $exception")
-        _newsListNews.value = _newsListNews.value.copy(showDialog = true, isRefreshing = false)
+        errorHandling()
     }
 
     init {
         getAllSavedNews()
-        displayNews()
     }
 
     private fun getAllSavedNews() {
-        viewModelScope.launch(ioDispatcher) {
-            try {
-                newsUseCase.getSavedNewsPaging()
-                    .cachedIn(viewModelScope)
-                    .collect { pagingData ->
-                        _newsListNews.value = NewsState(newList = flowOf(pagingData))
-                    }
-            } catch (e: Exception) {
-                Log.e("log", "Error get saved news: $e")
-            }
+        getSavedNews()
+        refreshNewsFromServer()
+    }
+
+    private fun getSavedNews() {
+        viewModelScope.launch(ioDispatcher + exceptionHandler) {
+            getNewsUseCase.getSavedNewsPaging()
+                .cachedIn(this)
+                .collect { pagingData ->
+                    updateNewsList(flowOf(pagingData))
+                }
         }
     }
 
-    @SuppressLint("SuspiciousIndentation")
+    private fun refreshNewsFromServer() {
+        viewModelScope.launch(ioDispatcher + exceptionHandler) {
+            fetchNewsUseCase.refreshNews()
+                .cachedIn(this)
+                .collect { pagingData ->
+                    updateNewsList(flowOf(pagingData))
+                }
+        }
+    }
+
     fun refreshScreen() {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            _newsListNews.value = _newsListNews.value.copy(isRefreshing = true)
 
-            try {
-                val fetchNews = async { newsUseCase.invoke() }
-                fetchNews.await()
+            showProgressBar()
 
-                val newSavedNews = mutableListOf<NewsUi>()
-                newsUseCase.getSavedNewsPaging().collect { savedPagingNews ->
-                    newSavedNews.addAll(savedPagingNews.mapPagingToList())
+            fetchNewsUseCase.refreshNews()
+                .cachedIn(this)
+                .collect { updatedNews ->
+                    updateNewsList(flowOf(updatedNews))
                 }
-
-                _newsListNews.value = _newsListNews.value.copy(
-                    newList = flowOf(PagingData.from(newSavedNews)),
-                    showDialog = false,
-                    isRefreshing = false
-                )
-
-            } catch (e: Exception) {
-                Log.e("log", "error during refresh screen: $e")
-            }
         }
     }
 
-    private fun displayNews() {
-        viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            try {
-               // val savedNews = async { getAllSavedNews() }
-                val fetchNews = async { newsUseCase.invoke() }
-
-              //  savedNews.await()
-                fetchNews.await()
-
-                 updateNewsState()
-
-            } catch (e: Exception) {
-                Log.e("log", "Error during displaying screen: $e")
-            }
-        }
+    private fun showProgressBar() {
+        _newsListNews.update { it.copy(isRefreshing = true) }
     }
 
-    private suspend fun updateNewsState() {
-        try {
-            val savedNews = mutableListOf<NewsUi>()
-            newsUseCase.getSavedNewsPaging().collect { savedPagingNews ->
-                savedNews.addAll(savedPagingNews.mapPagingToList())
-            }
-
-            val currentNewsList = mutableListOf<NewsUi>()
-            _newsListNews.value.newList.collect { currentPagingData ->
-                currentNewsList.addAll(currentPagingData.mapPagingToList())
-            }
-
-            val updatedCombinedNewsList = combineNews(currentNewsList, savedNews)
-            val updatedList = flowOf(PagingData.from(updatedCombinedNewsList))
-
-            _newsListNews.value = NewsState(newList = updatedList)
-
-        } catch (e: Exception) {
-            Log.e("log", "Error during updating screen:  $e")
-        }
+    private fun errorHandling() {
+        _newsListNews.update { it.copy(showDialog = true, isRefreshing = false) }
     }
 
-    private fun combineNews(
-        currentNewsList: List<NewsUi>,
-        newSavedNews: List<NewsUi>
-    ): List<NewsUi> {
-        return (currentNewsList + newSavedNews).distinctBy { it.id }
-    }
-
-    private fun <T : Any> PagingData<T>.mapPagingToList(): List<T> {
-        val list = mutableListOf<T>()
-        this.map { data ->
-            list.addAll(listOf(data))
-        }
-        return list
+    private fun updateNewsList(newList: Flow<PagingData<NewsUi>>) {
+        _newsListNews.value = NewsState(
+            newList = newList
+        )
     }
 
     fun dismissErrorDialog() {
@@ -145,7 +104,6 @@ class NewsViewModel @Inject constructor(
     fun pressBookmark(news: NewsUi) {
         viewModelScope.launch(ioDispatcher) {
 
-            try {
                 if (news.isBookmarked) {
                     newsRepository.deleteNews(news)
                 } else {
@@ -163,9 +121,6 @@ class NewsViewModel @Inject constructor(
                 }
 
                 _newsListNews.value = _newsListNews.value.copy(newList = updatedNewsList)
-            } catch (e: Exception) {
-                Log.e("log", "Error during press bookmark: $e")
-            }
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.newsfeed.data.remote.models.habrModels
 
-
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
@@ -30,9 +29,5 @@ data class Item(
 
     @field:ElementList(inline = true, entry = "category")
     @param:ElementList(inline = true, entry = "category")
-    val categories: List<String> = emptyList(),
-
-   /* @field:Element(name = "image")
-    @param:Element(name = "image")
-    val image: ItemImage*/
+    val categories: List<String> = emptyList()
 )

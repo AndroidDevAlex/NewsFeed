@@ -1,6 +1,5 @@
 package com.example.newsfeed.data.remote
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.example.newsfeed.data.local.NewsDao
@@ -10,33 +9,22 @@ class RoomDataSource(
     private val newsDao: NewsDao
 ) {
 
-     fun getPagingSavedNews() = Pager(
+    fun getPagingSavedNews() = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             initialLoadSize = INITIAL_LOAD_SIZE,
             prefetchDistance = PREFETCH_DISTANCE
         ),
-         pagingSourceFactory = { newsDao.getNewsPagination() }
-    ) .flow
+        pagingSourceFactory = { newsDao.getNewsPagination() }
+    ).flow
 
-     suspend fun saveNews(news: NewsUi) {
-        try {
-            val newsEntity = news.mapToDB()
-            newsDao.insertNews(newsEntity)
-            Log.i("log", "News successfully saved in Local database")
-        }catch (e: Exception){
-            Log.e("log", "Error saving news: $e")
-        }
+
+    suspend fun saveNews(news: NewsUi) {
+        newsDao.insertNews(news.mapToDB())
     }
 
     suspend fun deleteNews(news: NewsUi) {
-        try {
-            val newsDB = news.mapToDB()
-            newsDao.deleteNews(newsDB)
-            Log.i("log", "News successfully removed from DB")
-        }catch (e: Exception){
-            Log.e("log", "Error occurred while deleting data: ", e)
-        }
+        newsDao.deleteNews(news.mapToDB())
     }
 
     suspend fun getNewsByUrl(newsUrl: String): NewsUi {

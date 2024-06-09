@@ -6,6 +6,8 @@ import com.example.newsfeed.data.remote.models.redditModels.Entry
 import com.example.newsfeed.presentation.NewsUi
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 private fun Entry.parseDescription(): String {
     content.let {
@@ -21,7 +23,7 @@ private fun Entry.parseDescription(): String {
 }
 
 private fun Entry.mapToUi() = NewsUi(
-    id = generateNewId(),
+    id = TODO(),
     image = "",
     title = title,
     publishedAt = published,
@@ -47,12 +49,6 @@ fun List<Entry>.mapToUi(): List<NewsUi> {
     return result
 }
 
-private var currentId = 0
-
-private fun generateNewId(): Int {
-    return ++currentId
-}
-
 private fun Item.parseTitle(): String {
     title.let {
         val doc: Document = Jsoup.parse(title)
@@ -71,18 +67,6 @@ private fun Item.parseDescription(): String {
         return textContent.toString()
     }
 }
-
-/*private fun Item.parseImage(): String {
-
-    description.let {
-        val doc: Document = Jsoup.parse(description)
-        val imageElements = doc.select("img")
-        if (imageElements.isNotEmpty()) {
-            return imageElements[0].attr("src")
-        }
-    }
-    return ""
-}*/
 
 private const val rssXmlResponse = """
     <rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
@@ -116,26 +100,29 @@ private fun Item.parseImage(): String {
     return if (imageElements.isNotEmpty()) {
         imageElements[0].attr("src")
     } else {
-       // val rssImage: Document = Jsoup.parse(image.url)
         val rssDoc: Document = Jsoup.parse(rssXmlResponse)
         val imageElementRss = rssDoc.select("url")
-        //val imageElementRss = rssImage.select("url")
         imageElementRss[0].text()
     }
 }
 
- private fun Item.mapToUi() = NewsUi(
-    id = generateNewId(),
-    image = parseImage(),
-    title = parseTitle(),
-    publishedAt = pubDate,
-    description = parseDescription(),
-    addedBy = authorArticle,
-    isBookmarked = false,
-    source = habrSource(link),
-    url = link,
-    // imageUrl = image.url
-)
+private fun Item.mapToUi(): NewsUi {
+    val timestamp =
+        SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH).parse(pubDate)?.time
+            ?: System.currentTimeMillis()
+
+    return NewsUi(
+        id = timestamp,
+        image = parseImage(),
+        title = parseTitle(),
+        publishedAt = pubDate,
+        description = parseDescription(),
+        addedBy = authorArticle,
+        isBookmarked = false,
+        source = habrSource(link),
+        url = link
+    )
+}
 
 private fun habrSource(link: String): String {
     return when {
@@ -162,8 +149,7 @@ fun NewsUi.mapToDB(): NewsDB {
         addedBy = addedBy,
         isBookmarked = true,
         source = source,
-        url = url,
-        //imageUrl = imageUrl
+        url = url
     )
 }
 
@@ -177,7 +163,6 @@ fun NewsDB.mapFromDBToUi(): NewsUi {
         addedBy = addedBy,
         isBookmarked = true,
         source = source,
-        url = url,
-      //  imageUrl = imageUrl
+        url = url
     )
 }

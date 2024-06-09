@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
@@ -153,11 +154,18 @@ private fun NewsScreenUi(
                         loadState.refresh is LoadState.Error -> {
 
                             val e = (loadState.refresh as LoadState.Error).error
-                            Text(
-                                text = stringResource(R.string.load_error),
-                                color = Color.Red
-                            )
-                            Log.e("HomeScreen", "Error during loading: ${e.localizedMessage}")
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.load_error),
+                                    color = Color.Red,
+                                    fontSize = 35.sp
+                                )
+                                Log.e("HomeScreen", "Error during loading: ${e.localizedMessage}")
+                            }
                         }
 
                         loadState.append is LoadState.Loading -> {

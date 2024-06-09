@@ -14,8 +14,8 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class NetworkConnectivityObserver @Inject constructor(
-   connectivityManager: ConnectivityManager,
-   @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher,
+    private val connectivityManager: ConnectivityManager,
+    @Named("MainDispatcher") private val mainDispatcher: CoroutineDispatcher
 )  {
 
    val isConnected = callbackFlow<Boolean> {
@@ -45,5 +45,5 @@ class NetworkConnectivityObserver @Inject constructor(
        }
    }
        .distinctUntilChanged()
-       .flowOn(ioDispatcher)
+       .flowOn(mainDispatcher)
 }

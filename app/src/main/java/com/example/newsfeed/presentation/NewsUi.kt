@@ -1,7 +1,7 @@
 package com.example.newsfeed.presentation
 
 data class NewsUi(
-    val id: Int,
+    val id: Long,
     val image: String?,
     val title: String,
     val publishedAt: String,
@@ -9,6 +9,5 @@ data class NewsUi(
     val addedBy: String,
     val isBookmarked: Boolean,
     val source: String,
-    val url: String,
-    //val imageUrl: String?
+    val url: String
 )

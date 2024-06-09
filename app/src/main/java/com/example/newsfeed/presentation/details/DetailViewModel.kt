@@ -1,6 +1,5 @@
 package com.example.newsfeed.presentation.details
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsfeed.domain.DetailRepository
@@ -24,19 +23,14 @@ class DetailViewModel @Inject constructor(
 
     fun loadNews(newsUrl: String) {
         viewModelScope.launch(ioDispatcher) {
-            try {
                 val news = detailRepository.getNewsByUrl(newsUrl)
                 _detailState.value = _detailState.value.copy(currentNews = news)
-               } catch (e: Exception) {
-                Log.e("log", "error during load news: $e")
-            }
         }
     }
 
     fun toggleBookmark() {
         val news = _detailState.value.currentNews ?: return
         viewModelScope.launch(ioDispatcher) {
-            try {
                 if (news.isBookmarked) {
                     detailRepository.deleteNews(news)
                 } else {
@@ -44,9 +38,6 @@ class DetailViewModel @Inject constructor(
                 }
                 val updatedNews = news.copy(isBookmarked = !news.isBookmarked)
                 _detailState.value = _detailState.value.copy(currentNews = updatedNews, isBookmarked = updatedNews.isBookmarked)
-            } catch (e: Exception) {
-                Log.e("log", "error during press bookmark: $e")
-            }
         }
     }
 }

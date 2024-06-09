@@ -19,8 +19,8 @@ object DispatchersModule {
     }
 
     @Provides
-    @Named("DefaultDispatcher")
-    fun provideDefDispatcher(): CoroutineDispatcher {
-        return Dispatchers.Default
+    @Named("MainDispatcher")
+    fun provideMainDispatcher(): CoroutineDispatcher {
+        return Dispatchers.Main
     }
 }

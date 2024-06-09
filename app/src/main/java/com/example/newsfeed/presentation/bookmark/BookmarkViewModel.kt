@@ -4,6 +4,7 @@ package com.example.newsfeed.presentation.bookmark
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.newsfeed.domain.BookmarkRepository
 import com.example.newsfeed.presentation.NewsUi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +30,7 @@ class BookmarkViewModel @Inject constructor(
 
     private fun getSavedNews() {
         viewModelScope.launch(ioDispatcher) {
-           bookmarkRepository.getSavedNewsPagingSource().collect{ pagingNews->
+           bookmarkRepository.getSavedNewsPagingSource().cachedIn(viewModelScope).collect{ pagingNews->
                _bookmarkedPagingDataFlow.value = pagingNews
            }
         }

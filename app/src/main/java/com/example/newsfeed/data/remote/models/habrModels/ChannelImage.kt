@@ -4,7 +4,7 @@ import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
 
 @Root(name = "image", strict = false)
-data class ItemImage(
+data class ChannelImage(
 
     @field:Element(name = "url")
     @param:Element(name = "url")

@@ -16,9 +16,12 @@ interface NewsDao {
     @Delete
     suspend fun deleteNews(newsEntity: NewsDB)
 
-    @Query("SELECT * FROM news ORDER BY id ASC")
+    @Query("SELECT * FROM news ORDER BY id DESC")
     fun getNewsPagination(): PagingSource<Int, NewsDB>
 
     @Query("SELECT * FROM news WHERE url = :newsUrl LIMIT 1")
     suspend fun getNewsByUrl(newsUrl: String): NewsDB
+
+    @Query("SELECT * FROM news WHERE id = :id LIMIT 1")
+    suspend fun getNewsById(id: Long): NewsDB
 }

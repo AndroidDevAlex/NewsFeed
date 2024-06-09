@@ -1,6 +1,6 @@
 package com.example.newsfeed.data.remote.repository
 
-import android.util.Log
+
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.example.newsfeed.data.remote.ApiManager
@@ -23,17 +23,12 @@ class NewsRepositoryImpl @Inject constructor(
         }
     }
 
-   override suspend fun fetchAndSaveNews() {
-       try {
-           val remoteNews = apiManager.getOllNewsList()
-           remoteNews.forEach { news ->
-               dataSource.saveNews(news)
-           }
-       } catch (e: Exception) {
-           Log.e("log", "Error during fetch and save news: $e")
-           throw e
-       }
-   }
+    override suspend fun fetchAndSaveNews() {
+        val remoteNews = apiManager.getOllNewsList()
+        remoteNews.forEach { news ->
+            dataSource.saveNews(news)
+        }
+    }
 
     override suspend fun saveNews(news: NewsUi) {
         dataSource.saveNews(news)

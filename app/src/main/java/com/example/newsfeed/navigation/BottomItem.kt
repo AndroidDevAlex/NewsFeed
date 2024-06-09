@@ -7,9 +7,9 @@ sealed class BottomItem(
     val screen: Screen
 ) {
 
-    object NewsScreen : BottomItem(R.drawable.view, Screen.Home)
+    data object NewsScreen : BottomItem(R.drawable.view, Screen.Home)
 
-    object Filter : BottomItem(R.drawable.filter, Screen.Filter)
+    data object Filter : BottomItem(R.drawable.filter, Screen.Filter)
 
-    object Bookmark : BottomItem(R.drawable.bookmark, Screen.Bookmark)
+    data object Bookmark : BottomItem(R.drawable.bookmark, Screen.Bookmark)
 }

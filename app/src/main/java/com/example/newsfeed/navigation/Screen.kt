@@ -1,8 +1,8 @@
 package com.example.newsfeed.navigation
 
 sealed class Screen(val route: String) {
-    object Home : Screen("news")
-    object Filter : Screen("filter")
-    object Bookmark : Screen("bookmark")
-    object Details : Screen("details")
+    data object Home : Screen("news")
+    data object Filter : Screen("filter")
+    data object Bookmark : Screen("bookmark")
+    data object Details : Screen("details")
 }
