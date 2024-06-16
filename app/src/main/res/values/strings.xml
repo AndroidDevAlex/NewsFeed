@@ -8,7 +8,7 @@
     <string name="error_fetching_habr_news">Error fetching Habr news</string>
     <string name="close">Close</string>
     <string name="list_is_empty">List is Empty</string>
-    <string name="no_saved_news">No Saved news</string>
+    <string name="no_saved_news">Oops, no Saved news</string>
     <string name="error_occurred">Error occurred</string>
     <string name="oops">Oops, error occurred</string>
     <string name="load_error">Error during loading</string>

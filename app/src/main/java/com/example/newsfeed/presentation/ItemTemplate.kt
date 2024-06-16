@@ -25,15 +25,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.newsfeed.R
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.SourceButton
 
 @Composable
 fun ItemTemplate(
- item: NewsUi,
- onItemClick: (NewsUi) -> Unit,
- bookmarkClick: (NewsUi) -> Unit
+ item: ItemNewsUi,
+ onItemClick: (ItemNewsUi) -> Unit,
+ bookmarkClick: (ItemNewsUi) -> Unit
 ) {
  Column(
   modifier = Modifier
@@ -57,8 +58,8 @@ fun ItemTemplate(
 
 @Composable
 private fun TemplateRow(
- newsUi: NewsUi,
- onItemClick: (NewsUi) -> Unit
+ newsUi: ItemNewsUi,
+ onItemClick: (ItemNewsUi) -> Unit
 ) {
  Row(modifier =
  Modifier
@@ -73,7 +74,7 @@ private fun TemplateRow(
 }
 
 @Composable
-private fun NewsContent(item: NewsUi) {
+private fun NewsContent(item: ItemNewsUi) {
  Column(
   modifier =
   Modifier
@@ -99,7 +100,7 @@ private fun NewsContent(item: NewsUi) {
 }
 
 @Composable
-private fun NewsImage(item: NewsUi) {
+private fun NewsImage(item: ItemNewsUi) {
  item.image?.let { imageUrl ->
   Box(
    modifier = Modifier
@@ -119,8 +120,8 @@ private fun NewsImage(item: NewsUi) {
 @SuppressLint("UnrememberedMutableState")
 @Composable
 private fun BookmarkAndSource(
- item: NewsUi,
- onBookmarkClick: (NewsUi) -> Unit
+ item: ItemNewsUi,
+ onBookmarkClick: (ItemNewsUi) -> Unit
 ) {
 
  val bookmarkIcon: Painter = painterResource(id = R.drawable.bookmark)

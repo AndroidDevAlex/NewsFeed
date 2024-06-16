@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.newsfeed.domain.BookmarkRepository
-import com.example.newsfeed.presentation.NewsUi
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +21,8 @@ class BookmarkViewModel @Inject constructor(
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val _bookmarkedPagingDataFlow = MutableStateFlow<PagingData<NewsUi>>(PagingData.empty())
-    val bookmarkedPagingDataFlow: StateFlow<PagingData<NewsUi>> = _bookmarkedPagingDataFlow
+    private val _bookmarkedPagingDataFlow = MutableStateFlow<PagingData<ItemNewsUi>>(PagingData.empty())
+    val bookmarkedPagingDataFlow: StateFlow<PagingData<ItemNewsUi>> = _bookmarkedPagingDataFlow
 
     init {
         getSavedNews()
@@ -36,9 +36,11 @@ class BookmarkViewModel @Inject constructor(
         }
     }
 
-    fun onBookmarkClicked(news: NewsUi) {
+    fun onBookmarkClicked(news: ItemNewsUi) {
         viewModelScope.launch(ioDispatcher) {
-            bookmarkRepository.deleteNews(news)
+
+            val updatedNews = news.copy(isBookmarked = false)
+            bookmarkRepository.deleteNews(updatedNews)
         }
     }
 }

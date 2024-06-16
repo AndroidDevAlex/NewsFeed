@@ -2,14 +2,15 @@ package com.example.newsfeed.data.remote
 
 import com.example.newsfeed.data.local.NewsDB
 import com.example.newsfeed.data.remote.models.habrModels.Item
+import com.example.newsfeed.data.remote.models.habrModels.NewsFeed
 import com.example.newsfeed.data.remote.models.redditModels.Entry
-import com.example.newsfeed.presentation.NewsUi
+import com.example.newsfeed.presentation.entityUi.NewsUi
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-private const val defaultImageHabr = "https://habrastorage.org/webt/ym/el/wk/ymelwk3zy1gawz4nkejl_-ammtc.png"
 
 private fun Entry.parseDescription(): String {
     content.let {
@@ -24,7 +25,7 @@ private fun Entry.parseDescription(): String {
     return ""
 }
 
-private fun Entry.mapToUi() = NewsUi(
+private fun Entry.mapToUi() = ItemNewsUi(
     id = TODO(),
     image = "",
     title = title,
@@ -43,8 +44,8 @@ private fun redditSource(link: String): String {
     }
 }
 
-fun List<Entry>.mapToUi(): List<NewsUi> {
-    val result = mutableListOf<NewsUi>()
+fun List<Entry>.mapToUi(): List<ItemNewsUi> {
+    val result = mutableListOf<ItemNewsUi>()
     this.forEach {
         result.add(it.mapToUi())
     }
@@ -70,25 +71,25 @@ private fun Item.parseDescription(): String {
     }
 }
 
-private fun Item.parseImage(): String {
+private fun Item.parseImage(defaultImageUrl: String): String {
 
     val doc: Document = Jsoup.parse(description)
     val imageElements = doc.select("img")
     return if (imageElements.isNotEmpty()) {
         imageElements[0].attr("src")
     } else {
-        defaultImageHabr
+        defaultImageUrl
     }
 }
 
-private fun Item.mapToUi(): NewsUi {
+private fun Item.mapToUi(defaultImageUrl: String): ItemNewsUi {
     val timestamp =
         SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH).parse(pubDate)?.time
             ?: System.currentTimeMillis()
 
-    return NewsUi(
+    return ItemNewsUi(
         id = timestamp,
-        image = parseImage(),
+        image = parseImage(defaultImageUrl),
         title = parseTitle(),
         publishedAt = pubDate,
         description = parseDescription(),
@@ -106,15 +107,15 @@ private fun habrSource(link: String): String {
     }
 }
 
-fun List<Item>.mapToNewsUi(): List<NewsUi> {
-    val result = mutableListOf<NewsUi>()
-    this.forEach {
-        result.add(it.mapToUi())
-    }
-    return result
+fun NewsFeed.mapToNewsUi(): NewsUi {
+    val defaultImage = channel.mainImage.url
+
+    return NewsUi(
+        defaultImage, channel.items.map {
+        it.mapToUi(defaultImage)})
 }
 
-fun NewsUi.mapToDB(): NewsDB {
+fun ItemNewsUi.mapToDB(isBookmarked: Boolean): NewsDB {
     return NewsDB(
         id = id,
         image = image,
@@ -122,21 +123,21 @@ fun NewsUi.mapToDB(): NewsDB {
         publishedAt = publishedAt,
         description = description,
         addedBy = addedBy,
-        isBookmarked = true,
+        isBookmarked = isBookmarked,
         source = source,
         url = url
     )
 }
 
-fun NewsDB.mapFromDBToUi(): NewsUi {
-    return NewsUi(
+fun NewsDB.mapFromDBToUi(): ItemNewsUi {
+    return ItemNewsUi(
         id = id,
         image = image,
         title = title,
         publishedAt = publishedAt,
         description = description,
         addedBy = addedBy,
-        isBookmarked = true,
+        isBookmarked = isBookmarked,
         source = source,
         url = url
     )

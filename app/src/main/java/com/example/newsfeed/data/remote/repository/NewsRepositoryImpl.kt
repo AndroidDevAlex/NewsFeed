@@ -7,7 +7,7 @@ import com.example.newsfeed.data.remote.ApiManager
 import com.example.newsfeed.data.remote.RoomDataSource
 import com.example.newsfeed.data.remote.mapFromDBToUi
 import com.example.newsfeed.domain.NewsRepository
-import com.example.newsfeed.presentation.NewsUi
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -17,24 +17,25 @@ class NewsRepositoryImpl @Inject constructor(
     private val apiManager: ApiManager
 ) : NewsRepository {
 
-    override fun getSavedNewsPagingSource(): Flow<PagingData<NewsUi>> {
-        return dataSource.getPagingSavedNews().map { pagingDB ->
+    override fun getSavedNewsPagingSource(): Flow<PagingData<ItemNewsUi>> {
+        return dataSource.getOllPagingSavedNews().map { pagingDB ->
             pagingDB.map { it.mapFromDBToUi() }
         }
     }
 
     override suspend fun fetchAndSaveNews() {
         val remoteNews = apiManager.getOllNewsList()
-        remoteNews.forEach { news ->
-            dataSource.saveNews(news)
+        val defaultImageUrl = remoteNews.defaultImage
+
+        remoteNews.newsList.forEach { news ->
+            val existingNews = dataSource.getNewsById(news.id)
+            val isBookmarked = existingNews?.isBookmarked ?: false
+            val newsForSave = news.copy(image = news.image ?: defaultImageUrl, isBookmarked = isBookmarked)
+            dataSource.updateBookmarkStatus(newsForSave)
         }
     }
 
-    override suspend fun saveNews(news: NewsUi) {
-        dataSource.saveNews(news)
-    }
-
-    override suspend fun deleteNews(news: NewsUi) {
-        dataSource.deleteNews(news)
+    override suspend fun toggleBookmark(news: ItemNewsUi) {
+        dataSource.updateBookmarkStatus(news)
     }
 }

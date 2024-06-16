@@ -3,7 +3,7 @@ package com.example.newsfeed.domain.useCase
 
 import androidx.paging.PagingData
 import com.example.newsfeed.domain.NewsRepository
-import com.example.newsfeed.presentation.NewsUi
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -11,7 +11,7 @@ class GetSavedNewsUseCase @Inject constructor(
     private val repository: NewsRepository
 ) {
 
-    fun getSavedNewsPaging(): Flow<PagingData<NewsUi>> {
+    fun getSavedNewsPaging(): Flow<PagingData<ItemNewsUi>> {
         return repository.getSavedNewsPagingSource()
     }
 }

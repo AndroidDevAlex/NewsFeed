@@ -3,22 +3,18 @@ package com.example.newsfeed.data.remote.repository
 
 import com.example.newsfeed.data.remote.RoomDataSource
 import com.example.newsfeed.domain.DetailRepository
-import com.example.newsfeed.presentation.NewsUi
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import javax.inject.Inject
 
 class DetailRepositoryImpl @Inject constructor(
     private val dataSource: RoomDataSource
 ) : DetailRepository {
 
-    override suspend fun saveNews(news: NewsUi) {
-        dataSource.saveNews(news)
+    override suspend fun toggleBookmark(news: ItemNewsUi) {
+        dataSource.updateBookmarkStatus(news)
     }
 
-    override suspend fun deleteNews(news: NewsUi) {
-        dataSource.deleteNews(news)
-    }
-
-    override suspend fun getNewsByUrl(newsUrl: String): NewsUi {
+    override suspend fun getNewsByUrl(newsUrl: String): ItemNewsUi {
         return dataSource.getNewsByUrl(newsUrl)
     }
 }

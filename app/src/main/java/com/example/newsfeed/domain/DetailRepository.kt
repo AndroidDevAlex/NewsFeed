@@ -1,12 +1,10 @@
 package com.example.newsfeed.domain
 
-import com.example.newsfeed.presentation.NewsUi
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 
 interface DetailRepository {
 
-    suspend fun saveNews(news: NewsUi)
+    suspend fun toggleBookmark(news: ItemNewsUi)
 
-    suspend fun deleteNews(news: NewsUi)
-
-    suspend fun getNewsByUrl(newsUrl: String): NewsUi
+    suspend fun getNewsByUrl(newsUrl: String): ItemNewsUi
 }

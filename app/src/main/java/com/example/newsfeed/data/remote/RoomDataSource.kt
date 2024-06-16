@@ -3,13 +3,13 @@ package com.example.newsfeed.data.remote
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.example.newsfeed.data.local.NewsDao
-import com.example.newsfeed.presentation.NewsUi
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 
 class RoomDataSource(
     private val newsDao: NewsDao
 ) {
 
-    fun getPagingSavedNews() = Pager(
+    fun getOllPagingSavedNews() = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             initialLoadSize = INITIAL_LOAD_SIZE,
@@ -18,16 +18,24 @@ class RoomDataSource(
         pagingSourceFactory = { newsDao.getNewsPagination() }
     ).flow
 
+    fun getOllPagingSavedNewsByUser() = Pager(
+        config = PagingConfig(
+            pageSize = PAGE_SIZE,
+            initialLoadSize = INITIAL_LOAD_SIZE,
+            prefetchDistance = PREFETCH_DISTANCE
+        ),
+        pagingSourceFactory = { newsDao.getSavedNewsPaginationByUser() }
+    ).flow
 
-    suspend fun saveNews(news: NewsUi) {
-        newsDao.insertNews(news.mapToDB())
+    suspend fun updateBookmarkStatus(news: ItemNewsUi) {
+        newsDao.insertNews(news.mapToDB(news.isBookmarked))
     }
 
-    suspend fun deleteNews(news: NewsUi) {
-        newsDao.deleteNews(news.mapToDB())
+    suspend fun getNewsById(newsId: Long): ItemNewsUi? {
+        return newsDao.getNewsById(newsId)?.mapFromDBToUi()
     }
 
-    suspend fun getNewsByUrl(newsUrl: String): NewsUi {
+    suspend fun getNewsByUrl(newsUrl: String): ItemNewsUi {
         return newsDao.getNewsByUrl(newsUrl).mapFromDBToUi()
     }
 

@@ -37,7 +37,7 @@ import com.example.newsfeed.R
 import com.example.newsfeed.navigation.Screen
 import com.example.newsfeed.presentation.ErrorDialog
 import com.example.newsfeed.presentation.ItemTemplate
-import com.example.newsfeed.presentation.NewsUi
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
@@ -87,10 +87,10 @@ fun NewsScreen(
 private fun NewsScreenUi(
     onRefresh: () -> Unit,
     newsState: NewsState,
-    bookMarkClick: (NewsUi) -> Unit,
-    navigateToDetail: (NewsUi) -> Unit,
+    bookMarkClick: (ItemNewsUi) -> Unit,
+    navigateToDetail: (ItemNewsUi) -> Unit,
     swipeRefreshState: SwipeRefreshState,
-    newsPagingData: LazyPagingItems<NewsUi>,
+    newsPagingData: LazyPagingItems<ItemNewsUi>,
 ) {
     SwipeRefresh(
         state = swipeRefreshState,

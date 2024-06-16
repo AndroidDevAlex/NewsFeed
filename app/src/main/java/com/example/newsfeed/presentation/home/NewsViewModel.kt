@@ -10,7 +10,7 @@ import androidx.paging.map
 import com.example.newsfeed.domain.NewsRepository
 import com.example.newsfeed.domain.useCase.FetchNewsUseCase
 import com.example.newsfeed.domain.useCase.GetSavedNewsUseCase
-import com.example.newsfeed.presentation.NewsUi
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -90,7 +90,7 @@ class NewsViewModel @Inject constructor(
         _newsListNews.update { it.copy(showDialog = true, isRefreshing = false) }
     }
 
-    private fun updateNewsList(newList: Flow<PagingData<NewsUi>>) {
+    private fun updateNewsList(newList: Flow<PagingData<ItemNewsUi>>) {
         _newsListNews.value = NewsState(
             newList = newList
         )
@@ -101,26 +101,23 @@ class NewsViewModel @Inject constructor(
         refreshScreen()
     }
 
-    fun pressBookmark(news: NewsUi) {
+    fun pressBookmark(news: ItemNewsUi) {
         viewModelScope.launch(ioDispatcher) {
 
-                if (news.isBookmarked) {
-                    newsRepository.deleteNews(news)
-                } else {
-                    newsRepository.saveNews(news)
-                }
+            val isBookmarked = !news.isBookmarked
 
-                val updatedNewsList = _newsListNews.value.newList.map { pagingData ->
-                    pagingData.map { newsUi ->
-                        if (newsUi.id == news.id) {
-                            newsUi.copy(isBookmarked = !news.isBookmarked)
-                        } else {
-                            newsUi
-                        }
+            newsRepository.toggleBookmark(news.copy(isBookmarked = isBookmarked))
+
+            val updatedNewsList = _newsListNews.value.newList.map { pagingData ->
+                pagingData.map { newsUi ->
+                    if (newsUi.id == news.id) {
+                        newsUi.copy(isBookmarked = isBookmarked)
+                    } else {
+                        newsUi
                     }
                 }
-
-                _newsListNews.value = _newsListNews.value.copy(newList = updatedNewsList)
+            }
+            _newsListNews.value = _newsListNews.value.copy(newList = updatedNewsList)
         }
     }
 }

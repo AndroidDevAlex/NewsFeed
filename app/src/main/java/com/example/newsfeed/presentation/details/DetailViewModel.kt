@@ -23,21 +23,24 @@ class DetailViewModel @Inject constructor(
 
     fun loadNews(newsUrl: String) {
         viewModelScope.launch(ioDispatcher) {
-                val news = detailRepository.getNewsByUrl(newsUrl)
-                _detailState.value = _detailState.value.copy(currentNews = news)
+            val news = detailRepository.getNewsByUrl(newsUrl)
+            _detailState.value = _detailState.value.copy(
+                currentNews = news,
+                isBookmarked = news.isBookmarked
+            )
         }
     }
 
     fun toggleBookmark() {
         val news = _detailState.value.currentNews ?: return
+        val updatedNews = news.copy(isBookmarked = !news.isBookmarked)
+
         viewModelScope.launch(ioDispatcher) {
-                if (news.isBookmarked) {
-                    detailRepository.deleteNews(news)
-                } else {
-                    detailRepository.saveNews(news)
-                }
-                val updatedNews = news.copy(isBookmarked = !news.isBookmarked)
-                _detailState.value = _detailState.value.copy(currentNews = updatedNews, isBookmarked = updatedNews.isBookmarked)
+            detailRepository.toggleBookmark(updatedNews)
+            _detailState.value = _detailState.value.copy(
+                currentNews = updatedNews,
+                isBookmarked = updatedNews.isBookmarked
+            )
         }
     }
 }

@@ -34,7 +34,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.newsfeed.R
 import com.example.newsfeed.navigation.Screen
 import com.example.newsfeed.presentation.ItemTemplate
-import com.example.newsfeed.presentation.NewsUi
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
@@ -64,9 +64,9 @@ fun BookmarkScreen(navController: NavController) {
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 private fun BookmarkScreenUi(
-    bookmarkedNews: LazyPagingItems<NewsUi>,
-    navigateToDetail: (NewsUi) -> Unit,
-    bookMarkClick: (NewsUi) -> Unit
+    bookmarkedNews: LazyPagingItems<ItemNewsUi>,
+    navigateToDetail: (ItemNewsUi) -> Unit,
+    bookMarkClick: (ItemNewsUi) -> Unit
 ) {
 
     Scaffold(topBar = {
