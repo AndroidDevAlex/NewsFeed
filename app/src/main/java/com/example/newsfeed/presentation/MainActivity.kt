@@ -1,6 +1,5 @@
 package com.example.newsfeed.presentation
 
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,10 +19,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
 import com.example.newsfeed.R
 import com.example.newsfeed.navigation.MainScreen
 import com.example.newsfeed.internetConection.NetworkViewModel
+import com.example.newsfeed.ui.theme.Blue
+import com.example.newsfeed.ui.theme.Grey
+import com.example.newsfeed.util.Dimens
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,19 +37,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            // val wifiOn: Painter = painterResource(id = R.drawable.wifi_on)
-            // val wifiOf: Painter = painterResource(id = R.drawable.wifi_off)
 
             val scaffoldState = rememberScaffoldState()
 
-            val networkStatus by viewModel.isConnected.collectAsState(false)
+            val networkStatus by viewModel.isConnected.collectAsState()
 
             if (!networkStatus) {
                 LaunchedEffect(false) {
 
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = getString(R.string.you_are_offline),
-                        duration = SnackbarDuration.Short
+                        duration = SnackbarDuration.Indefinite
                     )
                 }
 
@@ -67,10 +67,13 @@ class MainActivity : ComponentActivity() {
                     SnackbarHost(
                         hostState = host
                     ) { data ->
+                        val backgroundColor = if (networkStatus) Blue else Grey
                         Snackbar(
-                            modifier = Modifier.padding(bottom = 60.dp),
-                            shape = RoundedCornerShape(10.dp),
-                            snackbarData = data
+                            modifier = Modifier.padding(bottom = Dimens.PaddingBottomModifier),
+                            shape = RoundedCornerShape(Dimens.PaddingModifier),
+                            backgroundColor = backgroundColor,
+                            snackbarData = data,
+                            contentColor = Color.White
                         )
                     }
                 }

@@ -23,20 +23,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.newsfeed.R
+import com.example.newsfeed.internetConection.NetworkViewModel
 import com.example.newsfeed.navigation.Screen
-import com.example.newsfeed.presentation.ErrorDialog
-import com.example.newsfeed.presentation.ItemTemplate
+import com.example.newsfeed.presentation.NewsItem
+import com.example.newsfeed.presentation.ShowNewsDetailsDialog
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
@@ -44,28 +44,37 @@ import com.example.newsfeed.util.Headline
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import java.net.URLEncoder
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "FlowOperatorInvokedInComposition")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "FlowOperatorInvokedInComposition",
+)
 @Composable
 fun NewsScreen(
     navController: NavController
 ) {
     val newsViewModel = hiltViewModel<NewsViewModel>()
+
     val state by newsViewModel.newsListNews.collectAsState()
+    val newsPaging = state.newList.collectAsLazyPagingItems()
+
+    val networkViewModel = hiltViewModel<NetworkViewModel>()
+    val isConnected by networkViewModel.isConnected.collectAsState()
 
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = state.isRefreshing)
 
-    val newsPaging = state.newList.collectAsLazyPagingItems()
+    val context = LocalContext.current
 
-    if (state.showDialog) {
-        ErrorDialog(
-            onDismiss = { newsViewModel.dismissErrorDialog() }
-        )
-    }
+    ShowNewsDetailsDialog(
+        isDialogVisible = state.isDialogVisible,
+        selectedNews = state.selectedNews,
+        isConnected = isConnected,
+        onDismiss = { newsViewModel.hideDialog() },
+        onConfirm = { encodedUrl ->
+            navController.navigate(Screen.Details.route + "/$encodedUrl")
+        },
+        context = context
+    )
 
     NewsScreenUi(
-        newsState = state,
         onRefresh = {
             newsViewModel.refreshScreen()
         },
@@ -73,11 +82,10 @@ fun NewsScreen(
             newsViewModel.pressBookmark(it)
         },
         navigateToDetail = { news ->
-            val encodedUrl = URLEncoder.encode(news.url, "UTF-8")
-            navController.navigate(Screen.Details.route + "/$encodedUrl")
+            newsViewModel.showDialog(news)
         },
         swipeRefreshState = swipeRefreshState,
-        newsPagingData = newsPaging,
+        newsPagingData = newsPaging
     )
 }
 
@@ -86,12 +94,12 @@ fun NewsScreen(
 @Composable
 private fun NewsScreenUi(
     onRefresh: () -> Unit,
-    newsState: NewsState,
     bookMarkClick: (ItemNewsUi) -> Unit,
     navigateToDetail: (ItemNewsUi) -> Unit,
     swipeRefreshState: SwipeRefreshState,
-    newsPagingData: LazyPagingItems<ItemNewsUi>,
+    newsPagingData: LazyPagingItems<ItemNewsUi>
 ) {
+
     SwipeRefresh(
         state = swipeRefreshState,
         onRefresh = { onRefresh() }
@@ -114,12 +122,13 @@ private fun NewsScreenUi(
 
             Column(
                 Modifier
-                    .padding(6.dp),
+                    .padding(Dimens.Padding)
+                    .padding(bottom = Dimens.DistanceFromBottom),
                 horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
 
-                Spacer(modifier = Modifier.height(60.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacerHeight))
                 Text(
                     text = Headline.ALL_FEEDS.title,
                     color = Color.Black,
@@ -130,7 +139,7 @@ private fun NewsScreenUi(
                 LazyColumn {
                     items(newsPagingData.itemCount) { index ->
                         newsPagingData[index]?.let { news ->
-                            ItemTemplate(
+                            NewsItem(
                                 item = news,
                                 onItemClick = { navigateToDetail(it) },
                                 bookmarkClick = { bookMarkClick(it) }
@@ -140,7 +149,7 @@ private fun NewsScreenUi(
                 }
                 newsPagingData.apply {
 
-                    when{
+                    when {
                         loadState.refresh is LoadState.Loading -> {
                             Box(
                                 modifier = Modifier
@@ -162,7 +171,7 @@ private fun NewsScreenUi(
                                 Text(
                                     text = stringResource(R.string.load_error),
                                     color = Color.Red,
-                                    fontSize = 35.sp
+                                    fontSize = Dimens.FontSizeBox
                                 )
                                 Log.e("HomeScreen", "Error during loading: ${e.localizedMessage}")
                             }
@@ -190,7 +199,7 @@ private fun NewsScreenUi(
                         }
                     }
                 }
-                }
             }
         }
     }
+}

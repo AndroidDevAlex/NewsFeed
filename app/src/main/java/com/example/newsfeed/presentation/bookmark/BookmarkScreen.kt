@@ -18,27 +18,29 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.newsfeed.R
+import com.example.newsfeed.internetConection.NetworkViewModel
 import com.example.newsfeed.navigation.Screen
-import com.example.newsfeed.presentation.ItemTemplate
+import com.example.newsfeed.presentation.NewsItem
+import com.example.newsfeed.presentation.ShowNewsDetailsDialog
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.ui.theme.Orange
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
-import java.net.URLEncoder
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -48,11 +50,28 @@ fun BookmarkScreen(navController: NavController) {
 
     val savedPagingNews = bookmarkViewModel.bookmarkedPagingDataFlow.collectAsLazyPagingItems()
 
+    val networkViewModel = hiltViewModel<NetworkViewModel>()
+    val isConnected by networkViewModel.isConnected.collectAsState()
+    val context = LocalContext.current
+
+    val isDialogVisible = bookmarkViewModel.isDialogVisible.collectAsState()
+    val selectedNews = bookmarkViewModel.selectedNews.collectAsState()
+
+    ShowNewsDetailsDialog(
+        isDialogVisible = isDialogVisible.value,
+        selectedNews = selectedNews.value,
+        isConnected = isConnected,
+        onDismiss = { bookmarkViewModel.hideDialog() },
+        onConfirm = { encodedUrl ->
+            navController.navigate(Screen.Details.route + "/$encodedUrl")
+        },
+        context = context
+    )
+
     BookmarkScreenUi(
         bookmarkedNews = savedPagingNews,
         navigateToDetail = { news ->
-            val encodedUrl = URLEncoder.encode(news.url, "UTF-8")
-            navController.navigate(Screen.Details.route + "/$encodedUrl")
+            bookmarkViewModel.showDialog(news)
         },
         bookMarkClick = { news ->
             bookmarkViewModel.onBookmarkClicked(news)
@@ -85,10 +104,11 @@ private fun BookmarkScreenUi(
     }) {
         Column(
             Modifier
-                .padding(6.dp),
+                .padding(Dimens.BetweenItems)
+                .padding(bottom = Dimens.DistanceFromBottom),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacerHeight))
 
             when (bookmarkedNews.itemCount) {
                 0 -> {
@@ -96,13 +116,14 @@ private fun BookmarkScreenUi(
                         text = stringResource(R.string.no_saved_news),
                         color = Color.Black,
                         textAlign = TextAlign.Center,
-                        fontSize = 24.sp,
+                        fontSize = Dimens.FontSize,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(top = 30.dp)
+                            .padding(top = Dimens.PaddingTop)
                     )
                 }
+
                 else -> {
                     Text(
                         text = Headline.SAVED.title,
@@ -111,13 +132,13 @@ private fun BookmarkScreenUi(
                         fontWeight = FontWeight.Bold
                     )
 
-                    LazyColumn {
+                    LazyColumn() {
                         items(bookmarkedNews.itemCount) { index ->
                             bookmarkedNews[index]?.let { news ->
-                                ItemTemplate(
+                                NewsItem(
                                     item = news,
                                     onItemClick = { navigateToDetail(it) },
-                                    bookmarkClick = { bookMarkClick(it) },
+                                    bookmarkClick = { bookMarkClick(it) }
                                 )
                             }
                         }
@@ -142,7 +163,10 @@ private fun BookmarkScreenUi(
                                     text = stringResource(R.string.load_error),
                                     color = Color.Red
                                 )
-                                Log.e("BookMarkScreen", "Error during loading: ${e.localizedMessage}")
+                                Log.e(
+                                    "BookMarkScreen",
+                                    "Error during loading: ${e.localizedMessage}"
+                                )
                             }
 
                             loadState.append is LoadState.Loading -> {

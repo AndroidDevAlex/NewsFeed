@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -24,15 +25,21 @@ class BookmarkViewModel @Inject constructor(
     private val _bookmarkedPagingDataFlow = MutableStateFlow<PagingData<ItemNewsUi>>(PagingData.empty())
     val bookmarkedPagingDataFlow: StateFlow<PagingData<ItemNewsUi>> = _bookmarkedPagingDataFlow
 
+    private val _selectedNews = MutableStateFlow<ItemNewsUi?>(null)
+    val selectedNews = _selectedNews.asStateFlow()
+
+    private val _isDialogVisible = MutableStateFlow(false)
+    val isDialogVisible = _isDialogVisible.asStateFlow()
+
     init {
         getSavedNews()
     }
 
     private fun getSavedNews() {
         viewModelScope.launch(ioDispatcher) {
-           bookmarkRepository.getSavedNewsPagingSource().cachedIn(viewModelScope).collect{ pagingNews->
-               _bookmarkedPagingDataFlow.value = pagingNews
-           }
+            bookmarkRepository.getSavedNewsPagingSource().cachedIn(viewModelScope).collect{ pagingNews->
+                    _bookmarkedPagingDataFlow.value = pagingNews
+                }
         }
     }
 
@@ -42,5 +49,15 @@ class BookmarkViewModel @Inject constructor(
             val updatedNews = news.copy(isBookmarked = false)
             bookmarkRepository.deleteNews(updatedNews)
         }
+    }
+
+    fun showDialog(news: ItemNewsUi) {
+        _selectedNews.value = news
+        _isDialogVisible.value = true
+    }
+
+    fun hideDialog() {
+        _selectedNews.value = null
+        _isDialogVisible.value = false
     }
 }

@@ -29,7 +29,13 @@ fun BottomNavigation(
             BottomNavigationItem(
                 selected = currentRoute == item.screen.route,
                 onClick = {
-                    navController.navigate(item.screen.route)
+                    navController.navigate(item.screen.route){
+                        launchSingleTop = true
+                        restoreState = true
+                        popUpTo(navController.graph.startDestinationId){
+                            saveState = true
+                        }
+                    }
                 },
                 icon = {
                     Icon(
@@ -38,7 +44,7 @@ fun BottomNavigation(
                         tint = if (currentRoute == item.screen.route) Orange else Color.White
                     )
                 },
-                )
+            )
         }
     }
 }

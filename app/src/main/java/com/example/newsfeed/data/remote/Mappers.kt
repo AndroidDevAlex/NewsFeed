@@ -112,7 +112,7 @@ fun NewsFeed.mapToNewsUi(): NewsUi {
 
     return NewsUi(
         defaultImage, channel.items.map {
-        it.mapToUi(defaultImage)})
+            it.mapToUi(defaultImage)})
 }
 
 fun ItemNewsUi.mapToDB(isBookmarked: Boolean): NewsDB {

@@ -21,12 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.newsfeed.presentation.details.state.StateUI
 import com.example.newsfeed.util.AppTopBar
+import com.example.newsfeed.util.Dimens
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -65,13 +65,13 @@ private fun DetailsScreenUi(
 ) {
 
     val webView = remember { WebView(context) }
-
     webView.apply {
 
         webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 uiState.stateUI = StateUI.Success
             }
+
         }
         settings.javaScriptEnabled = true
         settings.loadWithOverviewMode = true
@@ -79,7 +79,6 @@ private fun DetailsScreenUi(
         settings.setSupportZoom(true)
         loadUrl(newsUrl)
     }
-
     Scaffold(topBar = {
         AppTopBar(
             pressBookmark = {
@@ -92,22 +91,23 @@ private fun DetailsScreenUi(
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(top = 35.dp)
+                .padding(top = Dimens.BetweenItemsTop)
         ) {
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(Dimens.BetweenDataHeight))
 
-            when(uiState.stateUI){
+            when (uiState.stateUI){
                 StateUI.Loading -> {
                     Column {
                         Box(
                             Modifier
-                                .padding(30.dp)
+                                .padding(Dimens.PaddingProgress)
                                 .fillMaxWidth(), contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator()
                         }
                     }
                 }
+
                 StateUI.Success -> {
                     AndroidView(factory = { webView })
                 }

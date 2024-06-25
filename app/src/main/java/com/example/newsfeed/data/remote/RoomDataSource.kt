@@ -15,7 +15,7 @@ class RoomDataSource(
             initialLoadSize = INITIAL_LOAD_SIZE,
             prefetchDistance = PREFETCH_DISTANCE
         ),
-        pagingSourceFactory = { newsDao.getNewsPagination() }
+        pagingSourceFactory = { NewsPagingSource(newsDao) }
     ).flow
 
     fun getOllPagingSavedNewsByUser() = Pager(

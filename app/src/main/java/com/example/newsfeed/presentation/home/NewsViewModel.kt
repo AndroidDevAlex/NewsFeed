@@ -87,7 +87,7 @@ class NewsViewModel @Inject constructor(
     }
 
     private fun errorHandling() {
-        _newsListNews.update { it.copy(showDialog = true, isRefreshing = false) }
+        _newsListNews.update { it.copy(isRefreshing = false) }
     }
 
     private fun updateNewsList(newList: Flow<PagingData<ItemNewsUi>>) {
@@ -96,16 +96,9 @@ class NewsViewModel @Inject constructor(
         )
     }
 
-    fun dismissErrorDialog() {
-        _newsListNews.value = _newsListNews.value.copy(showDialog = false)
-        refreshScreen()
-    }
-
     fun pressBookmark(news: ItemNewsUi) {
         viewModelScope.launch(ioDispatcher) {
-
             val isBookmarked = !news.isBookmarked
-
             newsRepository.toggleBookmark(news.copy(isBookmarked = isBookmarked))
 
             val updatedNewsList = _newsListNews.value.newList.map { pagingData ->
@@ -117,7 +110,19 @@ class NewsViewModel @Inject constructor(
                     }
                 }
             }
-            _newsListNews.value = _newsListNews.value.copy(newList = updatedNewsList)
+
+            _newsListNews.value = _newsListNews.value.copy(
+                newList = updatedNewsList
+            )
+
         }
+    }
+
+    fun showDialog(news: ItemNewsUi) {
+        _newsListNews.update { it.copy(isDialogVisible = true, selectedNews = news) }
+    }
+
+    fun hideDialog() {
+        _newsListNews.update { it.copy(isDialogVisible = false, selectedNews = null) }
     }
 }

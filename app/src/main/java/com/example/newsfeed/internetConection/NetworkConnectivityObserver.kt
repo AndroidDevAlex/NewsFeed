@@ -16,34 +16,34 @@ import javax.inject.Named
 class NetworkConnectivityObserver @Inject constructor(
     private val connectivityManager: ConnectivityManager,
     @Named("MainDispatcher") private val mainDispatcher: CoroutineDispatcher
-)  {
+) {
 
-   val isConnected = callbackFlow<Boolean> {
+    val isConnected = callbackFlow<Boolean> {
 
-       val connectivityCallback = object: ConnectivityManager.NetworkCallback(){
-           override fun onAvailable(network: Network) {
-               super.onAvailable(network)
-               trySend(true)
-           }
+        val connectivityCallback = object: ConnectivityManager.NetworkCallback(){
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                trySend(true)
+            }
 
-           override fun onLost(network: Network) {
-               super.onLost(network)
-               trySend(false)
-           }
-       }
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                trySend(false)
+            }
+        }
 
-       val request = NetworkRequest.Builder()
-           .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-           .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-           .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-           .build()
+        val request = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .build()
 
-       connectivityManager.registerNetworkCallback(request,connectivityCallback)
+        connectivityManager.registerNetworkCallback(request,connectivityCallback)
 
-       awaitClose {
-           connectivityManager.unregisterNetworkCallback(connectivityCallback)
-       }
-   }
-       .distinctUntilChanged()
-       .flowOn(mainDispatcher)
+        awaitClose {
+            connectivityManager.unregisterNetworkCallback(connectivityCallback)
+        }
+    }
+        .distinctUntilChanged()
+        .flowOn(mainDispatcher)
 }

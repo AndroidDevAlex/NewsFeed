@@ -22,7 +22,10 @@ fun SourceButton(source: String, onClick: () -> Unit) {
             contentColor = Color.White
         )
 
-        else -> ButtonDefaults.buttonColors(backgroundColor = Color.Green, contentColor = Color.DarkGray)
+        else -> ButtonDefaults.buttonColors(
+            backgroundColor = Color.Green,
+            contentColor = Color.DarkGray
+        )
     }
 
     Button(

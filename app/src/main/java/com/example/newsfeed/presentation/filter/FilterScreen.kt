@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.newsfeed.R
@@ -66,10 +65,10 @@ fun FilterScreenUi(
 
         Column(
             Modifier
-                .padding(6.dp),
+                .padding(Dimens.BetweenItems),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacerHeight))
             Text(
                 text = Headline.ALL_GROUPS.title,
                 color = Color.Black,

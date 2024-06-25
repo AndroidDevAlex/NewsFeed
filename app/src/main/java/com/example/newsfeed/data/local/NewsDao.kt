@@ -12,9 +12,6 @@ interface NewsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNews(newsEntity: NewsDB)
 
-    @Query("SELECT * FROM news ORDER BY id DESC")
-    fun getNewsPagination(): PagingSource<Int, NewsDB>
-
     @Query("SELECT * FROM news WHERE url = :newsUrl LIMIT 1")
     suspend fun getNewsByUrl(newsUrl: String): NewsDB
 
@@ -23,4 +20,8 @@ interface NewsDao {
 
     @Query("SELECT * FROM news WHERE isBookmarked = 1")
     fun getSavedNewsPaginationByUser(): PagingSource<Int, NewsDB>
+
+    @Query("SELECT * FROM news ORDER BY id DESC LIMIT :limit OFFSET :offset")
+    suspend fun getOllSavedNews(offset: Int, limit: Int): List<NewsDB>
+
 }

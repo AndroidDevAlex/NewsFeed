@@ -8,5 +8,6 @@ import kotlinx.coroutines.flow.flowOf
 data class NewsState(
     val newList: Flow<PagingData<ItemNewsUi>> = flowOf(PagingData.empty()),
     val isRefreshing: Boolean = false,
-    val showDialog: Boolean = false
+    val isDialogVisible: Boolean = false,
+    val selectedNews: ItemNewsUi? = null
 )

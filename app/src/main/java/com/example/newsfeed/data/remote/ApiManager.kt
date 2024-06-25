@@ -9,6 +9,6 @@ class ApiManager(
 ) {
 
     suspend fun getOllNewsList(): NewsUi {
-       return habrServiceApi.getAllHabrNews().mapToNewsUi()
+        return habrServiceApi.getAllHabrNews().mapToNewsUi()
     }
 }
