@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import com.example.newsfeed.R
 import com.example.newsfeed.navigation.MainScreen
 import com.example.newsfeed.internetConection.NetworkViewModel
-import com.example.newsfeed.ui.theme.Blue
+import com.example.newsfeed.ui.theme.BlueStateNetwork
 import com.example.newsfeed.ui.theme.Grey
 import com.example.newsfeed.util.Dimens
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,32 +42,26 @@ class MainActivity : ComponentActivity() {
 
             val networkStatus by viewModel.isConnected.collectAsState()
 
-            if (!networkStatus) {
-                LaunchedEffect(false) {
-
+            LaunchedEffect(networkStatus) {
+                if (!networkStatus) {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = getString(R.string.you_are_offline),
                         duration = SnackbarDuration.Indefinite
                     )
-                }
-
-            } else {
-                LaunchedEffect(true) {
-
+                } else {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = getString(R.string.you_are_online),
                         duration = SnackbarDuration.Short
                     )
                 }
             }
-
             Scaffold(
                 scaffoldState = scaffoldState,
                 snackbarHost = { host ->
                     SnackbarHost(
                         hostState = host
                     ) { data ->
-                        val backgroundColor = if (networkStatus) Blue else Grey
+                        val backgroundColor = if (networkStatus) BlueStateNetwork else Grey
                         Snackbar(
                             modifier = Modifier.padding(bottom = Dimens.PaddingBottomModifier),
                             shape = RoundedCornerShape(Dimens.PaddingModifier),

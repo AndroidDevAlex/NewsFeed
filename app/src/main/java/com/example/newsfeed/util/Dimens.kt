@@ -5,27 +5,28 @@ import androidx.compose.ui.unit.sp
 
 object Dimens {
 
-    val TopAppBarFontSize = 18.sp
-    val FontTextSize = 20.sp
+    val TopAppBarFontSize = 26.sp
+    val HeadlineSize = 20.sp
     val FontSize = 24.sp
     val FontSizeBox = 35.sp
     val PaddingTop = 30.dp
-    val PaddingAll = 16.dp
     val BetweenItemsTop = 35.dp
-    val BetweenItems = 6.dp
+    val BetweenItems = 16.dp
+    val BetweenButton = 7.dp
     val DistanceFromBottom = 55.dp
     val PaddingBottomModifier = 50.dp
     val PaddingModifier = 10.dp
     val SpacerHeight = 60.dp
-    val BetweenDataHeight = 25.dp
-    val Padding = 4.dp
+    val SpacerBetweenContent = 30.dp
+    val Height = 25.dp
+    val Padding = 10.dp
     val ImageSize = 120.dp
     val Border = 2.dp
-    val PaddingBottom = 3.dp
+    val PaddingBetween = 2.dp
     val PaddingTemplate = 5.dp
+    val ModifierPadding = 16.dp
     val PaddingProgress = 30.dp
-    val ClipPercent = 25.dp
-    val TextFontSize = 10.sp
-    val TextFontSizeTitle = 15.sp
+    val TextFontSize = 13.sp
+    val TextFontSizeTitle = 18.sp
     val TextFontSizeSource = 14.sp
 }

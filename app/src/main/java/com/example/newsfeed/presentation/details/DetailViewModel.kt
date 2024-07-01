@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsfeed.domain.DetailRepository
 import com.example.newsfeed.presentation.details.state.StateUI
+import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,10 +25,7 @@ class DetailViewModel @Inject constructor(
     fun loadNews(newsUrl: String) {
         viewModelScope.launch(ioDispatcher) {
             val news = detailRepository.getNewsByUrl(newsUrl)
-            _detailState.value = _detailState.value.copy(
-                currentNews = news,
-                isBookmarked = news.isBookmarked
-            )
+            updateDetailNews(news)
         }
     }
 
@@ -37,10 +35,14 @@ class DetailViewModel @Inject constructor(
 
         viewModelScope.launch(ioDispatcher) {
             detailRepository.toggleBookmark(updatedNews)
-            _detailState.value = _detailState.value.copy(
-                currentNews = updatedNews,
-                isBookmarked = updatedNews.isBookmarked
-            )
+            updateDetailNews(updatedNews)
         }
+    }
+
+    private fun updateDetailNews(news: ItemNewsUi) {
+        _detailState.value = _detailState.value.copy(
+            currentNews = news,
+            isBookmarked = news.isBookmarked
+        )
     }
 }

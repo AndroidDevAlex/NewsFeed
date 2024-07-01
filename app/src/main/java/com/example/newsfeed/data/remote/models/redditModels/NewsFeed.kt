@@ -9,11 +9,11 @@ import org.simpleframework.xml.Root
 @Namespace(reference = "http://www.w3.org/2005/Atom")
 data class NewsFeed(
 
-   @field:Element(name = "icon")
-   @param:Element(name = "icon")
-   val icon: String = "",
+    @field:Element(name = "icon")
+    @param:Element(name = "icon")
+    val icon: String = "",
 
-   @field:ElementList(inline = true, entry = "entry")
-   @param:ElementList(inline = true, entry = "entry")
-   val entries: List<Entry> = emptyList()
+    @field:ElementList(inline = true, entry = "entry")
+    @param:ElementList(inline = true, entry = "entry")
+    val entries: List<Entry> = emptyList()
 )

@@ -6,6 +6,7 @@ import com.example.newsfeed.data.remote.models.habrModels.NewsFeed
 import com.example.newsfeed.data.remote.models.redditModels.Entry
 import com.example.newsfeed.presentation.entityUi.NewsUi
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
+import com.example.newsfeed.util.NewsSource
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat
@@ -33,14 +34,23 @@ private fun Entry.mapToUi() = ItemNewsUi(
     description = parseDescription(),
     addedBy = authorBy.name,
     isBookmarked = false,
-    source = redditSource(link.href),
+    source = getNewsSource(link.href).sourceName,
     url = link.href
 )
 
-private fun redditSource(link: String): String {
+fun String.toNewsSource(): NewsSource {
+    return when (this) {
+        NewsSource.REDDIT.sourceName -> NewsSource.REDDIT
+        NewsSource.HABR.sourceName -> NewsSource.HABR
+        else -> NewsSource.UNKNOWN
+    }
+}
+
+fun getNewsSource(link: String): NewsSource {
     return when {
-        link.contains("reddit.com") -> "reddit"
-        else -> ""
+        link.contains("reddit.com") -> NewsSource.REDDIT
+        link.contains("habr.com") -> NewsSource.HABR
+        else -> NewsSource.UNKNOWN
     }
 }
 
@@ -95,16 +105,9 @@ private fun Item.mapToUi(defaultImageUrl: String): ItemNewsUi {
         description = parseDescription(),
         addedBy = authorArticle,
         isBookmarked = false,
-        source = habrSource(link),
+        source = getNewsSource(link).sourceName,
         url = link
     )
-}
-
-private fun habrSource(link: String): String {
-    return when {
-        link.contains("habr.com") -> "habr"
-        else -> ""
-    }
 }
 
 fun NewsFeed.mapToNewsUi(): NewsUi {

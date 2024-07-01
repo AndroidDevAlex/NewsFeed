@@ -14,7 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,9 +25,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.newsfeed.R
-import com.example.newsfeed.ui.theme.Orange
+import com.example.newsfeed.ui.theme.Blue
+import com.example.newsfeed.ui.theme.DarkGray
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
+import com.example.newsfeed.util.NewsSource
 import com.example.newsfeed.util.SourceButton
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
@@ -46,20 +48,22 @@ fun FilterScreen(navController: NavController) {
 fun FilterScreenUi(
     clickItem: (String) -> Unit
 ) {
-    val newsList = listOf("reddit", "habr")
+    val newsList = listOf(NewsSource.REDDIT, NewsSource.HABR)
 
     Scaffold(topBar = {
         TopAppBar(
             title = {
                 Text(
                     text = stringResource(id = R.string.app_name),
-                    color = Color.White,
+                    color = Blue,
                     fontSize = Dimens.TopAppBarFontSize,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Left,
                     modifier = Modifier.fillMaxWidth(),
                     fontWeight = FontWeight.Bold
                 )
-            }, colors = TopAppBarDefaults.smallTopAppBarColors(Orange)
+            }, colors = topAppBarColors(
+                DarkGray
+            )
         )
     }) {
 
@@ -72,9 +76,9 @@ fun FilterScreenUi(
             Text(
                 text = Headline.ALL_GROUPS.title,
                 color = Color.Black,
-                fontSize = Dimens.TopAppBarFontSize,
+                fontSize = Dimens.HeadlineSize,
                 modifier = Modifier.padding(Dimens.Padding),
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.ExtraBold
             )
 
             LazyVerticalGrid(
@@ -87,8 +91,9 @@ fun FilterScreenUi(
                     SourceButton(
                         source = source,
                         onClick = {
-                            clickItem(source)
-                        }
+                            clickItem(source.sourceName)
+                        },
+                        modifier = Modifier.padding(Dimens.BetweenButton)
                     )
                 }
             }

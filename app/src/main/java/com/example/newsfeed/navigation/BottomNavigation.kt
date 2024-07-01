@@ -8,7 +8,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.newsfeed.ui.theme.Orange
+import com.example.newsfeed.ui.theme.Blue
+import com.example.newsfeed.ui.theme.DarkGray
 
 @Composable
 fun BottomNavigation(
@@ -21,7 +22,7 @@ fun BottomNavigation(
     )
 
     androidx.compose.material.BottomNavigation(
-        backgroundColor = Color.Gray
+        backgroundColor = DarkGray
     ) {
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = backStackEntry?.destination?.route ?: Screen.Home.route
@@ -29,10 +30,10 @@ fun BottomNavigation(
             BottomNavigationItem(
                 selected = currentRoute == item.screen.route,
                 onClick = {
-                    navController.navigate(item.screen.route){
+                    navController.navigate(item.screen.route) {
                         launchSingleTop = true
                         restoreState = true
-                        popUpTo(navController.graph.startDestinationId){
+                        popUpTo(navController.graph.startDestinationId) {
                             saveState = true
                         }
                     }
@@ -41,9 +42,9 @@ fun BottomNavigation(
                     Icon(
                         painter = painterResource(id = item.iconId),
                         contentDescription = "Icon",
-                        tint = if (currentRoute == item.screen.route) Orange else Color.White
+                        tint = if (currentRoute == item.screen.route) Blue else Color.White
                     )
-                },
+                }
             )
         }
     }

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface BookmarkRepository {
 
-    suspend fun deleteNews(news: ItemNewsUi)
+    suspend fun toggleBookmark(news: ItemNewsUi)
 
-    fun getSavedNewsPagingSource(): Flow<PagingData<ItemNewsUi>>
+    fun getSavedBookmarksNewsPagingSource(): Flow<PagingData<ItemNewsUi>>
 }

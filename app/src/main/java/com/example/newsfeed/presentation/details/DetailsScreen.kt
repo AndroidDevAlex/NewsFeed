@@ -12,7 +12,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -20,12 +26,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.newsfeed.R
 import com.example.newsfeed.presentation.details.state.StateUI
-import com.example.newsfeed.util.AppTopBar
+import com.example.newsfeed.ui.theme.Blue
+import com.example.newsfeed.ui.theme.DarkGray
+import com.example.newsfeed.ui.theme.Purple
 import com.example.newsfeed.util.Dimens
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -45,7 +59,7 @@ fun DetailsScreen(
 
     DetailsScreenUi(
         uiState = state,
-        bookMarkClick = {detailViewModel.toggleBookmark()},
+        bookMarkClick = { detailViewModel.toggleBookmark() },
         onBackPress = { navController.popBackStack() },
         newsUrl = newsUrl,
         context = context,
@@ -53,6 +67,7 @@ fun DetailsScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SetJavaScriptEnabled")
 @Composable
 private fun DetailsScreenUi(
@@ -80,12 +95,45 @@ private fun DetailsScreenUi(
         loadUrl(newsUrl)
     }
     Scaffold(topBar = {
-        AppTopBar(
-            pressBookmark = {
-                bookMarkClick()
+        TopAppBar(
+            title = {
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    color = Blue,
+                    textAlign = TextAlign.Center,
+                    fontSize = Dimens.TopAppBarFontSize,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontWeight = FontWeight.Bold
+                )
             },
-            onBackPress = onBackPress,
-            isBookmarked = isBookmark
+            colors = topAppBarColors(
+                DarkGray
+            ),
+            navigationIcon = {
+                IconButton(
+                    onClick = onBackPress,
+                    modifier = Modifier.padding(start = Dimens.ModifierPadding)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.back),
+                        contentDescription = "Back",
+                        tint = Color.White
+                    )
+                }
+            },
+            actions = {
+                IconButton(
+                    onClick = bookMarkClick,
+                    modifier = Modifier.padding(end = Dimens.ModifierPadding)
+                ) {
+                    val iconTint = if (isBookmark) Purple else Color.White
+                    Icon(
+                        painter = painterResource(id = R.drawable.bookmark),
+                        contentDescription = "Bookmark",
+                        tint = iconTint
+                    )
+                }
+            }
         )
     }) {
         Column(
@@ -93,9 +141,9 @@ private fun DetailsScreenUi(
                 .fillMaxSize()
                 .padding(top = Dimens.BetweenItemsTop)
         ) {
-            Spacer(modifier = Modifier.height(Dimens.BetweenDataHeight))
+            Spacer(modifier = Modifier.height(Dimens.Height))
 
-            when (uiState.stateUI){
+            when (uiState.stateUI) {
                 StateUI.Loading -> {
                     Column {
                         Box(

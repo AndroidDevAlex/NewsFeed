@@ -16,7 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,43 +36,35 @@ import com.example.newsfeed.R
 import com.example.newsfeed.internetConection.NetworkViewModel
 import com.example.newsfeed.navigation.Screen
 import com.example.newsfeed.presentation.NewsItem
-import com.example.newsfeed.presentation.ShowNewsDetailsDialog
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
-import com.example.newsfeed.ui.theme.Orange
+import com.example.newsfeed.ui.theme.Blue
+import com.example.newsfeed.ui.theme.DarkGray
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
+import com.example.newsfeed.util.showNoInternetToast
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import java.net.URLEncoder
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "FlowOperatorInvokedInComposition",
+@SuppressLint(
+    "UnusedMaterial3ScaffoldPaddingParameter",
+    "FlowOperatorInvokedInComposition"
 )
 @Composable
 fun NewsScreen(
     navController: NavController
 ) {
     val newsViewModel = hiltViewModel<NewsViewModel>()
+    val newsPaging = newsViewModel.allNews.collectAsLazyPagingItems()
 
-    val state by newsViewModel.newsListNews.collectAsState()
-    val newsPaging = state.newList.collectAsLazyPagingItems()
+    val isRefresh by newsViewModel.isRefreshing.collectAsState()
 
     val networkViewModel = hiltViewModel<NetworkViewModel>()
     val isConnected by networkViewModel.isConnected.collectAsState()
-
-    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = state.isRefreshing)
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefresh)
 
     val context = LocalContext.current
-
-    ShowNewsDetailsDialog(
-        isDialogVisible = state.isDialogVisible,
-        selectedNews = state.selectedNews,
-        isConnected = isConnected,
-        onDismiss = { newsViewModel.hideDialog() },
-        onConfirm = { encodedUrl ->
-            navController.navigate(Screen.Details.route + "/$encodedUrl")
-        },
-        context = context
-    )
 
     NewsScreenUi(
         onRefresh = {
@@ -82,7 +74,12 @@ fun NewsScreen(
             newsViewModel.pressBookmark(it)
         },
         navigateToDetail = { news ->
-            newsViewModel.showDialog(news)
+            if (isConnected) {
+                val encodedUrl = URLEncoder.encode(news.url, "UTF-8")
+                navController.navigate(Screen.Details.route + "/$encodedUrl")
+            } else {
+                showNoInternetToast(context)
+            }
         },
         swipeRefreshState = swipeRefreshState,
         newsPagingData = newsPaging
@@ -110,16 +107,17 @@ private fun NewsScreenUi(
                     title = {
                         Text(
                             text = stringResource(id = R.string.app_name),
-                            color = Color.White,
+                            color = Blue,
                             fontSize = Dimens.TopAppBarFontSize,
-                            textAlign = TextAlign.Center,
+                            textAlign = TextAlign.Left,
                             modifier = Modifier.fillMaxWidth(),
                             fontWeight = FontWeight.Bold
                         )
-                    }, colors = TopAppBarDefaults.smallTopAppBarColors(Orange)
+                    }, colors = topAppBarColors(
+                        DarkGray
+                    )
                 )
             }) {
-
             Column(
                 Modifier
                     .padding(Dimens.Padding)
@@ -132,8 +130,8 @@ private fun NewsScreenUi(
                 Text(
                     text = Headline.ALL_FEEDS.title,
                     color = Color.Black,
-                    fontSize = Dimens.TopAppBarFontSize,
-                    fontWeight = FontWeight.Bold
+                    fontSize = Dimens.HeadlineSize,
+                    fontWeight = FontWeight.ExtraBold
                 )
 
                 LazyColumn {

@@ -15,13 +15,13 @@ class BookmarkRepositoryImpl @Inject constructor(
     private val dataSource: RoomDataSource
 ) : BookmarkRepository {
 
-    override fun getSavedNewsPagingSource(): Flow<PagingData<ItemNewsUi>> {
+    override fun getSavedBookmarksNewsPagingSource(): Flow<PagingData<ItemNewsUi>> {
         return dataSource.getOllPagingSavedNewsByUser().map { pagingDB ->
             pagingDB.map { it.mapFromDBToUi() }
         }
     }
 
-    override suspend fun deleteNews(news: ItemNewsUi) {
+    override suspend fun toggleBookmark(news: ItemNewsUi) {
         dataSource.updateBookmarkStatus(news)
     }
 }

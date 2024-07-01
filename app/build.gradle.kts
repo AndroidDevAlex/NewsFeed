@@ -69,42 +69,42 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
 
-         //navigation
+    //navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.compose.material:material:1.6.2")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
-       //coroutine
+    //coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-         //Hilt
+    //Hilt
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-compiler:2.48")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-        //room
+    //room
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-common:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
-        //retrofit
+    //retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
-       //viewModel
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    //viewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
-      //Simple XML
-    implementation ("com.squareup.retrofit2:converter-simplexml:2.3.0")
+    //Simple XML
+    implementation("com.squareup.retrofit2:converter-simplexml:2.3.0")
 
-     //Jsoup
+    //Jsoup
     implementation("org.jsoup:jsoup:1.14.3")
 
     //swipe&refresh
@@ -112,6 +112,6 @@ dependencies {
 
     //pagination
     implementation("androidx.paging:paging-compose:3.3.0")
-    implementation ("androidx.paging:paging-runtime:3.3.0")
+    implementation("androidx.paging:paging-runtime:3.3.0")
     implementation("androidx.room:room-paging:2.6.1")
 }
