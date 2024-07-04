@@ -7,7 +7,7 @@ import org.simpleframework.xml.Root
 
 @Root(name = "feed", strict = false)
 @Namespace(reference = "http://www.w3.org/2005/Atom")
-data class NewsFeed(
+data class NewsFeedReddit(
 
     @field:Element(name = "icon")
     @param:Element(name = "icon")

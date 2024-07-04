@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
 
@@ -52,54 +52,52 @@ android {
 }
 
 dependencies {
-
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.2")
+    implementation("androidx.activity:activity-compose:1.9.0")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    //noinspection GradleCompatible
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.2")
 
-    //navigation
+    //Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("androidx.compose.material:material:1.6.2")
+    implementation("androidx.compose.material:material:1.6.8")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
-    //coroutine
+    //Coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     //Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-compiler:2.48")
+    implementation("com.google.dagger:hilt-android:2.49")
+    ksp("com.google.dagger:hilt-compiler:2.49")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    //room
-    kapt("androidx.room:room-compiler:2.6.1")
+    //Room
+    ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-common:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
-    //retrofit
+    //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
-    //viewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    //ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.2")
 
     //Simple XML
     implementation("com.squareup.retrofit2:converter-simplexml:2.3.0")
@@ -107,11 +105,11 @@ dependencies {
     //Jsoup
     implementation("org.jsoup:jsoup:1.14.3")
 
-    //swipe&refresh
+    //Swipe&refresh
     implementation("com.google.accompanist:accompanist-swiperefresh:0.25.1")
 
-    //pagination
+    //Pagination
     implementation("androidx.paging:paging-compose:3.3.0")
-    implementation("androidx.paging:paging-runtime:3.3.0")
+    implementation("androidx.paging:paging-runtime-ktx:3.3.0")
     implementation("androidx.room:room-paging:2.6.1")
 }

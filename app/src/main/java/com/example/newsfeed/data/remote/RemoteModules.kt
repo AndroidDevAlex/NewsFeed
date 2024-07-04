@@ -9,7 +9,11 @@ import com.example.newsfeed.domain.FilterRepository
 import com.example.newsfeed.domain.NewsRepository
 import com.example.newsfeed.data.remote.repository.DetailRepositoryImpl
 import com.example.newsfeed.domain.DetailRepository
-import com.example.newsfeed.domain.useCase.FetchNewsUseCase
+import com.example.newsfeed.domain.useCase.bookmarkCase.BookmarkToggleUseCase
+import com.example.newsfeed.domain.useCase.bookmarkCase.GetBookmarkNewsUseCase
+import com.example.newsfeed.domain.useCase.homeCase.FetchNewsUseCase
+import com.example.newsfeed.domain.useCase.homeCase.GetSavedNewsUseCase
+import com.example.newsfeed.domain.useCase.homeCase.ToggleBookmarkUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -70,5 +74,29 @@ object RemoteModules {
     @Singleton
     fun provideFetchNewsUseCase(newsRepository: NewsRepository): FetchNewsUseCase {
         return FetchNewsUseCase(newsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideToggleBookmarkUseCase(newsRepository: NewsRepository): ToggleBookmarkUseCase {
+        return ToggleBookmarkUseCase(newsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetSavedNewsUseCase(newsRepository: NewsRepository): GetSavedNewsUseCase {
+        return GetSavedNewsUseCase(newsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetBookmarkNewsUseCase(newsRepository: BookmarkRepository): GetBookmarkNewsUseCase {
+        return GetBookmarkNewsUseCase(newsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBookmarkToggleUseCase(newsRepository: BookmarkRepository): BookmarkToggleUseCase {
+        return BookmarkToggleUseCase(newsRepository)
     }
 }

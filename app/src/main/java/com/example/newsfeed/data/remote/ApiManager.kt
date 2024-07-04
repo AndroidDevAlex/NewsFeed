@@ -11,4 +11,8 @@ class ApiManager(
     suspend fun getOllNewsList(): NewsUi {
         return habrServiceApi.getAllHabrNews().mapToNewsUi()
     }
+
+    /* suspend fun getOllRedditNewsList(): NewsUi {
+        return redditServiceApi.getOllRedditNews().mapToNewsUiReddit()
+    }*/
 }

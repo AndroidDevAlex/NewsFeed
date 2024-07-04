@@ -11,6 +11,4 @@ import javax.inject.Named
 class FilterViewModel @Inject constructor(
     private val filterRepository: FilterRepository,
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher
-) : ViewModel() {
-
-}
+) : ViewModel()

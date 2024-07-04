@@ -18,9 +18,9 @@ class NetworkConnectivityObserver @Inject constructor(
     @Named("MainDispatcher") private val mainDispatcher: CoroutineDispatcher
 ) {
 
-    val isConnected = callbackFlow<Boolean> {
+    val isConnected = callbackFlow {
 
-        val connectivityCallback = object: ConnectivityManager.NetworkCallback(){
+        val connectivityCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 trySend(true)
@@ -38,7 +38,7 @@ class NetworkConnectivityObserver @Inject constructor(
             .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
             .build()
 
-        connectivityManager.registerNetworkCallback(request,connectivityCallback)
+        connectivityManager.registerNetworkCallback(request, connectivityCallback)
 
         awaitClose {
             connectivityManager.unregisterNetworkCallback(connectivityCallback)

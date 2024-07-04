@@ -18,7 +18,7 @@ interface NewsDao {
     @Query("SELECT * FROM news WHERE id = :id LIMIT 1")
     suspend fun getNewsById(id: Long): NewsDB?
 
-    @Query("SELECT * FROM news WHERE isBookmarked = 1")
+    @Query("SELECT * FROM news WHERE isBookmarked = 1 ORDER BY timeStamp DESC")
     fun getSavedNewsPaginationByUser(): PagingSource<Int, NewsDB>
 
     @Query("SELECT * FROM news ORDER BY id DESC")

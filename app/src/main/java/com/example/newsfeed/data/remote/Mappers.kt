@@ -4,6 +4,7 @@ import com.example.newsfeed.data.local.NewsDB
 import com.example.newsfeed.data.remote.models.habrModels.Item
 import com.example.newsfeed.data.remote.models.habrModels.NewsFeed
 import com.example.newsfeed.data.remote.models.redditModels.Entry
+import com.example.newsfeed.data.remote.models.redditModels.NewsFeedReddit
 import com.example.newsfeed.presentation.entityUi.NewsUi
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.util.NewsSource
@@ -12,6 +13,14 @@ import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+fun NewsFeedReddit.mapToNewsUiReddit(): NewsUi {
+    val defaultImage = icon
+
+    return NewsUi(
+        defaultImage, entries.map {
+            it.mapToUi(defaultImage)
+        })
+}
 
 private fun Entry.parseDescription(): String {
     content.let {
@@ -23,20 +32,50 @@ private fun Entry.parseDescription(): String {
         }
         return textContent.toString()
     }
-    return ""
 }
 
-private fun Entry.mapToUi() = ItemNewsUi(
-    id = TODO(),
-    image = "",
+private fun Entry.mapToUi(defaultImageUrl: String) = ItemNewsUi(
+    id = id,
+    image = defaultImageUrl,
     title = title,
     publishedAt = published,
     description = parseDescription(),
     addedBy = authorBy.name,
     isBookmarked = false,
     source = getNewsSource(link.href).sourceName,
-    url = link.href
+    url = link.href,
+    timeStamp = 0
 )
+
+fun ItemNewsUi.mapToDBReddit(isBookmarked: Boolean): NewsDB {
+    return NewsDB(
+        id = id,
+        image = image,
+        title = title,
+        publishedAt = publishedAt,
+        description = description,
+        addedBy = addedBy,
+        isBookmarked = isBookmarked,
+        source = source,
+        url = url,
+        timeStamp = 0
+    )
+}
+
+fun NewsDB.mapFromDBToUiReddit(): ItemNewsUi {
+    return ItemNewsUi(
+        id = id,
+        image = image,
+        title = title,
+        publishedAt = publishedAt,
+        description = description,
+        addedBy = addedBy,
+        isBookmarked = isBookmarked,
+        source = source,
+        url = url,
+        timeStamp = 0
+    )
+}
 
 fun String.toNewsSource(): NewsSource {
     return when (this) {
@@ -52,14 +91,6 @@ fun getNewsSource(link: String): NewsSource {
         link.contains("habr.com") -> NewsSource.HABR
         else -> NewsSource.UNKNOWN
     }
-}
-
-fun List<Entry>.mapToUi(): List<ItemNewsUi> {
-    val result = mutableListOf<ItemNewsUi>()
-    this.forEach {
-        result.add(it.mapToUi())
-    }
-    return result
 }
 
 private fun Item.parseTitle(): String {
@@ -106,7 +137,8 @@ private fun Item.mapToUi(defaultImageUrl: String): ItemNewsUi {
         addedBy = authorArticle,
         isBookmarked = false,
         source = getNewsSource(link).sourceName,
-        url = link
+        url = link,
+        timeStamp = 0
     )
 }
 
@@ -115,7 +147,8 @@ fun NewsFeed.mapToNewsUi(): NewsUi {
 
     return NewsUi(
         defaultImage, channel.items.map {
-            it.mapToUi(defaultImage)})
+            it.mapToUi(defaultImage)
+        })
 }
 
 fun ItemNewsUi.mapToDB(isBookmarked: Boolean): NewsDB {
@@ -128,7 +161,8 @@ fun ItemNewsUi.mapToDB(isBookmarked: Boolean): NewsDB {
         addedBy = addedBy,
         isBookmarked = isBookmarked,
         source = source,
-        url = url
+        url = url,
+        timeStamp = System.currentTimeMillis()
     )
 }
 
@@ -142,6 +176,7 @@ fun NewsDB.mapFromDBToUi(): ItemNewsUi {
         addedBy = addedBy,
         isBookmarked = isBookmarked,
         source = source,
-        url = url
+        url = url,
+        timeStamp = timeStamp
     )
 }

@@ -5,7 +5,7 @@ import androidx.paging.PagingData
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import kotlinx.coroutines.flow.Flow
 
-interface NewsRepository{
+interface NewsRepository {
 
     suspend fun fetchAndSaveNews()
 

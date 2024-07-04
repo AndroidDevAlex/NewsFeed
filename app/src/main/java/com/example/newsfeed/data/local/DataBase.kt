@@ -6,19 +6,20 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
-    version = 2,
+    version = 3,
     entities = [
         NewsDB::class
     ]
 )
 
-abstract class DataBase: RoomDatabase() {
+abstract class DataBase : RoomDatabase() {
 
-    object MIGRATION_1_2 : Migration(1, 2) {
+    object MIGRATION_2_3 : Migration(2, 3) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("ALTER TABLE news ADD COLUMN url TEXT")
+            database.execSQL("ALTER TABLE news ADD COLUMN timeStamp INTEGER DEFAULT 0")
+
         }
     }
 
-    abstract fun getNewsDao():NewsDao
+    abstract fun getNewsDao(): NewsDao
 }

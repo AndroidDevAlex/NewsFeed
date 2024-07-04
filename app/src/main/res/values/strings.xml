@@ -12,6 +12,6 @@
     <string name="error_occurred">Error occurred</string>
     <string name="oops">Oops, error occurred</string>
     <string name="load_error">Error during loading</string>
+    <string name="error">An error occurred</string>
     <string name="update_error">Error during updating</string>
-    <string name="open_details">Open Details</string>
 </resources>

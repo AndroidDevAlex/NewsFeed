@@ -20,13 +20,13 @@ object RoomModule {
             context,
             DataBase::class.java,
             "local_database"
-        ).addMigrations(DataBase.MIGRATION_1_2)
+        ).addMigrations(DataBase.MIGRATION_2_3)
             .build()
     }
 
     @Provides
     @Singleton
-    fun getUserDao(database: DataBase): NewsDao{
+    fun getUserDao(database: DataBase): NewsDao {
         return database.getNewsDao()
     }
 }

@@ -6,6 +6,10 @@ import org.simpleframework.xml.Root
 @Root(name = "entry", strict = false)
 data class Entry(
 
+    @field:Element(name = "id")
+    @param:Element(name = "id")
+    val id: Long = 0,
+
     @field:Element(name = "title")
     @param:Element(name = "title")
     val title: String = "",

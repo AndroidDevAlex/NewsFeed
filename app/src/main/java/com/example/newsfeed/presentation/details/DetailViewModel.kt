@@ -17,7 +17,7 @@ import javax.inject.Named
 class DetailViewModel @Inject constructor(
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher,
     private val detailRepository: DetailRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _detailState = MutableStateFlow(DetailState(stateUI = StateUI.Loading))
     val detailState: StateFlow<DetailState> = _detailState

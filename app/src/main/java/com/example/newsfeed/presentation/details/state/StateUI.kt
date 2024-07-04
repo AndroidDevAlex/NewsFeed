@@ -6,4 +6,6 @@ sealed class StateUI {
     data object Loading : StateUI()
 
     data object Success : StateUI()
+
+    data object Error : StateUI()
 }

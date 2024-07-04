@@ -2,8 +2,14 @@ package com.example.newsfeed.presentation.details
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
+import android.util.Log
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -78,7 +84,6 @@ private fun DetailsScreenUi(
     context: Context,
     isBookmark: Boolean
 ) {
-
     val webView = remember { WebView(context) }
     webView.apply {
 
@@ -87,12 +92,34 @@ private fun DetailsScreenUi(
                 uiState.stateUI = StateUI.Success
             }
 
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                uiState.stateUI = StateUI.Error
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Log.e("WebView", "Web page loading error: ${error?.description}")
+                }
+            }
+
+            override fun onReceivedHttpError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                errorResponse: WebResourceResponse?
+            ) {
+                uiState.stateUI = StateUI.Error
+                Log.e("WebView", "HTTP error: ${errorResponse?.statusCode}")
+            }
         }
-        settings.javaScriptEnabled = true
-        settings.loadWithOverviewMode = true
-        settings.useWideViewPort = true
-        settings.setSupportZoom(true)
-        loadUrl(newsUrl)
+        webView.apply {
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            settings.loadWithOverviewMode = true
+            settings.useWideViewPort = true
+            settings.setSupportZoom(true)
+            loadUrl(newsUrl)
+        }
     }
     Scaffold(topBar = {
         TopAppBar(
@@ -158,6 +185,22 @@ private fun DetailsScreenUi(
 
                 StateUI.Success -> {
                     AndroidView(factory = { webView })
+                }
+
+                StateUI.Error -> {
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(Dimens.PaddingProgress),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.error),
+                            color = Color.Red,
+                            fontSize = Dimens.FontSizeBox
+                        )
+                    }
                 }
             }
         }

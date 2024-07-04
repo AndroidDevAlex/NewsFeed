@@ -13,5 +13,6 @@ data class NewsDB(
     val addedBy: String,
     val isBookmarked: Boolean,
     val source: String,
-    val url: String
+    val url: String,
+    val timeStamp: Long
 )

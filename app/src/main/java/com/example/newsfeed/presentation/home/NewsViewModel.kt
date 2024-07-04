@@ -6,8 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.newsfeed.domain.NewsRepository
-import com.example.newsfeed.domain.useCase.FetchNewsUseCase
+import com.example.newsfeed.domain.useCase.homeCase.FetchNewsUseCase
+import com.example.newsfeed.domain.useCase.homeCase.GetSavedNewsUseCase
+import com.example.newsfeed.domain.useCase.homeCase.ToggleBookmarkUseCase
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,9 +22,10 @@ import javax.inject.Named
 
 @HiltViewModel
 class NewsViewModel @Inject constructor(
-    private val newsRepository: NewsRepository,
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher,
-    private val fetchNewsUseCase: FetchNewsUseCase
+    private val fetchNewsUseCase: FetchNewsUseCase,
+    private val getSavedNewsUseCase: GetSavedNewsUseCase,
+    private val toggleBookmarkUseCase: ToggleBookmarkUseCase
 ) : ViewModel() {
 
     private val _allNews = MutableStateFlow<PagingData<ItemNewsUi>>(PagingData.empty())
@@ -50,7 +52,7 @@ class NewsViewModel @Inject constructor(
     private fun getSavedNews() {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
             viewModelScope.launch(ioDispatcher) {
-                newsRepository.getSavedNewsPagingSource().cachedIn(viewModelScope)
+                getSavedNewsUseCase.getNewsPagingSource().cachedIn(this)
                     .collect { pagingNews ->
                         updateNewsList(pagingNews, false)
                     }
@@ -97,7 +99,7 @@ class NewsViewModel @Inject constructor(
     fun pressBookmark(news: ItemNewsUi) {
         viewModelScope.launch(ioDispatcher) {
             val isBookmarked = !news.isBookmarked
-            newsRepository.toggleBookmark(news.copy(isBookmarked = isBookmarked))
+            toggleBookmarkUseCase.toggleBookmark(news.copy(isBookmarked = isBookmarked))
         }
     }
 }
