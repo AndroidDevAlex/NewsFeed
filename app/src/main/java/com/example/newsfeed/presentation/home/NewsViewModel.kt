@@ -51,12 +51,11 @@ class NewsViewModel @Inject constructor(
 
     private fun getSavedNews() {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            viewModelScope.launch(ioDispatcher) {
-                getSavedNewsUseCase.getNewsPagingSource().cachedIn(this)
-                    .collect { pagingNews ->
-                        updateNewsList(pagingNews, false)
-                    }
-            }
+            getSavedNewsUseCase.getNewsPagingSource()
+                .cachedIn(this)
+                .collect { pagingNews ->
+                    updateNewsList(pagingNews, false)
+                }
         }
     }
 
