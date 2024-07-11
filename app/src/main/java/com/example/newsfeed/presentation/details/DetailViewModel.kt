@@ -39,6 +39,18 @@ class DetailViewModel @Inject constructor(
         }
     }
 
+    fun updateScrollPosition(position: Int) {
+        _detailState.value = _detailState.value.copy(
+            scrollPosition = position
+        )
+    }
+
+    fun updateStateUi(stateUI: StateUI) {
+        _detailState.value = _detailState.value.copy(
+            stateUI = stateUI
+        )
+    }
+
     private fun updateDetailNews(news: ItemNewsUi) {
         _detailState.value = _detailState.value.copy(
             currentNews = news,
