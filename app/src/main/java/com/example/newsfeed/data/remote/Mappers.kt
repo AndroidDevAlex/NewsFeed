@@ -44,7 +44,7 @@ private fun Entry.mapToUi(defaultImageUrl: String) = ItemNewsUi(
     isBookmarked = false,
     source = getNewsSource(link.href).sourceName,
     url = link.href,
-    timeStamp = 0
+    timeStamp = 0L
 )
 
 fun ItemNewsUi.mapToDBReddit(isBookmarked: Boolean): NewsDB {
@@ -58,7 +58,7 @@ fun ItemNewsUi.mapToDBReddit(isBookmarked: Boolean): NewsDB {
         isBookmarked = isBookmarked,
         source = source,
         url = url,
-        timeStamp = 0
+        timeStamp = 0L
     )
 }
 
@@ -73,7 +73,7 @@ fun NewsDB.mapFromDBToUiReddit(): ItemNewsUi {
         isBookmarked = isBookmarked,
         source = source,
         url = url,
-        timeStamp = 0
+        timeStamp = 0L
     )
 }
 
@@ -138,7 +138,7 @@ private fun Item.mapToUi(defaultImageUrl: String): ItemNewsUi {
         isBookmarked = false,
         source = getNewsSource(link).sourceName,
         url = link,
-        timeStamp = 0
+        timeStamp = 0L
     )
 }
 
@@ -151,7 +151,7 @@ fun NewsFeed.mapToNewsUi(): NewsUi {
         })
 }
 
-fun ItemNewsUi.mapToDB(isBookmarked: Boolean): NewsDB {
+fun ItemNewsUi.mapToDB(isBookmarked: Boolean, ): NewsDB {
     return NewsDB(
         id = id,
         image = image,
@@ -162,7 +162,9 @@ fun ItemNewsUi.mapToDB(isBookmarked: Boolean): NewsDB {
         isBookmarked = isBookmarked,
         source = source,
         url = url,
-        timeStamp = System.currentTimeMillis()
+        timeStamp = if (isBookmarked) {
+            if (timeStamp == 0L) System.currentTimeMillis() else timeStamp
+        } else 0L
     )
 }
 

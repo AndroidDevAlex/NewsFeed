@@ -30,8 +30,15 @@ class NewsRepositoryImpl @Inject constructor(
         remoteNews.newsList.forEach { news ->
             val existingNews = dataSource.getNewsById(news.id)
             val isBookmarked = existingNews?.isBookmarked ?: false
-            val newsForSave =
-                news.copy(image = news.image ?: defaultImageUrl, isBookmarked = isBookmarked)
+            val timeStamp =
+                if (isBookmarked) existingNews?.timeStamp ?: System.currentTimeMillis() else 0
+
+            val newsForSave = news.copy(
+                image = news.image ?: defaultImageUrl,
+                isBookmarked = isBookmarked,
+                timeStamp = timeStamp
+            )
+
             dataSource.updateBookmarkStatus(newsForSave)
         }
     }

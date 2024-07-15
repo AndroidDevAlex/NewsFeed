@@ -8,5 +8,5 @@ data class DetailState(
     val isBookmarked: Boolean = false,
     var stateUI: StateUI,
     val currentNews: ItemNewsUi? = null,
-    val scrollPosition : Int = 0
+    val scrollPosition: Int = 0
 )
