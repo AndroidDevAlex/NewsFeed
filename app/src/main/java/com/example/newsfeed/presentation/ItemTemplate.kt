@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.example.newsfeed.R
-import com.example.newsfeed.data.remote.toNewsSource
+import com.example.newsfeed.util.toNewsSource
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.SourceButton

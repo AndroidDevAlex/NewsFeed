@@ -1,8 +1,7 @@
 package com.example.newsfeed.data.remote.repository
 
 
-import com.example.newsfeed.data.remote.RoomDataSource
-import com.example.newsfeed.domain.DetailRepository
+import com.example.newsfeed.data.local.RoomDataSource
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import javax.inject.Inject
 

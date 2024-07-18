@@ -1,4 +1,4 @@
-package com.example.newsfeed.data.remote
+package com.example.newsfeed.util
 
 import com.example.newsfeed.data.local.NewsDB
 import com.example.newsfeed.data.remote.models.habrModels.Item
@@ -7,7 +7,6 @@ import com.example.newsfeed.data.remote.models.redditModels.Entry
 import com.example.newsfeed.data.remote.models.redditModels.NewsFeedReddit
 import com.example.newsfeed.presentation.entityUi.NewsUi
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
-import com.example.newsfeed.util.NewsSource
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat

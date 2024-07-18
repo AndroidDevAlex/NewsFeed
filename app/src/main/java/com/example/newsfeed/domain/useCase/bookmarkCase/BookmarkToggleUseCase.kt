@@ -1,6 +1,6 @@
 package com.example.newsfeed.domain.useCase.bookmarkCase
 
-import com.example.newsfeed.domain.BookmarkRepository
+import com.example.newsfeed.data.remote.repository.BookmarkRepository
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import javax.inject.Inject
 

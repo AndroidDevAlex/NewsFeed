@@ -1,14 +1,18 @@
-package com.example.newsfeed.data.remote
+package com.example.newsfeed.modules
 
 import com.example.newsfeed.data.local.NewsDao
+import com.example.newsfeed.data.remote.api.ApiManager
+import com.example.newsfeed.data.remote.api.habrApi.HabrServiceApi
+import com.example.newsfeed.data.remote.api.redditApi.RedditServiceApi
+import com.example.newsfeed.data.local.RoomDataSource
 import com.example.newsfeed.data.remote.repository.BookmarkRepositoryImpl
 import com.example.newsfeed.data.remote.repository.FilterRepositoryImpl
 import com.example.newsfeed.data.remote.repository.NewsRepositoryImpl
-import com.example.newsfeed.domain.BookmarkRepository
-import com.example.newsfeed.domain.FilterRepository
-import com.example.newsfeed.domain.NewsRepository
+import com.example.newsfeed.data.remote.repository.BookmarkRepository
+import com.example.newsfeed.data.remote.repository.FilterRepository
+import com.example.newsfeed.data.remote.repository.NewsRepository
 import com.example.newsfeed.data.remote.repository.DetailRepositoryImpl
-import com.example.newsfeed.domain.DetailRepository
+import com.example.newsfeed.data.remote.repository.DetailRepository
 import com.example.newsfeed.domain.useCase.bookmarkCase.BookmarkToggleUseCase
 import com.example.newsfeed.domain.useCase.bookmarkCase.GetBookmarkNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.FetchNewsUseCase

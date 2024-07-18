@@ -1,15 +1,16 @@
-package com.example.newsfeed.data.remote
+package com.example.newsfeed.data.local
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.example.newsfeed.data.local.NewsDao
+import com.example.newsfeed.util.mapFromDBToUi
+import com.example.newsfeed.util.mapToDB
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 
 class RoomDataSource(
     private val newsDao: NewsDao
 ) {
 
-    fun getOllPagingSavedNews() = Pager(
+    fun getAllPagingSavedNews() = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             initialLoadSize = INITIAL_LOAD_SIZE,
@@ -18,7 +19,7 @@ class RoomDataSource(
         pagingSourceFactory = { newsDao.getAllSavedNews() }
     ).flow
 
-    fun getOllPagingSavedNewsByUser() = Pager(
+    fun getAllPagingSavedNewsByUser() = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             initialLoadSize = INITIAL_LOAD_SIZE,

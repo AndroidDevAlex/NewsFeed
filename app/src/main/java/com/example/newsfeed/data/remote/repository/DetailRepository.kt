@@ -1,4 +1,4 @@
-package com.example.newsfeed.domain
+package com.example.newsfeed.data.remote.repository
 
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 

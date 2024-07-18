@@ -1,7 +1,10 @@
-package com.example.newsfeed.data.remote
+package com.example.newsfeed.data.remote.api
 
 
+import com.example.newsfeed.data.remote.api.habrApi.HabrServiceApi
+import com.example.newsfeed.data.remote.api.redditApi.RedditServiceApi
 import com.example.newsfeed.presentation.entityUi.NewsUi
+import com.example.newsfeed.util.mapToNewsUi
 
 class ApiManager(
     private val habrServiceApi: HabrServiceApi,

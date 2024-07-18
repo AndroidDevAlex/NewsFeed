@@ -40,13 +40,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.newsfeed.R
-import com.example.newsfeed.internetConection.NetworkViewModel
 import com.example.newsfeed.presentation.details.state.StateUI
 import com.example.newsfeed.ui.theme.Blue
 import com.example.newsfeed.ui.theme.Purple
 import com.example.newsfeed.util.Dimens
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SetJavaScriptEnabled")
+@SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun DetailsScreen(
     navController: NavController,
@@ -56,8 +55,7 @@ fun DetailsScreen(
     val detailViewModel = hiltViewModel<DetailViewModel>()
     val state by detailViewModel.detailState.collectAsState()
 
-    val networkViewModel = hiltViewModel<NetworkViewModel>()
-    val isConnected by networkViewModel.isConnected.collectAsState()
+    val isConnected by detailViewModel.isConnected.collectAsState()
 
     val context = LocalContext.current
 

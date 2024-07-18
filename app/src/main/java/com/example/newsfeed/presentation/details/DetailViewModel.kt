@@ -2,9 +2,10 @@ package com.example.newsfeed.presentation.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsfeed.domain.DetailRepository
+import com.example.newsfeed.data.remote.repository.DetailRepository
 import com.example.newsfeed.presentation.details.state.StateUI
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
+import com.example.newsfeed.internetConection.NetworkStateObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,11 +17,14 @@ import javax.inject.Named
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher,
-    private val detailRepository: DetailRepository
+    private val detailRepository: DetailRepository,
+    networkStateObserver: NetworkStateObserver
 ) : ViewModel() {
 
     private val _detailState = MutableStateFlow(DetailState(stateUI = StateUI.Loading))
     val detailState: StateFlow<DetailState> = _detailState
+
+    val isConnected: StateFlow<Boolean> = networkStateObserver.isConnected
 
     fun loadNews(newsUrl: String) {
         viewModelScope.launch(ioDispatcher) {

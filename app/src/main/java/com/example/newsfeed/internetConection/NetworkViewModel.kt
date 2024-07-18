@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NetworkViewModel @Inject constructor(
-    private val networkConnectivityObserver: NetworkConnectivityObserver
+    private val networkConnectivityObserver: NetworkConnectivityObserver,
 ) : ViewModel() {
 
     private val _isConnected = MutableStateFlow(false)

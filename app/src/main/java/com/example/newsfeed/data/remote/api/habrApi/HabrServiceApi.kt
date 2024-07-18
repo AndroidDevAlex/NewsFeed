@@ -1,4 +1,4 @@
-package com.example.newsfeed.data.remote
+package com.example.newsfeed.data.remote.api.habrApi
 
 
 import com.example.newsfeed.data.remote.models.habrModels.NewsFeed

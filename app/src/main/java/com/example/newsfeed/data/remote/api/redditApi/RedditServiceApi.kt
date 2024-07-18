@@ -1,4 +1,4 @@
-package com.example.newsfeed.data.remote
+package com.example.newsfeed.data.remote.api.redditApi
 
 
 import com.example.newsfeed.data.remote.models.redditModels.NewsFeedReddit

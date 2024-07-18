@@ -1,6 +1,5 @@
 package com.example.newsfeed.presentation.filter
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -19,7 +18,6 @@ import com.example.newsfeed.util.NewsSource
 import com.example.newsfeed.util.SourceButton
 import com.example.newsfeed.util.TopBarCustom
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @Composable
 fun FilterScreen(navController: NavController) {
 
@@ -29,7 +27,6 @@ fun FilterScreen(navController: NavController) {
         clickItem = {})
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FilterScreenUi(
     clickItem: (String) -> Unit
