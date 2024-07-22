@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.newsfeed.domain.useCase.homeCase.FetchNewsUseCase
-import com.example.newsfeed.domain.useCase.homeCase.GetSavedNewsUseCase
+import com.example.newsfeed.domain.useCase.homeCase.GetSavedCombineNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.ToggleBookmarkUseCase
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.internetConection.NetworkStateObserver
@@ -24,8 +24,8 @@ import javax.inject.Named
 class NewsViewModel @Inject constructor(
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher,
     private val fetchNewsUseCase: FetchNewsUseCase,
-    private val getSavedNewsUseCase: GetSavedNewsUseCase,
     private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
+    private val getSavedCombineNewsUseCase: GetSavedCombineNewsUseCase,
     networkStateObserver: NetworkStateObserver
 ) : ViewModel() {
 
@@ -51,9 +51,19 @@ class NewsViewModel @Inject constructor(
         refreshNewsFromServer()
     }
 
-    private fun getSavedNews() {
+   /* private fun getSavedNews() {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
             getSavedNewsUseCase.getNewsPagingSource()
+                .cachedIn(this)
+                .collect { pagingNews ->
+                    updateNewsList(pagingNews)
+                }
+        }
+    }*/
+
+    private fun getSavedNews() {
+        viewModelScope.launch(ioDispatcher + exceptionHandler) {
+            getSavedCombineNewsUseCase.getCombinedNewsPagingSource()
                 .cachedIn(this)
                 .collect { pagingNews ->
                     updateNewsList(pagingNews)

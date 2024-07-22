@@ -1,7 +1,7 @@
 package com.example.newsfeed.presentation.entityUi
 
 data class ItemNewsUi(
-    val id: Long,
+    val id: String,
     val image: String?,
     val title: String,
     val publishedAt: String,

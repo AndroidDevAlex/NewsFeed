@@ -7,21 +7,23 @@ import com.example.newsfeed.data.remote.api.redditApi.RedditServiceApi
 import com.example.newsfeed.data.local.RoomDataSource
 import com.example.newsfeed.data.remote.repository.BookmarkRepositoryImpl
 import com.example.newsfeed.data.remote.repository.FilterRepositoryImpl
-import com.example.newsfeed.data.remote.repository.NewsRepositoryImpl
+import com.example.newsfeed.data.remote.repository.HabrNewsRepositoryImpl
 import com.example.newsfeed.data.remote.repository.BookmarkRepository
 import com.example.newsfeed.data.remote.repository.FilterRepository
 import com.example.newsfeed.data.remote.repository.NewsRepository
 import com.example.newsfeed.data.remote.repository.DetailRepositoryImpl
 import com.example.newsfeed.data.remote.repository.DetailRepository
+import com.example.newsfeed.data.remote.repository.RedditNewsRepositoryImpl
 import com.example.newsfeed.domain.useCase.bookmarkCase.BookmarkToggleUseCase
 import com.example.newsfeed.domain.useCase.bookmarkCase.GetBookmarkNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.FetchNewsUseCase
-import com.example.newsfeed.domain.useCase.homeCase.GetSavedNewsUseCase
+import com.example.newsfeed.domain.useCase.homeCase.GetSavedCombineNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.ToggleBookmarkUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -51,11 +53,22 @@ object RemoteModules {
 
     @Provides
     @Singleton
+    @Named("Habr")
     fun provideNewsRepository(
         dataSource: RoomDataSource,
         apiManager: ApiManager
     ): NewsRepository {
-        return NewsRepositoryImpl(dataSource, apiManager)
+        return HabrNewsRepositoryImpl(dataSource, apiManager)
+    }
+
+    @Provides
+    @Singleton
+    @Named("Reddit")
+    fun provideRedditNewsRepository(
+        dataSource: RoomDataSource,
+        apiManager: ApiManager
+    ): NewsRepository {
+        return RedditNewsRepositoryImpl(apiManager, dataSource)
     }
 
     @Provides
@@ -76,20 +89,35 @@ object RemoteModules {
 
     @Provides
     @Singleton
-    fun provideFetchNewsUseCase(newsRepository: NewsRepository): FetchNewsUseCase {
-        return FetchNewsUseCase(newsRepository)
+    fun provideFetchNewsUseCase(
+        @Named("Habr") habrRepository: NewsRepository,
+        @Named("Reddit") redditRepository: NewsRepository
+    ): FetchNewsUseCase {
+        return FetchNewsUseCase(habrRepository, redditRepository)
     }
 
     @Provides
     @Singleton
-    fun provideToggleBookmarkUseCase(newsRepository: NewsRepository): ToggleBookmarkUseCase {
-        return ToggleBookmarkUseCase(newsRepository)
+    fun provideToggleBookmarkUseCase(
+        @Named("Habr") habrRepository: NewsRepository,
+        @Named("Reddit") redditRepository: NewsRepository
+    ): ToggleBookmarkUseCase {
+        return ToggleBookmarkUseCase(habrRepository, redditRepository)
     }
 
-    @Provides
+    /*@Provides
     @Singleton
     fun provideGetSavedNewsUseCase(newsRepository: NewsRepository): GetSavedNewsUseCase {
         return GetSavedNewsUseCase(newsRepository)
+    }*/
+
+    @Provides
+    @Singleton
+    fun provideGetSavedCombineNewsUseCase(
+        @Named("Habr") habrRepository: NewsRepository,
+        @Named("Reddit") redditRepository: NewsRepository
+    ): GetSavedCombineNewsUseCase {
+        return GetSavedCombineNewsUseCase(habrRepository, redditRepository)
     }
 
     @Provides

@@ -8,7 +8,7 @@ data class Entry(
 
     @field:Element(name = "id")
     @param:Element(name = "id")
-    val id: Long = 0,
+    val id: String = "",
 
     @field:Element(name = "title")
     @param:Element(name = "title")

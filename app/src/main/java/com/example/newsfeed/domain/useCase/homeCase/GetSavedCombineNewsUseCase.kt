@@ -8,17 +8,14 @@ import kotlinx.coroutines.flow.merge
 import javax.inject.Inject
 import javax.inject.Named
 
-class FetchNewsUseCase @Inject constructor(
+class GetSavedCombineNewsUseCase @Inject constructor(
     @Named("Habr") private val habrRepository: NewsRepository,
     @Named("Reddit") private val redditRepository: NewsRepository
 ) {
+    fun getCombinedNewsPagingSource(): Flow<PagingData<ItemNewsUi>> {
+        val habrFlow: Flow<PagingData<ItemNewsUi>> = habrRepository.getSavedNewsPagingSource()
+        val redditFlow: Flow<PagingData<ItemNewsUi>> = redditRepository.getSavedNewsPagingSource()
 
-    suspend fun refreshNews(): Flow<PagingData<ItemNewsUi>> {
-        habrRepository.fetchAndSaveNews()
-        redditRepository.fetchAndSaveNews()
-
-        val habrFlow = habrRepository.getSavedNewsPagingSource()
-        val redditFlow = redditRepository.getSavedNewsPagingSource()
         return merge(habrFlow, redditFlow)
     }
 }

@@ -10,15 +10,6 @@ class RoomDataSource(
     private val newsDao: NewsDao
 ) {
 
-    fun getAllPagingSavedNews() = Pager(
-        config = PagingConfig(
-            pageSize = PAGE_SIZE,
-            initialLoadSize = INITIAL_LOAD_SIZE,
-            prefetchDistance = PREFETCH_DISTANCE
-        ),
-        pagingSourceFactory = { newsDao.getAllSavedNews() }
-    ).flow
-
     fun getAllPagingSavedNewsByUser() = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
@@ -28,11 +19,20 @@ class RoomDataSource(
         pagingSourceFactory = { newsDao.getSavedNewsPaginationByUser() }
     ).flow
 
+    fun getAllPagingSavedNewsByUserBySource(source: String) = Pager(
+        config = PagingConfig(
+            pageSize = PAGE_SIZE,
+            initialLoadSize = INITIAL_LOAD_SIZE,
+            prefetchDistance = PREFETCH_DISTANCE
+        ),
+        pagingSourceFactory = { newsDao.getAllSavedNewsBySource(source) }
+    ).flow
+
     suspend fun updateBookmarkStatus(news: ItemNewsUi) {
         newsDao.insertNews(news.mapToDB(news.isBookmarked))
     }
 
-    suspend fun getNewsById(newsId: Long): ItemNewsUi? {
+    suspend fun getNewsById(newsId: String): ItemNewsUi? {
         return newsDao.getNewsById(newsId)?.mapFromDBToUi()
     }
 

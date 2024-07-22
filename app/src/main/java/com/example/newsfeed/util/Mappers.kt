@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 fun NewsFeedReddit.mapToNewsUiReddit(): NewsUi {
-    val defaultImage = icon
+    val defaultImage = icon.removeSuffix("/")
 
     return NewsUi(
         defaultImage, entries.map {
@@ -45,36 +45,6 @@ private fun Entry.mapToUi(defaultImageUrl: String) = ItemNewsUi(
     url = link.href,
     timeStamp = 0L
 )
-
-fun ItemNewsUi.mapToDBReddit(isBookmarked: Boolean): NewsDB {
-    return NewsDB(
-        id = id,
-        image = image,
-        title = title,
-        publishedAt = publishedAt,
-        description = description,
-        addedBy = addedBy,
-        isBookmarked = isBookmarked,
-        source = source,
-        url = url,
-        timeStamp = 0L
-    )
-}
-
-fun NewsDB.mapFromDBToUiReddit(): ItemNewsUi {
-    return ItemNewsUi(
-        id = id,
-        image = image,
-        title = title,
-        publishedAt = publishedAt,
-        description = description,
-        addedBy = addedBy,
-        isBookmarked = isBookmarked,
-        source = source,
-        url = url,
-        timeStamp = 0L
-    )
-}
 
 fun String.toNewsSource(): NewsSource {
     return when (this) {
@@ -128,7 +98,7 @@ private fun Item.mapToUi(defaultImageUrl: String): ItemNewsUi {
             ?: System.currentTimeMillis()
 
     return ItemNewsUi(
-        id = timestamp,
+        id = timestamp.toString(),
         image = parseImage(defaultImageUrl),
         title = parseTitle(),
         publishedAt = pubDate,
@@ -150,7 +120,7 @@ fun NewsFeed.mapToNewsUi(): NewsUi {
         })
 }
 
-fun ItemNewsUi.mapToDB(isBookmarked: Boolean, ): NewsDB {
+fun ItemNewsUi.mapToDB(isBookmarked: Boolean): NewsDB {
     return NewsDB(
         id = id,
         image = image,
