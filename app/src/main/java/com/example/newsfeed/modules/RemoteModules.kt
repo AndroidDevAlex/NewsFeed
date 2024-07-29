@@ -6,13 +6,11 @@ import com.example.newsfeed.data.remote.api.habrApi.HabrServiceApi
 import com.example.newsfeed.data.remote.api.redditApi.RedditServiceApi
 import com.example.newsfeed.data.local.RoomDataSource
 import com.example.newsfeed.data.remote.repository.BookmarkRepositoryImpl
-import com.example.newsfeed.data.remote.repository.FilterRepositoryImpl
-import com.example.newsfeed.data.remote.repository.HabrNewsRepositoryImpl
 import com.example.newsfeed.data.remote.repository.BookmarkRepository
-import com.example.newsfeed.data.remote.repository.FilterRepository
 import com.example.newsfeed.data.remote.repository.NewsRepository
 import com.example.newsfeed.data.remote.repository.DetailRepositoryImpl
 import com.example.newsfeed.data.remote.repository.DetailRepository
+import com.example.newsfeed.data.remote.repository.HabrNewsRepositoryImpl
 import com.example.newsfeed.data.remote.repository.RedditNewsRepositoryImpl
 import com.example.newsfeed.domain.useCase.bookmarkCase.BookmarkToggleUseCase
 import com.example.newsfeed.domain.useCase.bookmarkCase.GetBookmarkNewsUseCase
@@ -54,7 +52,7 @@ object RemoteModules {
     @Provides
     @Singleton
     @Named("Habr")
-    fun provideNewsRepository(
+    fun provideHabrNewsRepository(
         dataSource: RoomDataSource,
         apiManager: ApiManager
     ): NewsRepository {
@@ -83,12 +81,6 @@ object RemoteModules {
 
     @Provides
     @Singleton
-    fun provideFilterRepository(): FilterRepository {
-        return FilterRepositoryImpl()
-    }
-
-    @Provides
-    @Singleton
     fun provideFetchNewsUseCase(
         @Named("Habr") habrRepository: NewsRepository,
         @Named("Reddit") redditRepository: NewsRepository
@@ -104,12 +96,6 @@ object RemoteModules {
     ): ToggleBookmarkUseCase {
         return ToggleBookmarkUseCase(habrRepository, redditRepository)
     }
-
-    /*@Provides
-    @Singleton
-    fun provideGetSavedNewsUseCase(newsRepository: NewsRepository): GetSavedNewsUseCase {
-        return GetSavedNewsUseCase(newsRepository)
-    }*/
 
     @Provides
     @Singleton

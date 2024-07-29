@@ -136,7 +136,7 @@ private fun BookmarkAndSource(
 
         SourceButton(
             source = item.source.toNewsSource(),
-            onClick = {}
+            modifier = Modifier.padding(top = Dimens.PaddingTemplate)
         )
 
         Spacer(modifier = Modifier.height(Dimens.Height))

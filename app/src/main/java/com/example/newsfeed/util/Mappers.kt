@@ -1,5 +1,6 @@
 package com.example.newsfeed.util
 
+import android.os.Build
 import com.example.newsfeed.data.local.NewsDB
 import com.example.newsfeed.data.remote.models.habrModels.Item
 import com.example.newsfeed.data.remote.models.habrModels.NewsFeed
@@ -10,7 +11,9 @@ import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 fun NewsFeedReddit.mapToNewsUiReddit(): NewsUi {
     val defaultImage = icon.removeSuffix("/")
@@ -33,18 +36,22 @@ private fun Entry.parseDescription(): String {
     }
 }
 
-private fun Entry.mapToUi(defaultImageUrl: String) = ItemNewsUi(
-    id = id,
-    image = defaultImageUrl,
-    title = title,
-    publishedAt = published,
-    description = parseDescription(),
-    addedBy = authorBy.name,
-    isBookmarked = false,
-    source = getNewsSource(link.href).sourceName,
-    url = link.href,
-    timeStamp = 0L
-)
+private fun Entry.mapToUi(defaultImageUrl: String): ItemNewsUi {
+    val formattedDate = formatDate(published, NewsSource.REDDIT)
+
+    return ItemNewsUi(
+        id = id,
+        image = defaultImageUrl,
+        title = title,
+        publishedAt = formattedDate,
+        description = parseDescription(),
+        addedBy = authorBy.name,
+        isBookmarked = false,
+        source = getNewsSource(link.href).sourceName,
+        url = link.href,
+        timeStamp = 0L
+    )
+}
 
 fun String.toNewsSource(): NewsSource {
     return when (this) {
@@ -54,7 +61,7 @@ fun String.toNewsSource(): NewsSource {
     }
 }
 
-fun getNewsSource(link: String): NewsSource {
+private fun getNewsSource(link: String): NewsSource {
     return when {
         link.contains("reddit.com") -> NewsSource.REDDIT
         link.contains("habr.com") -> NewsSource.HABR
@@ -92,7 +99,35 @@ private fun Item.parseImage(defaultImageUrl: String): String {
     }
 }
 
+private fun formatDate(dateString: String, source: NewsSource): String {
+    val redditFormat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ENGLISH)
+    } else {
+        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z", Locale.ENGLISH)
+    }
+
+    val habrFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
+
+    val inputFormat: SimpleDateFormat = when (source) {
+        NewsSource.REDDIT -> redditFormat
+        NewsSource.HABR -> habrFormat
+        else -> throw IllegalArgumentException("Unknown news source")
+    }
+
+    inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+    val date: Date = inputFormat.parse(dateString)
+        ?: throw IllegalArgumentException("Cannot parse date: $dateString")
+
+    val outputFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm", Locale.ENGLISH)
+    outputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+    return outputFormat.format(date)
+}
+
 private fun Item.mapToUi(defaultImageUrl: String): ItemNewsUi {
+    val formattedDate = formatDate(pubDate, NewsSource.HABR)
+
     val timestamp =
         SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH).parse(pubDate)?.time
             ?: System.currentTimeMillis()
@@ -101,7 +136,7 @@ private fun Item.mapToUi(defaultImageUrl: String): ItemNewsUi {
         id = timestamp.toString(),
         image = parseImage(defaultImageUrl),
         title = parseTitle(),
-        publishedAt = pubDate,
+        publishedAt = formattedDate,
         description = parseDescription(),
         addedBy = authorArticle,
         isBookmarked = false,

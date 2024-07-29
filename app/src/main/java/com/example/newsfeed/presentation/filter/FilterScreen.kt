@@ -10,8 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
 import com.example.newsfeed.util.NewsSource
@@ -19,17 +17,13 @@ import com.example.newsfeed.util.SourceButton
 import com.example.newsfeed.util.TopBarCustom
 
 @Composable
-fun FilterScreen(navController: NavController) {
+fun FilterScreen() {
 
-    val redditNewsViewModel: FilterViewModel = hiltViewModel()
-
-    FilterScreenUi(
-        clickItem = {})
+    FilterScreenUi()
 }
 
 @Composable
 fun FilterScreenUi(
-    clickItem: (String) -> Unit
 ) {
     val newsList = listOf(NewsSource.REDDIT, NewsSource.HABR)
     TopBarCustom {
@@ -51,9 +45,6 @@ fun FilterScreenUi(
             itemsIndexed(newsList) { _, source ->
                 SourceButton(
                     source = source,
-                    onClick = {
-                        clickItem(source.sourceName)
-                    },
                     modifier = Modifier
                         .padding(start = Dimens.PaddingMod)
                         .padding(end = Dimens.PaddingMod)

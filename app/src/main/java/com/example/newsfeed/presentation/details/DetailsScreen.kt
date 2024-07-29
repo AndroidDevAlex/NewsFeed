@@ -1,6 +1,7 @@
 package com.example.newsfeed.presentation.details
 
 import android.annotation.SuppressLint
+import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -70,6 +71,11 @@ fun DetailsScreen(
             settings.loadWithOverviewMode = true
             settings.useWideViewPort = true
             settings.setSupportZoom(true)
+
+            val cookieManager = CookieManager.getInstance()
+            cookieManager.setAcceptCookie(true)
+            cookieManager.setAcceptThirdPartyCookies(this, true)
+
             loadUrl(newsUrl)
             webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView?, url: String?) {

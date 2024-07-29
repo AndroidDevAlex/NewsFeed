@@ -12,11 +12,11 @@ class ApiManager(
     private val redditServiceApi: RedditServiceApi
 ) {
 
-    suspend fun getOllHabrNewsList(): NewsUi {
+    suspend fun getAllHabrNewsList(): NewsUi {
         return habrServiceApi.getAllHabrNews().mapToNewsUi()
     }
 
-    suspend fun getOllRedditNewsList(): NewsUi {
+    suspend fun getAllRedditNewsList(): NewsUi {
         return redditServiceApi.getOllRedditNews().mapToNewsUiReddit()
     }
 }

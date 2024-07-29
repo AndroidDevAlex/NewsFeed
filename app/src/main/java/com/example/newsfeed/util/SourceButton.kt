@@ -1,43 +1,45 @@
 package com.example.newsfeed.util
 
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import com.example.newsfeed.ui.theme.HabrButton
+import com.example.newsfeed.ui.theme.RedditButton
 
 @Composable
-fun SourceButton(source: NewsSource, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val buttonColors = when (source) {
-        NewsSource.HABR -> ButtonDefaults.buttonColors(
-            backgroundColor = Color.Black,
-            contentColor = Color.Magenta
-        )
-
-        NewsSource.REDDIT -> ButtonDefaults.buttonColors(
-            backgroundColor = Color.Red,
-            contentColor = Color.White
-        )
-
-        else -> ButtonDefaults.buttonColors(
-            backgroundColor = Color.Green,
-            contentColor = Color.DarkGray
-        )
+fun SourceButton(source: NewsSource, modifier: Modifier = Modifier) {
+    val backgroundColor = when (source) {
+        NewsSource.HABR -> HabrButton
+        NewsSource.REDDIT -> RedditButton
+        else -> Color.Green
     }
 
-    Button(
-        onClick = onClick,
-        colors = buttonColors,
+    val contentColor = when (source) {
+        NewsSource.HABR -> Color.Black
+        NewsSource.REDDIT -> Color.White
+        else -> Color.DarkGray
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
+            .background(backgroundColor, shape = RoundedCornerShape(Dimens.CornerRadius))
+            .padding(horizontal = Dimens.PaddingHorizontal, vertical = Dimens.PaddingVertical)
     ) {
         Text(
             text = source.sourceName,
             style = TextStyle(
                 fontSize = Dimens.TextFontSizeSource,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = contentColor
             )
         )
     }

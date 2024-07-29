@@ -51,16 +51,6 @@ class NewsViewModel @Inject constructor(
         refreshNewsFromServer()
     }
 
-   /* private fun getSavedNews() {
-        viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            getSavedNewsUseCase.getNewsPagingSource()
-                .cachedIn(this)
-                .collect { pagingNews ->
-                    updateNewsList(pagingNews)
-                }
-        }
-    }*/
-
     private fun getSavedNews() {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
             getSavedCombineNewsUseCase.getCombinedNewsPagingSource()
@@ -74,6 +64,7 @@ class NewsViewModel @Inject constructor(
     private fun refreshNewsFromServer() {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
             fetchNewsUseCase.refreshNews()
+            getSavedCombineNewsUseCase.getCombinedNewsPagingSource()
                 .cachedIn(this)
                 .collect { pagingData ->
                     updateNewsList(pagingData)
@@ -87,6 +78,7 @@ class NewsViewModel @Inject constructor(
             showProgressBar()
 
             fetchNewsUseCase.refreshNews()
+            getSavedCombineNewsUseCase.getCombinedNewsPagingSource()
                 .cachedIn(this)
                 .collect { updatedNews ->
                     updateNewsList(updatedNews)

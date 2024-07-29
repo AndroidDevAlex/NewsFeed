@@ -27,5 +27,8 @@ object Dimens {
     val PaddingProgress = 30.dp
     val TextFontSize = 13.sp
     val TextFontSizeTitle = 18.sp
-    val TextFontSizeSource = 14.sp
+    val TextFontSizeSource = 15.sp
+    val CornerRadius = 8.dp
+    val PaddingHorizontal = 16.dp
+    val PaddingVertical = 10.dp
 }

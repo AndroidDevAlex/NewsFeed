@@ -19,7 +19,7 @@ fun NavGraph(
             NewsScreen(navHostController)
         }
         composable(Screen.Filter.route) {
-            FilterScreen(navHostController)
+            FilterScreen()
         }
         composable(Screen.Bookmark.route) {
             BookmarkScreen(navHostController)
