@@ -19,13 +19,13 @@ class RoomDataSource(
         pagingSourceFactory = { newsDao.getSavedNewsPaginationByUser() }
     ).flow
 
-    fun getPagingCombinedNewsBySourcesSortedByDate() = Pager(
+    fun getPagingCombinedNewsBySourcesSortedByDate(sources: List<String>) = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             initialLoadSize = INITIAL_LOAD_SIZE,
             prefetchDistance = PREFETCH_DISTANCE
         ),
-        pagingSourceFactory = { newsDao.getCombinedNewsSortedByDate() }
+        pagingSourceFactory = { newsDao.getCombinedNewsSortedByDate(sources) }
     ).flow
 
     suspend fun updateBookmarkStatus(news: ItemNewsUi) {

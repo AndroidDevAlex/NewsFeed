@@ -21,6 +21,6 @@ interface NewsDao {
     @Query("SELECT * FROM news WHERE isBookmarked = 1 ORDER BY timeStamp DESC")
     fun getSavedNewsPaginationByUser(): PagingSource<Int, NewsDB>
 
-    @Query("SELECT * FROM news ORDER BY publishedAt DESC")
-    fun getCombinedNewsSortedByDate(): PagingSource<Int, NewsDB>
+    @Query("SELECT * FROM news WHERE source IN (:sources) ORDER BY publishedAt DESC")
+    fun getCombinedNewsSortedByDate(sources: List<String>): PagingSource<Int, NewsDB>
 }

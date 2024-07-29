@@ -6,6 +6,7 @@ import com.example.newsfeed.data.local.RoomDataSource
 import com.example.newsfeed.data.remote.api.ApiManager
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.presentation.entityUi.NewsUi
+import com.example.newsfeed.util.NewsSource
 import com.example.newsfeed.util.mapFromDBToUi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -38,12 +39,11 @@ abstract class BaseNewsRepository(
         dataSource.updateBookmarkStatus(news)
     }
 
-    override fun getCombinedAndSortedNewsPagingSource(): Flow<PagingData<ItemNewsUi>> {
-        val combinedNewsFlow =
-            dataSource.getPagingCombinedNewsBySourcesSortedByDate()
-                .map { pagingData ->
-                    pagingData.map { it.mapFromDBToUi() }
-                }
-        return combinedNewsFlow
+    override fun getCombinedAndSortedNewsPagingSource(sources: List<NewsSource>): Flow<PagingData<ItemNewsUi>> {
+        val sourceNames = sources.map { it.sourceName }
+        return dataSource.getPagingCombinedNewsBySourcesSortedByDate(sourceNames)
+            .map { pagingData ->
+                pagingData.map { it.mapFromDBToUi() }
+            }
     }
 }
