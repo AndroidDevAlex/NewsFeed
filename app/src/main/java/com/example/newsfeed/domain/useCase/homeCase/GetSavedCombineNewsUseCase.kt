@@ -1,28 +1,25 @@
 package com.example.newsfeed.domain.useCase.homeCase
 
 import androidx.paging.PagingData
-import androidx.paging.map
-import com.example.newsfeed.data.remote.repository.NewsRepository
+import com.example.newsfeed.data.remote.repository.BaseNewsRepository
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.util.NewsSource
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flattenMerge
 import javax.inject.Inject
-import javax.inject.Named
 
 class GetSavedCombineNewsUseCase @Inject constructor(
-    @Named("Habr") private val habrRepository: NewsRepository,
-    @Named("Reddit") private val redditRepository: NewsRepository
+    private val repositories: List<BaseNewsRepository>
 ) {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun getCombinedNewsPagingSource(): Flow<PagingData<ItemNewsUi>> {
         val sources = listOf(NewsSource.HABR, NewsSource.REDDIT)
-        return merge(
-            habrRepository.getCombinedAndSortedNewsPagingSource(sources),
-            redditRepository.getCombinedAndSortedNewsPagingSource(sources)
-        ).map { pagingData ->
-            pagingData.map { it }
-        }
+
+        val listFlows = repositories.map { it.getCombinedAndSortedNewsPagingSource(sources) }
+
+        return listFlows.asFlow().flattenMerge()
     }
 }

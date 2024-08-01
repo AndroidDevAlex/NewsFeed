@@ -71,15 +71,28 @@ fun DetailsScreen(
             settings.loadWithOverviewMode = true
             settings.useWideViewPort = true
             settings.setSupportZoom(true)
+            settings.userAgentString
 
-            val cookieManager = CookieManager.getInstance()
-            cookieManager.setAcceptCookie(true)
-            cookieManager.setAcceptThirdPartyCookies(this, true)
+            clearCache(true)
+
+            configureCookieManager(newsUrl)
 
             loadUrl(newsUrl)
             webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView?, url: String?) {
                     detailViewModel.updateStateUi(StateUI.Success)
+                }
+
+                override fun shouldOverrideUrlLoading(
+                    view: WebView?,
+                    request: WebResourceRequest?
+                ): Boolean {
+                    val url = request?.url.toString()
+
+                    configureCookieManager(url)
+
+                    view?.loadUrl(url)
+                    return true
                 }
 
                 override fun onReceivedHttpError(
@@ -89,6 +102,7 @@ fun DetailsScreen(
                 ) {
                     detailViewModel.updateStateUi(StateUI.Error)
                 }
+
             }
             onScrollChangedListener = { newScrollPosition ->
                 detailViewModel.updateScrollPosition(newScrollPosition)
@@ -209,5 +223,15 @@ private fun DetailsScreenUi(
                 }
             }
         }
+    }
+}
+
+private fun configureCookieManager(url: String) {
+    val cookieManager = CookieManager.getInstance()
+    if (url.contains("https://www.reddit.com")) {
+        cookieManager.setAcceptCookie(true)
+        cookieManager.getCookie(url)
+    } else {
+        cookieManager.setAcceptCookie(false)
     }
 }
