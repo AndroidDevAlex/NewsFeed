@@ -30,14 +30,22 @@ import com.example.newsfeed.R
 import com.example.newsfeed.util.toNewsSource
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.util.Dimens
+import com.example.newsfeed.util.NewsSource
 import com.example.newsfeed.util.SourceButton
 
 @Composable
 fun NewsItem(
     item: ItemNewsUi,
     onItemClick: (ItemNewsUi) -> Unit,
-    bookmarkClick: (ItemNewsUi) -> Unit
+    bookmarkClick: (ItemNewsUi) -> Unit,
+    selectedSources: List<NewsSource>?,
+    isBookmarkScreen: Boolean = false
 ) {
+    val isSelectedSource = if (isBookmarkScreen) {
+        true
+    } else {
+        selectedSources?.contains(item.source.toNewsSource()) == true
+    }
 
     Column(
         modifier = Modifier
@@ -49,7 +57,7 @@ fun NewsItem(
             Box(modifier = Modifier.weight(1f)) {
                 ImageAndContent(item, onItemClick)
             }
-            BookmarkAndSource(item, bookmarkClick)
+            BookmarkAndSource(item, bookmarkClick, isSelectedSource, isBookmarkScreen)
         }
     }
 }
@@ -125,7 +133,9 @@ private fun NewsImage(item: ItemNewsUi) {
 @Composable
 private fun BookmarkAndSource(
     item: ItemNewsUi,
-    onBookmarkClick: (ItemNewsUi) -> Unit
+    onBookmarkClick: (ItemNewsUi) -> Unit,
+    isSelectedSource: Boolean,
+    isBookmarkScreen: Boolean
 ) {
 
     val bookmarkIcon: Painter = painterResource(id = R.drawable.bookmark)
@@ -136,7 +146,10 @@ private fun BookmarkAndSource(
 
         SourceButton(
             source = item.source.toNewsSource(),
-            modifier = Modifier.padding(top = Dimens.PaddingTemplate)
+            onClick = {},
+            modifier = Modifier.padding(top = Dimens.PaddingTemplate),
+            isSelected = isSelectedSource,
+            isBookmarkScreen = isBookmarkScreen
         )
 
         Spacer(modifier = Modifier.height(Dimens.Height))

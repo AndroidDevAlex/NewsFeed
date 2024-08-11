@@ -14,4 +14,5 @@
     <string name="load_error">Error during loading</string>
     <string name="error">An error occurred</string>
     <string name="update_error">Error during updating</string>
+    <string name="no_news_main_screen">No news at the moment, please select Service</string>
 </resources>

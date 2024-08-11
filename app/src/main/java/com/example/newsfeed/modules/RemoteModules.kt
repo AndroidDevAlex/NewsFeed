@@ -15,12 +15,14 @@ import com.example.newsfeed.data.remote.repository.RedditNewsRepositoryImpl
 import com.example.newsfeed.domain.useCase.bookmarkCase.BookmarkToggleUseCase
 import com.example.newsfeed.domain.useCase.bookmarkCase.GetBookmarkNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.FetchNewsUseCase
-import com.example.newsfeed.domain.useCase.homeCase.GetSavedCombineNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.ToggleBookmarkUseCase
+import com.example.newsfeed.data.remote.NewsFilterManager
+import com.example.newsfeed.data.remote.NewsFilterManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -99,17 +101,6 @@ object RemoteModules {
 
     @Provides
     @Singleton
-    fun provideGetSavedCombineNewsUseCase(
-        @Named("Habr") habrRepository: BaseNewsRepository,
-        @Named("Reddit") redditRepository: BaseNewsRepository
-    ): GetSavedCombineNewsUseCase {
-        val repositories = listOf(habrRepository, redditRepository)
-        return GetSavedCombineNewsUseCase(repositories)
-    }
-
-
-    @Provides
-    @Singleton
     fun provideGetBookmarkNewsUseCase(newsRepository: BookmarkRepository): GetBookmarkNewsUseCase {
         return GetBookmarkNewsUseCase(newsRepository)
     }
@@ -118,5 +109,16 @@ object RemoteModules {
     @Singleton
     fun provideBookmarkToggleUseCase(newsRepository: BookmarkRepository): BookmarkToggleUseCase {
         return BookmarkToggleUseCase(newsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNewsFilterManager(
+        @Named("Habr") habrRepository: BaseNewsRepository,
+        @Named("Reddit") redditRepository: BaseNewsRepository,
+        @Named("IODispatcher") ioDispatcher: CoroutineDispatcher
+    ): NewsFilterManager {
+        val repositories = listOf(habrRepository, redditRepository)
+        return NewsFilterManagerImpl(repositories, ioDispatcher)
     }
 }

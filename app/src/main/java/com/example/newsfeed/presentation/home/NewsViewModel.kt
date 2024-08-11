@@ -4,12 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.example.newsfeed.domain.useCase.homeCase.FetchNewsUseCase
-import com.example.newsfeed.domain.useCase.homeCase.GetSavedCombineNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.ToggleBookmarkUseCase
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.internetConection.NetworkStateObserver
+import com.example.newsfeed.data.remote.NewsFilterManager
+import com.example.newsfeed.util.NewsSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -25,12 +25,12 @@ class NewsViewModel @Inject constructor(
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher,
     private val fetchNewsUseCase: FetchNewsUseCase,
     private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
-    private val getSavedCombineNewsUseCase: GetSavedCombineNewsUseCase,
-    networkStateObserver: NetworkStateObserver
+    networkStateObserver: NetworkStateObserver,
+    private val newsFilterManager: NewsFilterManager
 ) : ViewModel() {
 
-    private val _allNews = MutableStateFlow<PagingData<ItemNewsUi>>(PagingData.empty())
-    val allNews: StateFlow<PagingData<ItemNewsUi>> = _allNews
+    val selectedSources: StateFlow<List<NewsSource>> = newsFilterManager.selectedSources
+    val allNews: StateFlow<PagingData<ItemNewsUi>> = newsFilterManager.filteredNews
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
@@ -53,22 +53,14 @@ class NewsViewModel @Inject constructor(
 
     private fun getSavedNews() {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            getSavedCombineNewsUseCase.getCombinedNewsPagingSource()
-                .cachedIn(this)
-                .collect { pagingNews ->
-                    updateNewsList(pagingNews)
-                }
+            newsFilterManager.refreshNewsBySource(selectedSources.value)
         }
     }
 
     private fun refreshNewsFromServer() {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            fetchNewsUseCase.refreshNews()
-            getSavedCombineNewsUseCase.getCombinedNewsPagingSource()
-                .cachedIn(this)
-                .collect { pagingData ->
-                    updateNewsList(pagingData)
-                }
+            fetchNewsUseCase.fetchNews(selectedSources.value)
+            newsFilterManager.refreshNewsBySource(selectedSources.value)
         }
     }
 
@@ -77,12 +69,9 @@ class NewsViewModel @Inject constructor(
 
             showProgressBar()
 
-            fetchNewsUseCase.refreshNews()
-            getSavedCombineNewsUseCase.getCombinedNewsPagingSource()
-                .cachedIn(this)
-                .collect { updatedNews ->
-                    updateNewsList(updatedNews)
-                }
+            fetchNewsUseCase.fetchNews(selectedSources.value)
+            newsFilterManager.refreshNewsBySource(selectedSources.value)
+            hideProgressBar()
         }
     }
 
@@ -90,12 +79,11 @@ class NewsViewModel @Inject constructor(
         _isRefreshing.value = true
     }
 
-    private fun errorHandling() {
+    private fun hideProgressBar() {
         _isRefreshing.value = false
     }
 
-    private fun updateNewsList(newList: PagingData<ItemNewsUi>) {
-        _allNews.value = newList
+    private fun errorHandling() {
         _isRefreshing.value = false
     }
 

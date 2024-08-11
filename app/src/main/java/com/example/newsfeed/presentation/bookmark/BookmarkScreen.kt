@@ -82,7 +82,9 @@ private fun BookmarkScreenUi(
                             NewsItem(
                                 item = news,
                                 onItemClick = { navigateToDetail(it) },
-                                bookmarkClick = { bookMarkClick(it) }
+                                bookmarkClick = { bookMarkClick(it) },
+                                selectedSources = null,
+                                isBookmarkScreen = true
                             )
                         }
                     }

@@ -73,9 +73,9 @@ fun DetailsScreen(
             settings.setSupportZoom(true)
             settings.userAgentString
 
-            clearCache(true)
+          //  clearCache(true)
 
-            configureCookieManager(newsUrl)
+           // configureCookieManager(newsUrl)
 
             loadUrl(newsUrl)
             webViewClient = object : WebViewClient() {
@@ -83,7 +83,7 @@ fun DetailsScreen(
                     detailViewModel.updateStateUi(StateUI.Success)
                 }
 
-                override fun shouldOverrideUrlLoading(
+               /* override fun shouldOverrideUrlLoading(
                     view: WebView?,
                     request: WebResourceRequest?
                 ): Boolean {
@@ -93,7 +93,7 @@ fun DetailsScreen(
 
                     view?.loadUrl(url)
                     return true
-                }
+                }*/
 
                 override fun onReceivedHttpError(
                     view: WebView?,
