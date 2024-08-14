@@ -1,4 +1,4 @@
-package com.example.newsfeed.util
+package com.example.newsfeed.presentation
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -12,6 +12,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.example.newsfeed.ui.theme.HabrButton
 import com.example.newsfeed.ui.theme.RedditButton
+import com.example.newsfeed.util.Dimens
+import com.example.newsfeed.util.NewsSource
 
 @Composable
 fun SourceButton(

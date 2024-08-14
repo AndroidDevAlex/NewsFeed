@@ -31,7 +31,6 @@ import com.example.newsfeed.util.toNewsSource
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.NewsSource
-import com.example.newsfeed.util.SourceButton
 
 @Composable
 fun NewsItem(
@@ -42,7 +41,7 @@ fun NewsItem(
     isBookmarkScreen: Boolean = false
 ) {
     val isSelectedSource = if (isBookmarkScreen) {
-        true
+        false
     } else {
         selectedSources?.contains(item.source.toNewsSource()) == true
     }

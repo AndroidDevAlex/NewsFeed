@@ -19,7 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
 import com.example.newsfeed.util.NewsSource
-import com.example.newsfeed.util.SourceButton
+import com.example.newsfeed.presentation.SourceButton
 import com.example.newsfeed.util.TopBarCustom
 
 @Composable

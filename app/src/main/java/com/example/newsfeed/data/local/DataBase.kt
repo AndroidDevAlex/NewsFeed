@@ -9,7 +9,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     version = 6,
     entities = [
         NewsDB::class
-    ]
+    ],
+    exportSchema = false
 )
 
 abstract class DataBase : RoomDatabase() {

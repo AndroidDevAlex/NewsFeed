@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.example.newsfeed.presentation.NewsSourceManager
+import com.example.newsfeed.domain.useCase.homeCase.GetAllNewsSourcesUseCase
 import com.example.newsfeed.domain.useCase.homeCase.FetchNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.ToggleBookmarkUseCase
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.internetConection.NetworkStateObserver
-import com.example.newsfeed.data.remote.NewsFilterManager
 import com.example.newsfeed.util.NewsSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -25,12 +27,15 @@ class NewsViewModel @Inject constructor(
     @Named("IODispatcher") private val ioDispatcher: CoroutineDispatcher,
     private val fetchNewsUseCase: FetchNewsUseCase,
     private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
+    private val getAllNewsSourcesUseCase: GetAllNewsSourcesUseCase,
     networkStateObserver: NetworkStateObserver,
-    private val newsFilterManager: NewsFilterManager
+    private val newsSourceManager: NewsSourceManager,
 ) : ViewModel() {
 
-    val selectedSources: StateFlow<List<NewsSource>> = newsFilterManager.selectedSources
-    val allNews: StateFlow<PagingData<ItemNewsUi>> = newsFilterManager.filteredNews
+    val selectedSources: StateFlow<List<NewsSource>> = newsSourceManager.selectedSources
+
+    private val _allNews = MutableStateFlow<PagingData<ItemNewsUi>>(PagingData.empty())
+    val allNews: StateFlow<PagingData<ItemNewsUi>> = _allNews
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
@@ -43,24 +48,43 @@ class NewsViewModel @Inject constructor(
     }
 
     init {
-        getAllSavedNews()
+        showNews()
     }
 
-    private fun getAllSavedNews() {
-        getSavedNews()
+    private fun showNews() {
+        loadNewsBySource()
         refreshNewsFromServer()
+
     }
 
-    private fun getSavedNews() {
+    private fun loadNewsBySource() {
+        viewModelScope.launch {
+            newsSourceManager.selectedSources.collect { sources ->
+                getNews(sources)
+            }
+        }
+    }
+
+    private fun getNews(sources: List<NewsSource>) {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            newsFilterManager.refreshNewsBySource(selectedSources.value)
+            getAllNewsSourcesUseCase.getNewsBySelectedSources(sources)
+                .cachedIn(this)
+                .collect { pagingNews ->
+                    updateNewsList(pagingNews)
+                }
         }
     }
 
     private fun refreshNewsFromServer() {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            fetchNewsUseCase.fetchNews(selectedSources.value)
-            newsFilterManager.refreshNewsBySource(selectedSources.value)
+            val sources = newsSourceManager.selectedSources.value
+            fetchNewsUseCase.fetchNews(sources)
+
+            getAllNewsSourcesUseCase.getNewsBySelectedSources(sources)
+                .cachedIn(this)
+                .collect { pagingNews ->
+                    updateNewsList(pagingNews)
+                }
         }
     }
 
@@ -69,18 +93,19 @@ class NewsViewModel @Inject constructor(
 
             showProgressBar()
 
-            fetchNewsUseCase.fetchNews(selectedSources.value)
-            newsFilterManager.refreshNewsBySource(selectedSources.value)
-            hideProgressBar()
+            val sources = newsSourceManager.selectedSources.value
+            fetchNewsUseCase.fetchNews(sources)
+
+            getAllNewsSourcesUseCase.getNewsBySelectedSources(sources)
+                .cachedIn(this)
+                .collect { pagingNews ->
+                    updateNewsList(pagingNews)
+                }
         }
     }
 
     private fun showProgressBar() {
         _isRefreshing.value = true
-    }
-
-    private fun hideProgressBar() {
-        _isRefreshing.value = false
     }
 
     private fun errorHandling() {
@@ -92,5 +117,10 @@ class NewsViewModel @Inject constructor(
             val isBookmarked = !news.isBookmarked
             toggleBookmarkUseCase.toggleBookmark(news.copy(isBookmarked = isBookmarked))
         }
+    }
+
+    private fun updateNewsList(newList: PagingData<ItemNewsUi>) {
+        _allNews.value = newList
+        _isRefreshing.value = false
     }
 }
