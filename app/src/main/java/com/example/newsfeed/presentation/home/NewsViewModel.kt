@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.newsfeed.presentation.NewsSourceManager
 import com.example.newsfeed.domain.useCase.homeCase.GetAllNewsSourcesUseCase
 import com.example.newsfeed.domain.useCase.homeCase.FetchNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.ToggleBookmarkUseCase
@@ -28,11 +27,11 @@ class NewsViewModel @Inject constructor(
     private val fetchNewsUseCase: FetchNewsUseCase,
     private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
     private val getAllNewsSourcesUseCase: GetAllNewsSourcesUseCase,
-    networkStateObserver: NetworkStateObserver,
-    private val newsSourceManager: NewsSourceManager,
+    networkStateObserver: NetworkStateObserver
 ) : ViewModel() {
 
-    val selectedSources: StateFlow<List<NewsSource>> = newsSourceManager.selectedSources
+    private val _selectedSources = MutableStateFlow(listOf(NewsSource.HABR, NewsSource.REDDIT))
+    val selectedSources: StateFlow<List<NewsSource>> = _selectedSources
 
     private val _allNews = MutableStateFlow<PagingData<ItemNewsUi>>(PagingData.empty())
     val allNews: StateFlow<PagingData<ItemNewsUi>> = _allNews
@@ -47,27 +46,18 @@ class NewsViewModel @Inject constructor(
         errorHandling()
     }
 
-    init {
-        showNews()
+    fun showNewsFeedBySelectedSources() {
+        loadAndShowNews()
     }
 
-    private fun showNews() {
-        loadNewsBySource()
+    private fun loadAndShowNews() {
+        getNews()
         refreshNewsFromServer()
-
     }
 
-    private fun loadNewsBySource() {
-        viewModelScope.launch {
-            newsSourceManager.selectedSources.collect { sources ->
-                getNews(sources)
-            }
-        }
-    }
-
-    private fun getNews(sources: List<NewsSource>) {
+    private fun getNews() {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            getAllNewsSourcesUseCase.getNewsBySelectedSources(sources)
+            getAllNewsSourcesUseCase.getAllNewsBySelectedSources()
                 .cachedIn(this)
                 .collect { pagingNews ->
                     updateNewsList(pagingNews)
@@ -77,10 +67,9 @@ class NewsViewModel @Inject constructor(
 
     private fun refreshNewsFromServer() {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            val sources = newsSourceManager.selectedSources.value
-            fetchNewsUseCase.fetchNews(sources)
+            fetchNewsUseCase.fetchNews()
 
-            getAllNewsSourcesUseCase.getNewsBySelectedSources(sources)
+            getAllNewsSourcesUseCase.getAllNewsBySelectedSources()
                 .cachedIn(this)
                 .collect { pagingNews ->
                     updateNewsList(pagingNews)
@@ -93,10 +82,9 @@ class NewsViewModel @Inject constructor(
 
             showProgressBar()
 
-            val sources = newsSourceManager.selectedSources.value
-            fetchNewsUseCase.fetchNews(sources)
+            fetchNewsUseCase.fetchNews()
 
-            getAllNewsSourcesUseCase.getNewsBySelectedSources(sources)
+            getAllNewsSourcesUseCase.getAllNewsBySelectedSources()
                 .cachedIn(this)
                 .collect { pagingNews ->
                     updateNewsList(pagingNews)

@@ -7,9 +7,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {
 
-    suspend fun fetchAndSaveNews(sources: List<NewsSource>)
+    suspend fun fetchAndSaveNews()
 
     suspend fun toggleBookmark(news: ItemNewsUi)
 
-    fun getCombinedAndSortedNewsPagingSource(sources: List<NewsSource>): Flow<PagingData<ItemNewsUi>>
+    fun getCombinedAndSortedNewsPagingSource(): Flow<PagingData<ItemNewsUi>>
+
+    fun updateSources(newsSources: List<NewsSource>)
 }
