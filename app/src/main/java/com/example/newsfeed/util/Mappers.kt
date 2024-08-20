@@ -53,14 +53,6 @@ private fun Entry.mapToUi(defaultImageUrl: String): ItemNewsUi {
     )
 }
 
-fun String.toNewsSource(): NewsSource {
-    return when (this) {
-        NewsSource.REDDIT.sourceName -> NewsSource.REDDIT
-        NewsSource.HABR.sourceName -> NewsSource.HABR
-        else -> NewsSource.UNKNOWN
-    }
-}
-
 private fun getNewsSource(link: String): NewsSource {
     return when {
         link.contains("reddit.com") -> NewsSource.REDDIT

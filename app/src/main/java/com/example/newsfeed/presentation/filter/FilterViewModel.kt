@@ -3,7 +3,7 @@ package com.example.newsfeed.presentation.filter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsfeed.domain.useCase.filterCase.UpdateSelectedSourcesUseCase
-import com.example.newsfeed.util.NewsSource
+import com.example.newsfeed.util.ConstantsSourceNames
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,24 +15,20 @@ class FilterViewModel @Inject constructor(
     private val updateSelectedSourcesUseCase: UpdateSelectedSourcesUseCase
 ) : ViewModel() {
 
-    private val _selectedSources = MutableStateFlow<List<NewsSource>>(emptyList())
-    val selectedSources: StateFlow<List<NewsSource>> = _selectedSources
+    private val _selectedSources = MutableStateFlow<List<String>>(emptyList())
+    val selectedSources: StateFlow<List<String>> = _selectedSources
 
     init {
-        _selectedSources.value = initialSources()
+        _selectedSources.value = listOf(ConstantsSourceNames.HABR, ConstantsSourceNames.REDDIT)
     }
 
-    private fun initialSources(): List<NewsSource> {
-        return listOf(NewsSource.HABR, NewsSource.REDDIT)
-    }
-
-    fun toggleSource(source: NewsSource) {
+    fun toggleSource(sourceName: String) {
         viewModelScope.launch {
             val currentSources = _selectedSources.value.toMutableList()
-            if (currentSources.contains(source)) {
-                currentSources.remove(source)
+            if (currentSources.contains(sourceName)) {
+                currentSources.remove(sourceName)
             } else {
-                currentSources.add(source)
+                currentSources.add(sourceName)
             }
             _selectedSources.value = currentSources
             updateSelectedSourcesUseCase.updateNewsSource(currentSources)

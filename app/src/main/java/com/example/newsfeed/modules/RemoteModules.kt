@@ -9,14 +9,14 @@ import com.example.newsfeed.data.remote.repository.BookmarkRepositoryImpl
 import com.example.newsfeed.data.remote.repository.BookmarkRepository
 import com.example.newsfeed.data.remote.repository.DetailRepositoryImpl
 import com.example.newsfeed.data.remote.repository.DetailRepository
-import com.example.newsfeed.data.remote.repository.HabrRepository
+import com.example.newsfeed.data.remote.repository.HabrSource
 import com.example.newsfeed.domain.useCase.bookmarkCase.BookmarkToggleUseCase
 import com.example.newsfeed.domain.useCase.bookmarkCase.GetBookmarkNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.FetchNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.ToggleBookmarkUseCase
 import com.example.newsfeed.data.remote.repository.NewsRepository
 import com.example.newsfeed.data.remote.repository.NewsRepositoryImpl
-import com.example.newsfeed.data.remote.repository.RedditRepository
+import com.example.newsfeed.data.remote.repository.RedditSource
 import com.example.newsfeed.domain.useCase.homeCase.GetAllNewsSourcesUseCase
 import com.example.newsfeed.domain.useCase.filterCase.UpdateSelectedSourcesUseCase
 import dagger.Module
@@ -64,10 +64,10 @@ object RemoteModules {
     @Singleton
     fun provideNewsRepository(
         dataSource: RoomDataSource,
-        habrRepository: HabrRepository,
-        redditRepository: RedditRepository
+        habrSource: HabrSource,
+        redditSource: RedditSource
     ): NewsRepository {
-        val listSources = listOf(habrRepository, redditRepository)
+        val listSources = listOf(habrSource, redditSource)
         return NewsRepositoryImpl(dataSource, listSources)
     }
 

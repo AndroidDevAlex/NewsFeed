@@ -4,7 +4,7 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import com.example.newsfeed.data.local.RoomDataSource
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
-import com.example.newsfeed.util.NewsSource
+import com.example.newsfeed.util.ConstantsSourceNames
 import com.example.newsfeed.util.mapFromDBToUi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -12,14 +12,13 @@ import javax.inject.Inject
 
 class NewsRepositoryImpl @Inject constructor(
     private val dataSource: RoomDataSource,
-    private val sources: List<Sources>
+    private val availableSources: List<Source>
 ) : NewsRepository {
 
-    private var selectedSources: List<Sources> = sources
+    private var selectedSources: List<Source> = availableSources
 
-    override fun updateSources(newsSources: List<NewsSource>) {
-        selectedSources =
-            this.sources.filter { it.getSourceName() in newsSources.map { source -> source.sourceName } }
+    override fun updateSources(newsSources: List<String>) {
+        selectedSources = this.availableSources.filter { it.getSourceName() in newsSources }
     }
 
     override fun getCombinedAndSortedNewsPagingSource(): Flow<PagingData<ItemNewsUi>> {
@@ -41,7 +40,7 @@ class NewsRepositoryImpl @Inject constructor(
                     if (isBookmarked) existingNews?.timeStamp ?: System.currentTimeMillis() else 0
 
                 val newsForSave = news.copy(
-                    image = if (source.getSourceName() == NewsSource.HABR.sourceName) news.image
+                    image = if (source.getSourceName() == ConstantsSourceNames.HABR) news.image
                         ?: remoteNews.defaultImage else news.image,
                     isBookmarked = isBookmarked,
                     timeStamp = timeStamp

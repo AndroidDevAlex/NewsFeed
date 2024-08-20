@@ -27,23 +27,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.example.newsfeed.R
-import com.example.newsfeed.util.toNewsSource
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.util.Dimens
-import com.example.newsfeed.util.NewsSource
 
 @Composable
 fun NewsItem(
     item: ItemNewsUi,
     onItemClick: (ItemNewsUi) -> Unit,
     bookmarkClick: (ItemNewsUi) -> Unit,
-    selectedSources: List<NewsSource>?,
+    selectedSources: List<String>?,
     isBookmarkScreen: Boolean = false
 ) {
     val isSelectedSource = if (isBookmarkScreen) {
         false
     } else {
-        selectedSources?.contains(item.source.toNewsSource()) == true
+        selectedSources?.contains(item.source) == true
     }
 
     Column(
@@ -144,7 +142,7 @@ private fun BookmarkAndSource(
     Column(horizontalAlignment = Alignment.End) {
 
         SourceButton(
-            source = item.source.toNewsSource(),
+            source = item.source,
             onClick = {},
             modifier = Modifier.padding(top = Dimens.PaddingTemplate),
             isSelected = isSelectedSource,

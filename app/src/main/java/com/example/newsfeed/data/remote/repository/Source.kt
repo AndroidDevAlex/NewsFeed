@@ -2,7 +2,7 @@ package com.example.newsfeed.data.remote.repository
 
 import com.example.newsfeed.presentation.entityUi.NewsUi
 
-interface Sources {
+interface Source {
 
     suspend fun fetchNews(): NewsUi
 

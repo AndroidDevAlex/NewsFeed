@@ -2,12 +2,12 @@ package com.example.newsfeed.data.remote.repository
 
 import com.example.newsfeed.data.remote.api.ApiManager
 import com.example.newsfeed.presentation.entityUi.NewsUi
-import com.example.newsfeed.util.NewsSource
+import com.example.newsfeed.util.ConstantsSourceNames
 import javax.inject.Inject
 
-class HabrRepository @Inject constructor(
+class HabrSource @Inject constructor(
     private val apiManager: ApiManager
-) : Sources {
+) : Source {
 
     override suspend fun fetchNews(): NewsUi {
         return apiManager.getAllHabrNewsList().apply {
@@ -21,6 +21,6 @@ class HabrRepository @Inject constructor(
     }
 
     override fun getSourceName(): String {
-        return NewsSource.HABR.sourceName
+        return ConstantsSourceNames.HABR
     }
 }

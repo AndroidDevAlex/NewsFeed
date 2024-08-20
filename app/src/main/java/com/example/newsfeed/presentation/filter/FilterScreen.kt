@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
-import com.example.newsfeed.util.NewsSource
 import com.example.newsfeed.presentation.SourceButton
+import com.example.newsfeed.util.ConstantsSourceNames
 import com.example.newsfeed.util.TopBarCustom
 
 @Composable
@@ -38,10 +38,10 @@ fun FilterScreen() {
 
 @Composable
 fun FilterScreenUi(
-    selectedSources: List<NewsSource>,
-    pressSource: (NewsSource) -> Unit
+    selectedSources: List<String>,
+    pressSource: (String) -> Unit
 ) {
-    val newsList = listOf(NewsSource.REDDIT, NewsSource.HABR)
+    val newsList = listOf(ConstantsSourceNames.HABR, ConstantsSourceNames.REDDIT)
     TopBarCustom {
 
         Text(

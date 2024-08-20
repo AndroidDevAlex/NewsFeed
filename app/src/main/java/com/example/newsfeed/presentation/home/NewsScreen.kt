@@ -25,7 +25,6 @@ import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.util.TopBarCustom
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
-import com.example.newsfeed.util.NewsSource
 import com.example.newsfeed.util.navigateAndCheckIsConnected
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
@@ -69,7 +68,7 @@ fun NewsScreen(
 
 @Composable
 private fun NewsScreenUi(
-    selectedSources: List<NewsSource>,
+    selectedSources: List<String>,
     onRefresh: () -> Unit,
     bookMarkClick: (ItemNewsUi) -> Unit,
     navigateToDetail: (ItemNewsUi) -> Unit,

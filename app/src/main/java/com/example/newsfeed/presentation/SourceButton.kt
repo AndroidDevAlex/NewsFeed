@@ -12,12 +12,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.example.newsfeed.ui.theme.HabrButton
 import com.example.newsfeed.ui.theme.RedditButton
+import com.example.newsfeed.util.ConstantsSourceNames
 import com.example.newsfeed.util.Dimens
-import com.example.newsfeed.util.NewsSource
 
 @Composable
 fun SourceButton(
-    source: NewsSource,
+    source: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isBookmarkScreen: Boolean,
@@ -30,7 +30,7 @@ fun SourceButton(
         modifier = modifier
     ) {
         Text(
-            text = source.sourceName,
+            text = source,
             style = TextStyle(
                 fontSize = Dimens.TextFontSizeSource,
                 fontWeight = FontWeight.Bold
@@ -42,7 +42,7 @@ fun SourceButton(
 @Composable
 fun sourceButtonColors(
     isSelected: Boolean,
-    source: NewsSource,
+    source: String,
     isBookmarkScreen: Boolean
 ): ButtonColors {
     return if (isBookmarkScreen) {
@@ -60,14 +60,14 @@ fun sourceButtonColors(
 }
 
 @Composable
-fun getButtonColorsBySource(source: NewsSource): ButtonColors {
+fun getButtonColorsBySource(source: String): ButtonColors {
     return when (source) {
-        NewsSource.HABR -> ButtonDefaults.buttonColors(
+        ConstantsSourceNames.HABR -> ButtonDefaults.buttonColors(
             backgroundColor = HabrButton,
             contentColor = Color.Black
         )
 
-        NewsSource.REDDIT -> ButtonDefaults.buttonColors(
+        ConstantsSourceNames.REDDIT -> ButtonDefaults.buttonColors(
             backgroundColor = RedditButton,
             contentColor = Color.White
         )
