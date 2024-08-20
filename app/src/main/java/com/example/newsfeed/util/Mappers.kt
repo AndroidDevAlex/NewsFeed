@@ -15,6 +15,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
+
 fun NewsFeedReddit.mapToNewsUiReddit(): NewsUi {
     val defaultImage = icon.removeSuffix("/")
 
@@ -37,7 +38,7 @@ private fun Entry.parseDescription(): String {
 }
 
 private fun Entry.mapToUi(defaultImageUrl: String): ItemNewsUi {
-    val formattedDate = formatDate(published, NewsSource.REDDIT)
+    val formattedDate = formatDate(published, ConstantsSourceNames.REDDIT)
 
     return ItemNewsUi(
         id = id,
@@ -47,17 +48,17 @@ private fun Entry.mapToUi(defaultImageUrl: String): ItemNewsUi {
         description = parseDescription(),
         addedBy = authorBy.name,
         isBookmarked = false,
-        source = getNewsSource(link.href).sourceName,
+        source = getNewsSource(link.href),
         url = link.href,
         timeStamp = 0L
     )
 }
 
-private fun getNewsSource(link: String): NewsSource {
+private fun getNewsSource(link: String): String {
     return when {
-        link.contains("reddit.com") -> NewsSource.REDDIT
-        link.contains("habr.com") -> NewsSource.HABR
-        else -> NewsSource.UNKNOWN
+        link.contains("reddit.com") -> ConstantsSourceNames.REDDIT
+        link.contains("habr.com") -> ConstantsSourceNames.HABR
+        else -> "unknown"
     }
 }
 
@@ -91,7 +92,7 @@ private fun Item.parseImage(defaultImageUrl: String): String {
     }
 }
 
-private fun formatDate(dateString: String, source: NewsSource): String {
+private fun formatDate(dateString: String, source: String): String {
     val redditFormat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ENGLISH)
     } else {
@@ -101,8 +102,8 @@ private fun formatDate(dateString: String, source: NewsSource): String {
     val habrFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
 
     val inputFormat: SimpleDateFormat = when (source) {
-        NewsSource.REDDIT -> redditFormat
-        NewsSource.HABR -> habrFormat
+        ConstantsSourceNames.REDDIT -> redditFormat
+        ConstantsSourceNames.HABR -> habrFormat
         else -> throw IllegalArgumentException("Unknown news source")
     }
 
@@ -118,7 +119,7 @@ private fun formatDate(dateString: String, source: NewsSource): String {
 }
 
 private fun Item.mapToUi(defaultImageUrl: String): ItemNewsUi {
-    val formattedDate = formatDate(pubDate, NewsSource.HABR)
+    val formattedDate = formatDate(pubDate, ConstantsSourceNames.HABR)
 
     val timestamp =
         SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH).parse(pubDate)?.time
@@ -132,7 +133,7 @@ private fun Item.mapToUi(defaultImageUrl: String): ItemNewsUi {
         description = parseDescription(),
         addedBy = authorArticle,
         isBookmarked = false,
-        source = getNewsSource(link).sourceName,
+        source = getNewsSource(link),
         url = link,
         timeStamp = 0L
     )

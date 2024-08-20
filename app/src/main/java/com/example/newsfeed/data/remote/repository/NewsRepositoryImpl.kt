@@ -17,8 +17,19 @@ class NewsRepositoryImpl @Inject constructor(
 
     private var selectedSources: List<Source> = availableSources
 
+    private fun getNewsSourceByName(sourceName: String): NewsSource {
+        return when (sourceName) {
+            "reddit" -> NewsSource.REDDIT
+            "habr" -> NewsSource.HABR
+            else -> NewsSource.UNKNOWN
+        }
+    }
+
     override fun updateSources(newsSources: List<String>) {
-        selectedSources = this.availableSources.filter { it.getSourceName() in newsSources }
+        val newsSourcesEnum = newsSources.map { getNewsSourceByName(it) }
+        selectedSources = this.availableSources.filter { source ->
+            newsSourcesEnum.any { it.sourceName == source.getSourceName() }
+        }
     }
 
     override fun getCombinedAndSortedNewsPagingSource(): Flow<PagingData<ItemNewsUi>> {
@@ -52,5 +63,11 @@ class NewsRepositoryImpl @Inject constructor(
 
     override suspend fun toggleBookmark(news: ItemNewsUi) {
         dataSource.updateBookmarkStatus(news)
+    }
+
+    private enum class NewsSource(val sourceName: String) {
+        REDDIT("reddit"),
+        HABR("habr"),
+        UNKNOWN("unknown")
     }
 }
