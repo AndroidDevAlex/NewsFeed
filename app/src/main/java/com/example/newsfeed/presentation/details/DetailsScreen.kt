@@ -1,7 +1,6 @@
 package com.example.newsfeed.presentation.details
 
 import android.annotation.SuppressLint
-import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -73,27 +72,11 @@ fun DetailsScreen(
             settings.setSupportZoom(true)
             settings.userAgentString
 
-          //  clearCache(true)
-
-           // configureCookieManager(newsUrl)
-
             loadUrl(newsUrl)
             webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView?, url: String?) {
                     detailViewModel.updateStateUi(StateUI.Success)
                 }
-
-               /* override fun shouldOverrideUrlLoading(
-                    view: WebView?,
-                    request: WebResourceRequest?
-                ): Boolean {
-                    val url = request?.url.toString()
-
-                    configureCookieManager(url)
-
-                    view?.loadUrl(url)
-                    return true
-                }*/
 
                 override fun onReceivedHttpError(
                     view: WebView?,
@@ -223,15 +206,5 @@ private fun DetailsScreenUi(
                 }
             }
         }
-    }
-}
-
-private fun configureCookieManager(url: String) {
-    val cookieManager = CookieManager.getInstance()
-    if (url.contains("https://www.reddit.com")) {
-        cookieManager.setAcceptCookie(true)
-        cookieManager.getCookie(url)
-    } else {
-        cookieManager.setAcceptCookie(false)
     }
 }

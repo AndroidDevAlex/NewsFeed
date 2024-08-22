@@ -42,8 +42,6 @@ fun NewsScreen(
     val isConnected by newsViewModel.isConnected.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefresh)
 
-    val selectedSources by newsViewModel.selectedSources.collectAsState()
-
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -61,20 +59,20 @@ fun NewsScreen(
             navigateAndCheckIsConnected(navController, news, isConnected, context)
         },
         swipeRefreshState = swipeRefreshState,
-        newsPagingData = newsPaging,
-        selectedSources = selectedSources
+        newsPagingData = newsPaging
     )
 }
 
 @Composable
 private fun NewsScreenUi(
-    selectedSources: List<String>,
     onRefresh: () -> Unit,
     bookMarkClick: (ItemNewsUi) -> Unit,
     navigateToDetail: (ItemNewsUi) -> Unit,
     swipeRefreshState: SwipeRefreshState,
     newsPagingData: LazyPagingItems<ItemNewsUi>
 ) {
+
+    val selectedSources = listOf(HomeSourceNames.HABR_SOURCE, HomeSourceNames.REDDIT_SOURCE)
 
     SwipeRefresh(
         state = swipeRefreshState,
@@ -121,4 +119,9 @@ private fun NewsScreenUi(
             }
         }
     }
+}
+
+private object HomeSourceNames {
+    const val REDDIT_SOURCE = "reddit"
+    const val HABR_SOURCE = "habr"
 }

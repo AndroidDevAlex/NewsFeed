@@ -1,9 +1,6 @@
 package com.example.newsfeed.modules
 
 import com.example.newsfeed.data.local.NewsDao
-import com.example.newsfeed.data.remote.api.ApiManager
-import com.example.newsfeed.data.remote.api.habrApi.HabrServiceApi
-import com.example.newsfeed.data.remote.api.redditApi.RedditServiceApi
 import com.example.newsfeed.data.local.RoomDataSource
 import com.example.newsfeed.data.remote.repository.BookmarkRepositoryImpl
 import com.example.newsfeed.data.remote.repository.BookmarkRepository
@@ -17,6 +14,7 @@ import com.example.newsfeed.domain.useCase.homeCase.ToggleBookmarkUseCase
 import com.example.newsfeed.data.remote.repository.NewsRepository
 import com.example.newsfeed.data.remote.repository.NewsRepositoryImpl
 import com.example.newsfeed.data.remote.repository.RedditSource
+import com.example.newsfeed.domain.useCase.filterCase.GetAvailableSourcesUseCase
 import com.example.newsfeed.domain.useCase.homeCase.GetAllNewsSourcesUseCase
 import com.example.newsfeed.domain.useCase.filterCase.UpdateSelectedSourcesUseCase
 import dagger.Module
@@ -39,15 +37,6 @@ object RemoteModules {
     @Singleton
     fun provideRoomDataSource(newsDao: NewsDao): RoomDataSource {
         return RoomDataSource(newsDao)
-    }
-
-    @Provides
-    @Singleton
-    fun provideApiManager(
-        habrServiceApi: HabrServiceApi,
-        redditServiceApi: RedditServiceApi
-    ): ApiManager {
-        return ApiManager(habrServiceApi, redditServiceApi)
     }
 
     @Provides
@@ -85,6 +74,14 @@ object RemoteModules {
         newsRepository: NewsRepository
     ): UpdateSelectedSourcesUseCase {
         return UpdateSelectedSourcesUseCase(newsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetAvailableSourcesUseCase(
+        newsRepository: NewsRepository
+    ): GetAvailableSourcesUseCase {
+        return GetAvailableSourcesUseCase(newsRepository)
     }
 
     @Provides

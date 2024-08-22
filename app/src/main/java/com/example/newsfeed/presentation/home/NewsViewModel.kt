@@ -10,7 +10,6 @@ import com.example.newsfeed.domain.useCase.homeCase.FetchNewsUseCase
 import com.example.newsfeed.domain.useCase.homeCase.ToggleBookmarkUseCase
 import com.example.newsfeed.presentation.entityUi.ItemNewsUi
 import com.example.newsfeed.internetConection.NetworkStateObserver
-import com.example.newsfeed.util.ConstantsSourceNames
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -29,9 +28,6 @@ class NewsViewModel @Inject constructor(
     private val getAllNewsSourcesUseCase: GetAllNewsSourcesUseCase,
     networkStateObserver: NetworkStateObserver
 ) : ViewModel() {
-
-    private val _selectedSources = MutableStateFlow(listOf(ConstantsSourceNames.HABR, ConstantsSourceNames.REDDIT))
-    val selectedSources: StateFlow<List<String>> = _selectedSources
 
     private val _allNews = MutableStateFlow<PagingData<ItemNewsUi>>(PagingData.empty())
     val allNews: StateFlow<PagingData<ItemNewsUi>> = _allNews

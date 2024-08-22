@@ -19,7 +19,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
 import com.example.newsfeed.presentation.SourceButton
-import com.example.newsfeed.util.ConstantsSourceNames
 import com.example.newsfeed.util.TopBarCustom
 
 @Composable
@@ -41,7 +40,9 @@ fun FilterScreenUi(
     selectedSources: List<String>,
     pressSource: (String) -> Unit
 ) {
-    val newsList = listOf(ConstantsSourceNames.HABR, ConstantsSourceNames.REDDIT)
+
+    val newsSourcesList = listOf(FilterSourceNames.HABR_SOURCE, FilterSourceNames.REDDIT_SOURCE)
+
     TopBarCustom {
 
         Text(
@@ -60,7 +61,7 @@ fun FilterScreenUi(
             horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingHorizontal),
             verticalArrangement = Arrangement.spacedBy(Dimens.PaddingVertical)
         ) {
-            itemsIndexed(newsList) { _, source ->
+            itemsIndexed(newsSourcesList) { _, source ->
                 val isSelected = selectedSources.contains(source)
 
                 SourceButton(
@@ -78,4 +79,9 @@ fun FilterScreenUi(
             }
         }
     }
+}
+
+private object FilterSourceNames {
+    const val REDDIT_SOURCE = "reddit"
+    const val HABR_SOURCE = "habr"
 }

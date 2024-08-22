@@ -1,6 +1,7 @@
 package com.example.newsfeed.modules
 
 
+import com.example.newsfeed.data.remote.api.ApiManager
 import com.example.newsfeed.data.remote.api.habrApi.HabrServiceApi
 import com.example.newsfeed.data.remote.api.redditApi.RedditServiceApi
 import com.example.newsfeed.util.ConstantsUrl
@@ -50,5 +51,14 @@ object NetworkModules {
     @Singleton
     fun provideHabrApiInstance(@Named("habr") retrofit: Retrofit): HabrServiceApi {
         return retrofit.create(HabrServiceApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiManager(
+        habrServiceApi: HabrServiceApi,
+        redditServiceApi: RedditServiceApi
+    ): ApiManager {
+        return ApiManager(habrServiceApi, redditServiceApi)
     }
 }

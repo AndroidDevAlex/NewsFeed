@@ -13,4 +13,6 @@ interface NewsRepository {
     fun getCombinedAndSortedNewsPagingSource(): Flow<PagingData<ItemNewsUi>>
 
     fun updateSources(newsSources: List<String>)
+
+    fun getSourcesNames(): List<String>
 }

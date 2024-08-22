@@ -179,3 +179,8 @@ fun NewsDB.mapFromDBToUi(): ItemNewsUi {
         timeStamp = timeStamp
     )
 }
+
+private object ConstantsSourceNames {
+    const val REDDIT = "reddit"
+    const val HABR = "habr"
+}

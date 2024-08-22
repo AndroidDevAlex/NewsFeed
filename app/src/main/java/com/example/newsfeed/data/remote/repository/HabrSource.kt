@@ -2,7 +2,6 @@ package com.example.newsfeed.data.remote.repository
 
 import com.example.newsfeed.data.remote.api.ApiManager
 import com.example.newsfeed.presentation.entityUi.NewsUi
-import com.example.newsfeed.util.ConstantsSourceNames
 import javax.inject.Inject
 
 class HabrSource @Inject constructor(
@@ -21,6 +20,10 @@ class HabrSource @Inject constructor(
     }
 
     override fun getSourceName(): String {
-        return ConstantsSourceNames.HABR
+        return HABR
+    }
+
+    companion object {
+        private const val HABR = "habr"
     }
 }

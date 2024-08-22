@@ -12,7 +12,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.example.newsfeed.ui.theme.HabrButton
 import com.example.newsfeed.ui.theme.RedditButton
-import com.example.newsfeed.util.ConstantsSourceNames
 import com.example.newsfeed.util.Dimens
 
 @Composable
@@ -62,12 +61,12 @@ fun sourceButtonColors(
 @Composable
 fun getButtonColorsBySource(source: String): ButtonColors {
     return when (source) {
-        ConstantsSourceNames.HABR -> ButtonDefaults.buttonColors(
+        NewsSource.HABR -> ButtonDefaults.buttonColors(
             backgroundColor = HabrButton,
             contentColor = Color.Black
         )
 
-        ConstantsSourceNames.REDDIT -> ButtonDefaults.buttonColors(
+        NewsSource.REDDIT -> ButtonDefaults.buttonColors(
             backgroundColor = RedditButton,
             contentColor = Color.White
         )
@@ -77,4 +76,9 @@ fun getButtonColorsBySource(source: String): ButtonColors {
             contentColor = Color.DarkGray
         )
     }
+}
+
+private object NewsSource {
+    const val REDDIT = "reddit"
+    const val HABR = "habr"
 }
