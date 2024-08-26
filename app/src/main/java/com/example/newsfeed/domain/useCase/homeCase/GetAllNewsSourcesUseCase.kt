@@ -11,6 +11,6 @@ class GetAllNewsSourcesUseCase @Inject constructor(
 ) {
 
     fun getAllNewsBySelectedSources(): Flow<PagingData<ItemNewsUi>> {
-        return newsRepository.getCombinedAndSortedNewsPagingSource()
+        return newsRepository.getAllAvailableNewsBySource()
     }
 }

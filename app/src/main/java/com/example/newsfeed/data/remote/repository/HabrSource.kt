@@ -9,14 +9,7 @@ class HabrSource @Inject constructor(
 ) : Source {
 
     override suspend fun fetchNews(): NewsUi {
-        return apiManager.getAllHabrNewsList().apply {
-            val defaultImage = this.defaultImage
-            this.newsList.forEach { news ->
-                if (news.image == null) {
-                    news.image = defaultImage
-                }
-            }
-        }
+        return apiManager.getAllHabrNewsList()
     }
 
     override fun getSourceName(): String {

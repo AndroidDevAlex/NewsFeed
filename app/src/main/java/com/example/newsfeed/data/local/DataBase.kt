@@ -6,7 +6,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
-    version = 6,
+    version = 7,
     entities = [
         NewsDB::class
     ],
@@ -15,13 +15,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 abstract class DataBase : RoomDatabase() {
 
-    object MIGRATION_5_6 : Migration(5, 6) {
+    object MIGRATION_6_7 : Migration(6, 7) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL(
                 """
                 CREATE TABLE news_new (
                     id TEXT PRIMARY KEY NOT NULL,
-                    image TEXT,
+                    image TEXT NOT NULL,
                     title TEXT NOT NULL,
                     publishedAt TEXT NOT NULL,
                     description TEXT NOT NULL,
@@ -37,7 +37,7 @@ abstract class DataBase : RoomDatabase() {
             database.execSQL(
                 """
             INSERT INTO news_new (id, image, title, publishedAt, description, addedBy, isBookmarked, source, url, timeStamp)
-            SELECT CAST(id AS TEXT), image, title, publishedAt, description, addedBy, isBookmarked, source, url, timeStamp
+            SELECT id, COALESCE(image, '') as image, title, publishedAt, description, addedBy, isBookmarked, source, url, timeStamp
             FROM news
             """.trimIndent()
             )

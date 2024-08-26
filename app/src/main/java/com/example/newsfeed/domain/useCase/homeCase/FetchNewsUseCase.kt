@@ -8,6 +8,6 @@ class FetchNewsUseCase @Inject constructor(
 ){
 
     suspend fun fetchNews() {
-        newsRepository.fetchAndSaveNews()
+        newsRepository.fetchNewsFromApiAndSaveDB()
     }
 }

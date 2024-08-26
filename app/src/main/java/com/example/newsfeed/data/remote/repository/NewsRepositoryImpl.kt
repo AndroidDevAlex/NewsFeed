@@ -14,53 +14,50 @@ class NewsRepositoryImpl @Inject constructor(
     private val availableSources: List<Source>
 ) : NewsRepository {
 
-    private var selectedSources: List<Source> = availableSources
+    private val sourceMap: Map<String, Source> = availableSources.associateBy { it.getSourceName() }
+    private var selectedSourceNames: Set<String> = sourceMap.keys
 
     override fun updateSources(newsSources: List<String>) {
-        selectedSources = availableSources.filter { source ->
-            newsSources.contains(source.getSourceName())
-        }
+        selectedSourceNames = newsSources.toSet()
     }
 
     override fun getSourcesNames(): List<String> {
-        return listOf(SOURCE_REDDIT, SOURCE_HABR)
+        return sourceMap.keys.toList()
     }
 
-    override fun getCombinedAndSortedNewsPagingSource(): Flow<PagingData<ItemNewsUi>> {
+    override fun getAllAvailableNewsBySource(): Flow<PagingData<ItemNewsUi>> {
+        val selectedSourceNames = selectedSourceNames.toList()
         return dataSource.getPagingCombinedNewsBySourcesSortedByDate(
-            selectedSources.map { it.getSourceName() }
+            selectedSourceNames
         ).map { pagingData ->
             pagingData.map { it.mapFromDBToUi() }
         }
     }
 
-    override suspend fun fetchAndSaveNews() {
-        selectedSources.forEach { source ->
-            val remoteNews = source.fetchNews()
+    override suspend fun fetchNewsFromApiAndSaveDB() {
+        selectedSourceNames.forEach { sourceName ->
+            val source = sourceMap[sourceName]
+            source?.let {
+                val remoteNews = source.fetchNews()
 
-            remoteNews.newsList.forEach { news ->
-                val existingNews = dataSource.getNewsById(news.id)
-                val isBookmarked = existingNews?.isBookmarked ?: false
-                val timeStamp =
-                    if (isBookmarked) existingNews?.timeStamp ?: System.currentTimeMillis() else 0
+                remoteNews.newsList.forEach { news ->
+                    val existingNews = dataSource.getNewsById(news.id)
+                    val isBookmarked = existingNews?.isBookmarked ?: false
+                    val timeStamp =
+                        if (isBookmarked) existingNews?.timeStamp
+                            ?: System.currentTimeMillis() else 0
 
-                val newsForSave = news.copy(
-                    image = if (source.getSourceName() == SOURCE_HABR) news.image
-                        ?: remoteNews.defaultImage else news.image,
-                    isBookmarked = isBookmarked,
-                    timeStamp = timeStamp
-                )
-                dataSource.updateBookmarkStatus(newsForSave)
+                    val newsForSave = news.copy(
+                        isBookmarked = isBookmarked,
+                        timeStamp = timeStamp
+                    )
+                    dataSource.updateBookmarkStatus(newsForSave)
+                }
             }
         }
     }
 
     override suspend fun toggleBookmark(news: ItemNewsUi) {
         dataSource.updateBookmarkStatus(news)
-    }
-
-    companion object {
-        private const val SOURCE_REDDIT = "reddit"
-        private const val SOURCE_HABR = "habr"
     }
 }
