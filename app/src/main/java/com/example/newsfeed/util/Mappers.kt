@@ -15,7 +15,6 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-
 fun NewsFeedReddit.mapToNewsUiReddit(): NewsUi {
     val defaultImage = icon.removeSuffix("/")
 
@@ -48,18 +47,10 @@ private fun Entry.mapToUi(defaultImageUrl: String): ItemNewsUi {
         description = parseDescription(),
         addedBy = authorBy.name,
         isBookmarked = false,
-        source = getNewsSource(link.href),
+        source = ConstantsSourceNames.REDDIT,
         url = link.href,
         timeStamp = 0L
     )
-}
-
-private fun getNewsSource(link: String): String {
-    return when {
-        link.contains("reddit.com") -> ConstantsSourceNames.REDDIT
-        link.contains("habr.com") -> ConstantsSourceNames.HABR
-        else -> "unknown"
-    }
 }
 
 private fun Item.parseTitle(): String {
@@ -133,7 +124,7 @@ private fun Item.mapToUi(defaultImageUrl: String): ItemNewsUi {
         description = parseDescription(),
         addedBy = authorArticle,
         isBookmarked = false,
-        source = getNewsSource(link),
+        source = ConstantsSourceNames.HABR,
         url = link,
         timeStamp = 0L
     )

@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.newsfeed.util.Dimens
 import com.example.newsfeed.util.Headline
@@ -57,7 +56,7 @@ fun FilterScreenUi(
             columns = GridCells.Fixed(2),
             Modifier
                 .background(Color.White),
-            contentPadding = PaddingValues(30.dp),
+            contentPadding = PaddingValues(Dimens.PaddingProgress),
             horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingHorizontal),
             verticalArrangement = Arrangement.spacedBy(Dimens.PaddingVertical)
         ) {

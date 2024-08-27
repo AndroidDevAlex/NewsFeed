@@ -109,7 +109,7 @@ private fun NewsContent(item: ItemNewsUi) {
 
 @Composable
 private fun NewsImage(item: ItemNewsUi) {
-    item.image?.let { imageUrl ->
+    item.image.let { imageUrl ->
         Box(
             modifier = Modifier
                 .border(Dimens.Border, Color.Black)
